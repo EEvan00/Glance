@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import AppKit
 import SwiftUI
 
@@ -42,42 +43,19 @@ struct AboutSettingsPane: View {
             Divider()
 
             HStack(spacing: 8) {
-                Link(destination: AppMetadata.repositoryURL) {
-                    Label {
-                        Text(localization.string(.settingsAboutRepository))
-                    } icon: {
-                        GitHubMarkIcon()
+                if AppMetadata.repositoryIsAvailable {
+                    Link(destination: AppMetadata.repositoryURL) {
+                        Label(localization.string(.settingsAboutRepository), systemImage: "chevron.left.forwardslash.chevron.right")
                     }
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-
                 Link(destination: AppMetadata.authorURL) {
                     Label(AppMetadata.authorName, systemImage: "person.crop.circle")
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-
-                Link(destination: AppMetadata.projectHomepageURL) {
-                    Label(
-                        localization.string(.settingsAboutProject),
-                        systemImage: "house"
-                    )
+                Link(destination: AppMetadata.upstreamURL) {
+                    Label(localization.string(.settingsAboutUpstream), systemImage: "heart")
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
+            }.buttonStyle(.bordered).controlSize(.small)
 
-                if localization.resolvedLanguage.isChinese {
-                    Link(destination: AppMetadata.authorWebsiteURL) {
-                        Label(
-                            localization.string(.settingsAboutWebsite),
-                            systemImage: "globe"
-                        )
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                }
-            }
         }
     }
 }

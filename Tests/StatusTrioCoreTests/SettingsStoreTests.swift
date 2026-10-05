@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import AppKit
 import Combine
 import CoreAudio
@@ -6,6 +7,18 @@ import XCTest
 
 @MainActor
 final class SettingsStoreTests: XCTestCase {
+    func testPopupVolumeScrollingDefaultsOffAndPersistsChoice() {
+        let suite = "StatusTrio.ScrollVolume.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let settings = SettingsStore(defaults: defaults)
+        XCTAssertFalse(settings.scrollToAdjustVolume)
+        settings.scrollToAdjustVolume = false
+        XCTAssertFalse(SettingsStore(defaults: defaults).scrollToAdjustVolume)
+        settings.scrollToAdjustVolume = true
+        XCTAssertTrue(SettingsStore(defaults: defaults).scrollToAdjustVolume)
+    }
+
     func testDefaultsMatchSpecifiedRange() {
         XCTAssertEqual(SettingsStore.iconSizeRange, 16...36)
 

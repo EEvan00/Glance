@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import AppKit
 import SwiftUI
 import XCTest
@@ -25,7 +26,7 @@ final class SettingsRowHitAreaTests: XCTestCase {
         )
     }
 
-    func testPopupSettingsButtonUsesFullRowHitArea() {
+    func testCompactPopupCardsExposeTheirWholeTileHitArea() {
         let localization = makeLocalization()
         let settings = makeSettings()
         let store = SystemStatusStore(
@@ -37,12 +38,18 @@ final class SettingsRowHitAreaTests: XCTestCase {
             store: store,
             settings: settings,
             magSafeLED: .unavailable(),
+            codexUsage: CodexUsageController(),
+            weather: WeatherController(),
+            weatherForecast: WeatherController(),
+            nowPlaying: NowPlayingController(),
+            brightness: BrightnessController(),
             requestWiFiNameAccess: {},
             openBatterySettings: {},
             openWiFiSettings: {},
             openLocationSettings: {},
             openBluetoothSettings: {},
             openSettings: {},
+            openWeather: {},
             openSoundSettings: {},
             quit: {}
         )
@@ -50,12 +57,12 @@ final class SettingsRowHitAreaTests: XCTestCase {
 
         let hitAreaWidths = interactiveSubViewWidths(
             for: view,
-            size: NSSize(width: 300, height: 600)
+            size: NSSize(width: 284, height: 220)
         )
 
         XCTAssertTrue(
-            hitAreaWidths.contains { abs($0 - 268) < 0.5 },
-            "Expected the Settings row to react across the popup content width, got \(hitAreaWidths)"
+            hitAreaWidths.contains { abs($0 - 136) < 1 },
+            "Expected 136pt compact details cards to react across their tile width, got \(hitAreaWidths)"
         )
     }
 

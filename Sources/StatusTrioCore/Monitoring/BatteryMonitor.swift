@@ -1,9 +1,10 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import Foundation
 import IOKit.ps
 import OSLog
 
 private let batteryMonitorLogger = Logger(
-    subsystem: "io.github.404404.StatusTrio",
+    subsystem: "io.github.EEvan00.Glance",
     category: "battery"
 )
 

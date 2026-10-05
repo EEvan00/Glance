@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import SwiftUI
 
 struct OutputDeviceRow: View {
@@ -14,7 +15,7 @@ struct OutputDeviceRow: View {
                     Circle()
                         .fill(device.isCurrent ? Color.accentColor : Color.secondary.opacity(0.14))
 
-                    Image(systemName: device.isCurrent ? "hifispeaker.fill" : "hifispeaker")
+                    Image(systemName: (device.uid?.contains("BuiltInSpeaker") == true || displayName.lowercased().contains("macbook")) ? "laptopcomputer" : "speaker.wave.2.fill")
                         .font(.body.weight(.semibold))
                         .foregroundStyle(device.isCurrent ? Color.white : Color.secondary)
                 }

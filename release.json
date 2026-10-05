@@ -1,15 +1,15 @@
 {
-  "app_name": "Status Trio",
-  "bundle_id": "io.github.404404.StatusTrio",
-  "github_repo": "EEvan00/status-trio",
+  "app_name": "Glance",
+  "bundle_id": "io.github.EEvan00.Glance",
+  "github_repo": "EEvan00/Glance",
   "git_branch": "main",
   "min_system_version": "15.0",
-  "bundle_name": "Status Trio.app",
-  "dmg_name": "StatusTrio.dmg",
+  "bundle_name": "Glance.app",
+  "dmg_name": "Glance.dmg",
   "appcast_file": "appcast.xml",
   "sparkle_enabled": false,
   "derived_data_prefixes": [
-    "StatusTrio-",
-    "Status Trio-"
-  ]
+    "Glance-"
+  ],
+  "glance_modification_notice": "Modified by EEvan00 in 2026 for the independent Glance product."
 }

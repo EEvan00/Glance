@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import AppKit
 import SwiftUI
 
@@ -36,10 +37,12 @@ struct WiFiNetworkListView: View {
             }
             .frame(maxHeight: 330)
 
-            Divider()
-            Button(localization.string(.wifiActionOpenSettings), action: onOpenWiFiSettings)
-                .buttonStyle(.plain)
-                .accessibilityLabel(localization.string(.wifiActionOpenSettings))
+            VStack(alignment: .leading, spacing: 0) {
+                PopupDivider()
+                Button(localization.string(.wifiActionOpenSettings), action: onOpenWiFiSettings)
+                    .buttonStyle(.plain)
+                    .popupFooterInsets()
+            }
         }
         .onAppear {
             controller.activate(nameAccess: wifi.nameAccess)
@@ -56,9 +59,9 @@ struct WiFiNetworkListView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: CompactPopupLayout.gap) {
             Button(action: onBack) {
-                Image(systemName: "chevron.backward")
+                PopupChevron(symbol: "chevron.backward")
             }
             .buttonStyle(.plain)
             .accessibilityLabel(localization.string(.commonBack))
@@ -80,16 +83,17 @@ struct WiFiNetworkListView: View {
         if let connected = controller.networks.first(where: \.isConnected) {
             Text(localization.string(.wifiCurrentNetwork))
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
             networkRow(connected)
 
             Button {
                 showsDetails.toggle()
             } label: {
-                Label(
-                    localization.string(showsDetails ? .wifiDetailsHide : .wifiDetailsShow),
-                    systemImage: showsDetails ? "chevron.up" : "info.circle"
-                )
+                HStack(spacing: 4) {
+                    if showsDetails { PopupChevron(symbol: "chevron.up") }
+                    else { Image(systemName: "info.circle") }
+                    Text(localization.string(showsDetails ? .wifiDetailsHide : .wifiDetailsShow))
+                }.contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel(localization.string(.wifiDetailsShow))
@@ -100,7 +104,7 @@ struct WiFiNetworkListView: View {
         } else if controller.details.ssid != nil {
             Text(localization.string(.wifiCurrentNetwork))
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
             WiFiDetailsView(details: controller.details)
         }
     }
@@ -111,7 +115,7 @@ struct WiFiNetworkListView: View {
         if !others.isEmpty {
             Text(localization.string(.wifiOtherNetworks))
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
             ForEach(others) { network in
                 networkRow(network)
             }
@@ -128,7 +132,7 @@ struct WiFiNetworkListView: View {
                 Text(localization.string(.wifiScanning))
             }
             .font(.caption)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.primary.opacity(0.78))
         case .ready where controller.credentialIssue == .saveFailed:
             Text(localization.string(.wifiPasswordSaveFailed))
                 .font(.caption)
@@ -136,15 +140,15 @@ struct WiFiNetworkListView: View {
         case .ready where controller.networks.isEmpty:
             Text(localization.string(.wifiNoNetworks))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
         case .poweredOff:
             Text(localization.string(.wifiPanelOff))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
         case .noInterface:
             Text(localization.string(.wifiNoInterface))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
         case .permissionDenied:
             Button(localization.string(.wifiPermissionDenied), action: onOpenLocationSettings)
                 .buttonStyle(.link)
@@ -152,7 +156,7 @@ struct WiFiNetworkListView: View {
         case .failed:
             Text(localization.string(.wifiScanFailed))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
         case .connectionFailed:
             Text(localization.string(.wifiConnectionFailed))
                 .font(.caption)
@@ -175,7 +179,7 @@ struct WiFiNetworkListView: View {
                 Text(localization.string(.wifiCredentialsChecking))
             }
             .font(.caption)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.primary.opacity(0.78))
         case .credentialAccessCancelled:
             credentialAccessMessage(.wifiCredentialAccessCancelled)
         case .credentialAccessDenied:
@@ -199,7 +203,7 @@ struct WiFiNetworkListView: View {
         HStack(spacing: 8) {
             Text(localization.string(key))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
             Button(localization.string(.wifiCredentialEnterPassword)) {
                 controller.enterPasswordManually()
             }
@@ -224,11 +228,11 @@ struct WiFiNetworkListView: View {
                 if network.security.requiresPassword {
                     Image(systemName: "lock.fill")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.primary.opacity(0.78))
                         .accessibilityHidden(true)
                 }
                 Image(systemName: signalSymbol(for: network.rssi))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary.opacity(0.78))
                     .accessibilityHidden(true)
             }
             .contentShape(Rectangle())
@@ -287,7 +291,7 @@ private struct WiFiPasswordSheet: View {
                 Toggle(localization.string(.wifiRememberPassword), isOn: $rememberPassword)
                 Text(localization.string(.wifiPasswordKeychainNote))
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary.opacity(0.78))
                 HStack {
                     Button(localization.string(.commonCancel), action: dismiss.callAsFunction)
                     Spacer()
@@ -342,7 +346,7 @@ private struct WiFiDetailsView: View {
     private func detail(_ label: LocalizationKey, _ value: String?, copyable: Bool = false) -> some View {
         HStack(alignment: .firstTextBaseline) {
             Text(localization.string(label))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
             Spacer()
             if copyable, let value, !value.isEmpty {
                 Button(value) {

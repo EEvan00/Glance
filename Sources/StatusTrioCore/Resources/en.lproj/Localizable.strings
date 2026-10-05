@@ -1,14 +1,15 @@
-"menu.version" = "Status Trio %@";
+/* Glance modifications by EEvan00, 2026. Original project notices: NOTICE. */
+"menu.version" = "Glance %@";
 "menu.settings" = "Settings…";
-"menu.quit" = "Quit Status Trio";
+"menu.quit" = "Quit Glance";
 "menu.checkForUpdates" = "Check for Updates…";
 "settings.title" = "Settings";
 "settings.language" = "Language";
 "settings.language.followSystem" = "Follow System";
 "settings.language.description" = "Changes apply immediately.";
 "settings.launchAtLogin" = "Launch at login";
-"settings.launchAtLogin.description" = "Start Status Trio automatically when you log in.";
-"settings.launchAtLogin.requiresApproval" = "Waiting for approval. Allow Status Trio in System Settings › General › Login Items.";
+"settings.launchAtLogin.description" = "Start Glance automatically when you log in.";
+"settings.launchAtLogin.requiresApproval" = "Waiting for approval. Allow Glance in System Settings › General › Login Items.";
 "settings.launchAtLogin.openLoginItems" = "Open Login Items";
 "settings.launchAtLogin.failure" = "Couldn’t update the login item. Manage it in System Settings › General › Login Items.";
 "settings.iconSize" = "Icon Size";
@@ -34,13 +35,13 @@
 "settings.audio.orderDescription" = "Drag devices to change the order shown in the volume popover. New devices appear at the end.";
 "settings.audio.orderEmpty" = "No output devices available.";
 "settings.about.version" = "Version %@";
-"settings.about.description" = "A native macOS menu bar app that combines Wi-Fi, battery, and volume into one compact status icon. Inspired by the iPhone Duo combined status bar icon, with volume replacing cellular data on Mac.";
+"settings.about.description" = "A compact macOS menu bar panel for system controls, now playing, weather, and Codex usage.";
 "settings.about.project" = "Website";
 "settings.about.repository" = "GitHub";
 "settings.about.author" = "Author";
 "settings.about.authorRole" = "Creator and maintainer";
 "settings.about.website" = "Website";
-"settings.about.copyright" = "© lingyired";
+"settings.about.copyright" = "Glance modifications maintained by EEvan00. Based on Status Trio, © 2026 lingyired.";
 "settings.battery.title" = "Battery Display";
 "settings.battery.showPercentage" = "Show battery percentage";
 "settings.battery.showChargingIndicator" = "Show bolt while charging or connected to power";
@@ -111,7 +112,7 @@
 "accessibility.battery" = "Battery %d%%";
 "accessibility.volume" = "Volume %@";
 "settings.refreshInterval" = "Status refresh interval";
-"settings.refreshInterval.description" = "How often Status Trio checks for changes. Faster updates use more CPU.";
+"settings.refreshInterval.description" = "How often Glance checks for changes. Faster updates use more CPU.";
 "settings.refreshInterval.value" = "%d seconds";
 "settings.popup.order" = "Popup Order";
 "settings.popup.order.description" = "Drag items to change their order in the popup.";
@@ -172,7 +173,7 @@
 "bluetooth.off" = "Bluetooth is off.";
 "bluetooth.unavailable" = "Bluetooth is unavailable.";
 "bluetooth.readFailed" = "Could not read paired Bluetooth devices.";
-"bluetooth.noConnectedDevices" = "No connected devices";
+"bluetooth.noConnectedDevices" = "Not connected";
 "bluetooth.noDevices" = "No paired devices found.";
 "bluetooth.connected" = "Connected";
 "bluetooth.notConnected" = "Not Connected";
@@ -205,3 +206,86 @@
 "magsafe.error.uninstall" = "The MagSafe helper could not be removed.";
 "magsafe.error.write" = "The MagSafe indicator setting could not be applied.";
 "magsafe.privateAPIWarning" = "Uses a private, firmware-dependent SMC control. It changes the light only, not charging.";
+
+/* Compact controls and usage */
+"brightness.title" = "Brightness";
+"codex.remaining" = "%d%% remaining";
+"codex.reset" = "Re: %@";
+"codex.resetFull" = "Resets %@";
+"codex.updated" = "Updated %@";
+"codex.loading" = "Loading…";
+"codex.unavailable" = "Unavailable";
+"codex.cached" = "Cached · refresh unavailable";
+"codex.fiveHours" = "5 hours";
+"codex.weekly" = "Weekly";
+"codex.windowMinutes" = "%d minutes";
+"media.previous" = "Previous";
+"media.pause" = "Pause";
+"media.next" = "Next";
+"media.commandFailed" = "Could not control this player.";
+
+"volume.output.hint" = "Click to mute; right-click for Output";
+
+"codex.refreshNow" = "Refresh now";
+"display.title" = "Display";
+"display.settings" = "Display Settings…";
+"display.darkMode" = "Dark Mode";
+"display.nightShift" = "Night Shift";
+"display.trueTone" = "True Tone";
+"display.on" = "On";
+"display.off" = "Off";
+"display.unavailable" = "Unavailable";
+"display.actionFailed" = "Could not change the display setting.";
+
+"sound.title" = "Sound";
+"sound.settings" = "Sound Settings…";
+
+"media.progress" = "Playback position";
+
+"menu.compactQuit" = "Quit";
+
+"menu.compactSettings" = "Settings";
+
+"media.play" = "Play";
+
+"weather.unavailable" = "Weather unavailable";
+"weather.clear" = "Clear";
+"weather.partlyCloudy" = "Partly cloudy";
+"weather.cloudy" = "Cloudy";
+"weather.fog" = "Fog";
+"weather.rain" = "Rain";
+"weather.snow" = "Snow";
+"weather.thunderstorm" = "Thunderstorm";
+"weather.unknown" = "Unknown condition";
+"settings.clockFormat" = "Time format";
+"settings.clock12" = "12-hour";
+"settings.clock24" = "24-hour";
+"settings.weatherShortcut" = "Weather setup";
+"settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
+"settings.weatherOpenShortcut" = "Open weather shortcut";
+
+"weather.title" = "Weather";
+"weather.temperature" = "Temperature";
+"weather.condition" = "Conditions";
+"weather.source" = "Source";
+"weather.updated" = "Updated %@";
+"weather.loading" = "Loading weather…";
+"weather.openApp" = "Open Weather";
+
+"weather.low" = "Low";
+"weather.high" = "High";
+"weather.hourly" = "Hourly Forecast";
+"weather.forecastUnavailable" = "Forecast unavailable";
+
+"weather.currentLocation" = "Current Location";
+
+"settings.weatherAddCurrent" = "Add current weather";
+
+"settings.weatherAddForecast" = "Add forecast";
+
+"settings.weatherInstallHelp" = "Shortcuts are included. Add both and confirm system permissions once. Detailed forecasts load only when the weather menu opens.";
+
+"settings.audio.scrollVolume" = "Scroll to adjust volume";
+"settings.audio.scrollVolumeDescription" = "Scroll up or down in the popup to adjust volume. Lists and weather forecasts keep their normal scrolling.";
+
+"settings.about.upstream" = "Based on Status Trio";

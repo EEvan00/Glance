@@ -1,3 +1,4 @@
+# Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 name: Build and Release macOS
 
 on:
@@ -18,7 +19,7 @@ on:
         required: false
         type: string
       tag:
-        description: "Release tag. Defaults to vVERSION-fork.REVISION."
+        description: "Release tag. Defaults to vVERSION."
         required: false
         type: string
       publish:
@@ -44,7 +45,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: status-trio-${{ github.repository }}-${{ github.event_name == 'workflow_dispatch' && inputs.publish && 'publication' || github.ref }}
+  group: glance-${{ github.repository }}-${{ github.event_name == 'workflow_dispatch' && inputs.publish && 'publication' || github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -93,8 +94,8 @@ jobs:
           VERSION="${VERSION_INPUT:-${PLIST_VERSION}}"
           FORK_REVISION="${FORK_REVISION_INPUT:-${PLIST_FORK_REVISION}}"
           BUILD="${BUILD_INPUT:-${PLIST_BUILD}}"
-          TAG="${TAG_INPUT:-v${VERSION}-fork.${FORK_REVISION}}"
-          EXPECTED_TAG="v${VERSION}-fork.${FORK_REVISION}"
+          TAG="${TAG_INPUT:-v${VERSION}}"
+          EXPECTED_TAG="v${VERSION}"
 
           if [[ ! "${VERSION}" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
             echo "::error::VERSION must contain dot-separated numbers."
@@ -257,7 +258,7 @@ jobs:
 
           {
             printf '# Version %s （English + 中文， 中文在下方）\n\n' "${VERSION}"
-            printf "Upstream version: %s · Fork revision: %s · Build: %s\n\n" "${VERSION}" "${FORK_REVISION}" "${BUILD}"
+            printf "Version: %s · Internal revision: %s · Build: %s\n\n" "${VERSION}" "${FORK_REVISION}" "${BUILD}"
             printf '## English\n\n'
             cat "${NOTES_PATH}"
             printf '\n## 中文\n\n'
@@ -269,13 +270,13 @@ jobs:
             printf '\n## First launch / 首次启动\n\n'
             printf 'If macOS blocks the first launch, run:\n\n'
             printf '```bash\n'
-            printf 'xattr -dr com.apple.quarantine "/Applications/Status Trio.app"\n'
-            printf 'open "/Applications/Status Trio.app"\n'
+            printf 'xattr -dr com.apple.quarantine "/Applications/Glance.app"\n'
+            printf 'open "/Applications/Glance.app"\n'
             printf '```\n\n'
             printf '如果 macOS 阻止首次启动，请运行：\n\n'
             printf '```bash\n'
-            printf 'xattr -dr com.apple.quarantine "/Applications/Status Trio.app"\n'
-            printf 'open "/Applications/Status Trio.app"\n'
+            printf 'xattr -dr com.apple.quarantine "/Applications/Glance.app"\n'
+            printf 'open "/Applications/Glance.app"\n'
             printf '```\n'
           } >> "${RELEASE_BODY_PATH}"
 
@@ -312,7 +313,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: StatusTrio-${{ github.run_number }}
+          name: Glance-${{ github.run_number }}
           path: |
             dist/*.dmg
             dist/*.dmg.sha256

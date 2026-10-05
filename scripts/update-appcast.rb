@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 # frozen_string_literal: true
 
 require "cgi"
@@ -68,7 +69,7 @@ end
 
 release_notes = File.readlines(notes_path, chomp: true)
 description = notes_to_html(release_notes)
-description = "<p>Status Trio #{xml_escape(version)} is available.</p>" if description.empty?
+description = "<p>Glance #{xml_escape(version)} is available.</p>" if description.empty?
 
 pub_date = Time.now.utc.strftime("%a, %d %b %Y %H:%M:%S +0000")
 item = <<~XML.gsub(/^/, "    ").rstrip

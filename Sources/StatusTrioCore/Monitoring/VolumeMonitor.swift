@@ -1,9 +1,10 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import CoreAudio
 import Foundation
 import os
 
 private let volumeMonitorLogger = Logger(
-    subsystem: "io.github.404404.StatusTrio",
+    subsystem: "io.github.EEvan00.Glance",
     category: "VolumeMonitor"
 )
 

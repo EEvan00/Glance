@@ -1,14 +1,15 @@
-"menu.version" = "Status Trio %@";
+/* Glance modifications by EEvan00, 2026. Original project notices: NOTICE. */
+"menu.version" = "Glance %@";
 "menu.settings" = "Einstellungen…";
-"menu.quit" = "Status Trio beenden";
+"menu.quit" = "Glance beenden";
 "menu.checkForUpdates" = "Nach Updates suchen…";
 "settings.title" = "Einstellungen";
 "settings.language" = "Sprache";
 "settings.language.followSystem" = "Systemeinstellung folgen";
 "settings.language.description" = "Änderungen werden sofort übernommen.";
 "settings.launchAtLogin" = "Beim Anmelden starten";
-"settings.launchAtLogin.description" = "Startet Status Trio automatisch bei der Anmeldung.";
-"settings.launchAtLogin.requiresApproval" = "Warte auf Freigabe. Erlaube Status Trio in Systemeinstellungen › Allgemein › Anmeldeobjekte.";
+"settings.launchAtLogin.description" = "Startet Glance automatisch bei der Anmeldung.";
+"settings.launchAtLogin.requiresApproval" = "Warte auf Freigabe. Erlaube Glance in Systemeinstellungen › Allgemein › Anmeldeobjekte.";
 "settings.launchAtLogin.openLoginItems" = "Anmeldeobjekte öffnen";
 "settings.launchAtLogin.failure" = "Das Anmeldeobjekt konnte nicht aktualisiert werden. Verwalte es in Systemeinstellungen › Allgemein › Anmeldeobjekte.";
 "settings.iconSize" = "Symbolgröße";
@@ -34,13 +35,13 @@
 "settings.audio.orderDescription" = "Geräte ziehen, um die Reihenfolge im Lautstärke-Popover zu ändern. Neue Geräte erscheinen am Ende.";
 "settings.audio.orderEmpty" = "Keine Ausgabegeräte verfügbar.";
 "settings.about.version" = "Version %@";
-"settings.about.description" = "Eine native macOS-Menüleisten-App, die WLAN, Batterie und Lautstärke in einem kompakten Statussymbol vereint. Inspiriert vom kombinierten Statusleisten-Symbol des iPhone Duo, verwendet sie auf dem Mac die Lautstärke statt Mobilfunkdaten.";
+"settings.about.description" = "A compact macOS menu bar panel for system controls, now playing, weather, and Codex usage.";
 "settings.about.project" = "Website";
 "settings.about.repository" = "GitHub";
 "settings.about.author" = "Autor";
 "settings.about.authorRole" = "Entwickler und Maintainer";
 "settings.about.website" = "Website";
-"settings.about.copyright" = "© lingyired";
+"settings.about.copyright" = "Glance modifications maintained by EEvan00. Based on Status Trio, © 2026 lingyired.";
 "settings.battery.title" = "Batterieanzeige";
 "settings.battery.showPercentage" = "Batterieprozentsatz anzeigen";
 "settings.battery.showChargingIndicator" = "Blitz beim Laden oder Netzbetrieb anzeigen";
@@ -111,7 +112,7 @@
 "accessibility.battery" = "Batterie %d%%";
 "accessibility.volume" = "Lautstärke %@";
 "settings.refreshInterval" = "Aktualisierungsintervall";
-"settings.refreshInterval.description" = "Wie oft Status Trio auf Änderungen prüft. Häufigere Aktualisierungen erhöhen die CPU-Auslastung.";
+"settings.refreshInterval.description" = "Wie oft Glance auf Änderungen prüft. Häufigere Aktualisierungen erhöhen die CPU-Auslastung.";
 "settings.refreshInterval.value" = "%d Sekunden";
 "settings.popup.order" = "Reihenfolge im Popover";
 "settings.popup.order.description" = "Ziehe Elemente, um ihre Reihenfolge im Popover zu ändern.";
@@ -205,3 +206,86 @@
 "magsafe.error.uninstall" = "The MagSafe helper could not be removed.";
 "magsafe.error.write" = "The MagSafe indicator setting could not be applied.";
 "magsafe.privateAPIWarning" = "Uses a private, firmware-dependent SMC control. It changes the light only, not charging.";
+
+/* Compact controls and usage */
+"brightness.title" = "Helligkeit";
+"codex.remaining" = "%d%% verbleibend";
+"codex.reset" = "Zurücksetzung %@";
+"codex.resetFull" = "Zurücksetzung %@";
+"codex.updated" = "Aktualisiert %@";
+"codex.loading" = "Laden…";
+"codex.unavailable" = "Nicht verfügbar";
+"codex.cached" = "Cache · Aktualisierung fehlgeschlagen";
+"codex.fiveHours" = "5 Stunden";
+"codex.weekly" = "Wöchentlich";
+"codex.windowMinutes" = "%d Minuten";
+"media.previous" = "Zurück";
+"media.pause" = "Pause";
+"media.next" = "Weiter";
+"media.commandFailed" = "Dieser Player kann nicht gesteuert werden.";
+
+"volume.output.hint" = "Klicken zum Stummschalten; Rechtsklick für Ausgabe";
+
+"codex.refreshNow" = "Jetzt aktualisieren";
+"display.title" = "Display";
+"display.settings" = "Display-Einstellungen…";
+"display.darkMode" = "Dunkelmodus";
+"display.nightShift" = "Night Shift";
+"display.trueTone" = "True Tone";
+"display.on" = "Ein";
+"display.off" = "Aus";
+"display.unavailable" = "Nicht verfügbar";
+"display.actionFailed" = "Display-Einstellung konnte nicht geändert werden.";
+
+"sound.title" = "Ton";
+"sound.settings" = "Toneinstellungen…";
+
+"media.progress" = "Wiedergabeposition";
+
+"menu.compactQuit" = "Beenden";
+
+"menu.compactSettings" = "Einstellungen";
+
+"media.play" = "Wiedergabe";
+
+"weather.unavailable" = "Weather unavailable";
+"weather.clear" = "Clear";
+"weather.partlyCloudy" = "Partly cloudy";
+"weather.cloudy" = "Cloudy";
+"weather.fog" = "Fog";
+"weather.rain" = "Rain";
+"weather.snow" = "Snow";
+"weather.thunderstorm" = "Thunderstorm";
+"weather.unknown" = "Unknown condition";
+"settings.clockFormat" = "Time format";
+"settings.clock12" = "12-hour";
+"settings.clock24" = "24-hour";
+"settings.weatherShortcut" = "Weather setup";
+"settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
+"settings.weatherOpenShortcut" = "Open weather shortcut";
+
+"weather.title" = "Weather";
+"weather.temperature" = "Temperature";
+"weather.condition" = "Conditions";
+"weather.source" = "Source";
+"weather.updated" = "Updated %@";
+"weather.loading" = "Loading weather…";
+"weather.openApp" = "Open Weather";
+
+"weather.low" = "Low";
+"weather.high" = "High";
+"weather.hourly" = "Hourly Forecast";
+"weather.forecastUnavailable" = "Forecast unavailable";
+
+"weather.currentLocation" = "Current Location";
+
+"settings.weatherAddCurrent" = "Add current weather";
+
+"settings.weatherAddForecast" = "Add forecast";
+
+"settings.weatherInstallHelp" = "Shortcuts are included. Add both and confirm system permissions once. Detailed forecasts load only when the weather menu opens.";
+
+"settings.audio.scrollVolume" = "Scroll to adjust volume";
+"settings.audio.scrollVolumeDescription" = "Scroll up or down in the popup to adjust volume. Lists and weather forecasts keep their normal scrolling.";
+
+"settings.about.upstream" = "Based on Status Trio";

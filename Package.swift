@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 // swift-tools-version: 6.0
 import PackageDescription
 
@@ -7,12 +8,15 @@ let package = Package(
     platforms: [.macOS(.v15)],
     products: [
         .executable(name: "StatusTrio", targets: ["StatusTrio"]),
+        .library(name: "StatusTrioMediaBridge", type: .dynamic, targets: ["StatusTrioMediaBridge"]),
         .executable(name: "StatusTrioMagSafeHelper", targets: ["StatusTrioMagSafeHelper"])
     ],
     dependencies: [
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.0.0")
     ],
     targets: [
+        .target(name: "StatusTrioMediaBridge", linkerSettings: [.linkedFramework("Foundation")]),
+        .target(name: "DisplayFeaturesBridge", linkerSettings: [.linkedFramework("Foundation")]),
         .target(name: "HotspotBridge", linkerSettings: [.linkedFramework("CoreWLAN")]),
         .target(
             name: "SMCDefinitions",
@@ -28,6 +32,7 @@ let package = Package(
             name: "StatusTrioCore",
             dependencies: [
                 "HotspotBridge",
+                "DisplayFeaturesBridge",
                 "MagSafeSMC",
                 .product(name: "Sparkle", package: "Sparkle")
             ],

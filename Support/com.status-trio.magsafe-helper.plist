@@ -3,18 +3,18 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>io.github.404404.StatusTrio.MagSafeHelper</string>
+    <string>io.github.EEvan00.Glance.MagSafeHelper</string>
 	<key>BundleProgram</key>
 	<string>Contents/Resources/StatusTrioMagSafeHelper</string>
     <key>MachServices</key>
     <dict>
-        <key>io.github.404404.StatusTrio.MagSafeHelper</key>
+        <key>io.github.EEvan00.Glance.MagSafeHelper</key>
         <true/>
     </dict>
     <key>EnvironmentVariables</key>
     <dict>
         <key>STATUS_TRIO_MACH_SERVICE</key>
-        <string>io.github.404404.StatusTrio.MagSafeHelper</string>
+        <string>io.github.EEvan00.Glance.MagSafeHelper</string>
     </dict>
 </dict>
 </plist>

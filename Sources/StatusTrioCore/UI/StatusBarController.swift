@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import AppKit
 import Combine
 import SwiftUI
@@ -22,6 +23,11 @@ final class StatusBarController: NSObject {
 
     private let statusItem: NSStatusItem
     private let popover = StatusPopupPanel()
+    private let codexUsage = CodexUsageController()
+    private let weather = WeatherController()
+    private let weatherForecast = WeatherController()
+    private let nowPlaying = NowPlayingController()
+    private let brightness = BrightnessController()
     private let store: SystemStatusStore
     private let settings: SettingsStore
     private let magSafeLED: MagSafeLEDController
@@ -236,12 +242,21 @@ final class StatusBarController: NSObject {
                 store: store,
                 settings: settings,
                 magSafeLED: magSafeLED,
+                codexUsage: codexUsage,
+                weather: weather,
+                weatherForecast: weatherForecast,
+                nowPlaying: nowPlaying,
+                brightness: brightness,
                 requestWiFiNameAccess: handleRequestWiFiNameAccess,
                 openBatterySettings: handleOpenBatterySettings,
                 openWiFiSettings: handleOpenWiFiSettings,
                 openLocationSettings: handleOpenLocationSettings,
                 openBluetoothSettings: handleOpenBluetoothSettings,
                 openSettings: handleOpenSettings,
+                openWeather: { [weak self] in
+                    self?.popover.performClose(nil)
+                    NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Weather.app"))
+                },
                 openSoundSettings: handleOpenSoundSettings,
                 quit: quitAction
             )
@@ -250,8 +265,8 @@ final class StatusBarController: NSObject {
             rootView: rootView
                 .background(.regularMaterial)
                 .overlay {
-                    RoundedRectangle(cornerRadius: StatusPopupPanel.cornerRadius)
-                        .strokeBorder(.primary.opacity(0.25), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: StatusPopupPanel.cornerRadius, style: .circular)
+                        .strokeBorder(.primary.opacity(0.25), lineWidth: CompactPopupLayout.borderWidth)
                         .allowsHitTesting(false)
                         .accessibilityHidden(true)
                 }
@@ -266,6 +281,10 @@ final class StatusBarController: NSObject {
             popover.performClose(nil)
         } else {
             store.setPopoverVisible(true)
+            brightness.refresh()
+            codexUsage.setVisible(true)
+            weather.setVisible(true, shortcutName: settings.weatherShortcutName)
+            nowPlaying.setVisible(true)
             installPopoverContentIfNeeded()
             popover.show(
                 relativeTo: button.bounds,
@@ -320,6 +339,10 @@ final class StatusBarController: NSObject {
     }
 
     private func shouldConsumeVolumeScrollWheel(_ event: NSEvent) -> Bool {
+        guard settings.scrollToAdjustVolume else {
+            resetVolumeScrollSession()
+            return false
+        }
         guard event.window === popover.contentViewController?.view.window,
               store.isVolumeControlAvailable,
               !isPointerOverScrollView(event) else {
@@ -374,6 +397,10 @@ final class StatusBarController: NSObject {
         removePopoverDismissMonitor()
         removeVolumeScrollMonitor()
         store.setPopoverVisible(false)
+        codexUsage.setVisible(false)
+        weather.setVisible(false, shortcutName: settings.weatherShortcutName)
+        weatherForecast.setVisible(false, shortcutName: settings.weatherForecastShortcutName)
+        nowPlaying.setVisible(false)
         store.closePopoverDetails()
         popover.contentViewController = nil
     }

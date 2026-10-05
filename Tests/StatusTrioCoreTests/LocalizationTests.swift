@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import Combine
 import XCTest
 @testable import StatusTrioCore
@@ -73,6 +74,10 @@ final class LocalizationTests: XCTestCase {
     func testEveryParameterizedKeyUsesMatchingPlaceholders() throws {
         let expectedPlaceholderCounts: [LocalizationKey: Int] = [
             .menuVersion: 1,
+            .codexRemaining: 1,
+            .codexReset: 1,
+            .codexUpdated: 1,
+            .codexWindowMinutes: 1,
             .settingsIconSizeAccessibilityValue: 1,
             .settingsRefreshIntervalValue: 1,
             .settingsAboutVersion: 1,

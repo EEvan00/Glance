@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import AppKit
 import XCTest
 @testable import StatusTrioCore
@@ -17,10 +18,10 @@ final class StatusMenuBuilderTests: XCTestCase {
         let quitItem = menu.items[3]
 
         XCTAssertEqual(menu.items.map(\.title), [
-            "Status Trio 1.0.0",
+            "Glance 1.0.0",
             "设置…",
             "",
-            "退出 Status Trio"
+            "退出 Glance"
         ])
         XCTAssertFalse(versionItem.isEnabled)
         XCTAssertFalse(settingsItem.isEnabled)
@@ -42,10 +43,10 @@ final class StatusMenuBuilderTests: XCTestCase {
         )
 
         XCTAssertEqual(menu.items.map(\.title), [
-            "Status Trio 1.0.0",
+            "Glance 1.0.0",
             "Einstellungen…",
             "",
-            "Status Trio beenden"
+            "Glance beenden"
         ])
     }
 

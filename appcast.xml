@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<!-- Glance update feed, modified by EEvan00 in 2026. No release has been published. -->
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
   <channel>
-    <title>Status Trio (fork updates disabled)</title>
-    <link>https://github.com/404404/status-trio</link>
-    <description>Sparkle updates are disabled until this fork has its own EdDSA key pair and signed appcast configuration.</description>
+    <title>Glance Updates</title>
+    <link>https://github.com/EEvan00/Glance</link>
+    <description>Independent Glance releases.</description>
     <language>en</language>
   </channel>
 </rss>

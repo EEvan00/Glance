@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import AppKit
 import SwiftUI
 
@@ -20,7 +21,7 @@ struct WiFiStatusView: View {
                         Text(localization.string(.networkTitle))
                             .font(.headline)
                         Spacer()
-                        Image(systemName: "chevron.right")
+                        PopupChevron()
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(.tertiary)
                     }

@@ -1,14 +1,15 @@
-"menu.version" = "Status Trio %@";
+/* Glance modifications by EEvan00, 2026. Original project notices: NOTICE. */
+"menu.version" = "Glance %@";
 "menu.settings" = "Настройки…";
-"menu.quit" = "Завершить Status Trio";
+"menu.quit" = "Завершить Glance";
 "menu.checkForUpdates" = "Проверить обновления…";
 "settings.title" = "Настройки";
 "settings.language" = "Язык";
 "settings.language.followSystem" = "Как в системе";
 "settings.language.description" = "Изменения применяются сразу.";
 "settings.launchAtLogin" = "Запускать при входе";
-"settings.launchAtLogin.description" = "Автоматически запускать Status Trio при входе в систему.";
-"settings.launchAtLogin.requiresApproval" = "Ожидается подтверждение. Разрешите Status Trio в «Системные настройки › Основные › Объекты входа».";
+"settings.launchAtLogin.description" = "Автоматически запускать Glance при входе в систему.";
+"settings.launchAtLogin.requiresApproval" = "Ожидается подтверждение. Разрешите Glance в «Системные настройки › Основные › Объекты входа».";
 "settings.launchAtLogin.openLoginItems" = "Открыть объекты входа";
 "settings.launchAtLogin.failure" = "Не удалось обновить объект входа. Управляйте им в «Системные настройки › Основные › Объекты входа».";
 "settings.iconSize" = "Размер значка";
@@ -34,13 +35,13 @@
 "settings.audio.orderDescription" = "Перетаскивайте устройства, чтобы изменить порядок в панели громкости. Новые устройства добавляются в конец.";
 "settings.audio.orderEmpty" = "Нет доступных устройств вывода.";
 "settings.about.version" = "Версия %@";
-"settings.about.description" = "Нативное приложение macOS, объединяющее Wi-Fi, аккумулятор и громкость в одном компактном значке строки меню. Вдохновлено объединённым значком строки состояния iPhone Duo: на Mac громкость заменяет сотовые данные.";
+"settings.about.description" = "A compact macOS menu bar panel for system controls, now playing, weather, and Codex usage.";
 "settings.about.project" = "Веб-сайт";
 "settings.about.repository" = "GitHub";
 "settings.about.author" = "Автор";
 "settings.about.authorRole" = "Автор и сопровождающий";
 "settings.about.website" = "Веб-сайт";
-"settings.about.copyright" = "© lingyired";
+"settings.about.copyright" = "Glance modifications maintained by EEvan00. Based on Status Trio, © 2026 lingyired.";
 "settings.battery.title" = "Отображение батареи";
 "settings.battery.showPercentage" = "Показывать процент заряда";
 "settings.battery.showChargingIndicator" = "Показывать молнию при зарядке или питании от сети";
@@ -111,7 +112,7 @@
 "accessibility.battery" = "Батарея %d%%";
 "accessibility.volume" = "Громкость %@";
 "settings.refreshInterval" = "Интервал обновления";
-"settings.refreshInterval.description" = "Как часто Status Trio проверяет изменения. Более частое обновление увеличивает нагрузку на CPU.";
+"settings.refreshInterval.description" = "Как часто Glance проверяет изменения. Более частое обновление увеличивает нагрузку на CPU.";
 "settings.refreshInterval.value" = "%d секунд";
 "settings.popup.order" = "Порядок в панели";
 "settings.popup.order.description" = "Перетаскивайте элементы, чтобы изменить их порядок в панели.";
@@ -205,3 +206,86 @@
 "magsafe.error.uninstall" = "The MagSafe helper could not be removed.";
 "magsafe.error.write" = "The MagSafe indicator setting could not be applied.";
 "magsafe.privateAPIWarning" = "Uses a private, firmware-dependent SMC control. It changes the light only, not charging.";
+
+/* Compact controls and usage */
+"brightness.title" = "Яркость";
+"codex.remaining" = "Осталось %d%%";
+"codex.reset" = "Сброс %@";
+"codex.resetFull" = "Сброс %@";
+"codex.updated" = "Обновлено %@";
+"codex.loading" = "Загрузка…";
+"codex.unavailable" = "Недоступно";
+"codex.cached" = "Кэш · обновление недоступно";
+"codex.fiveHours" = "5 часов";
+"codex.weekly" = "За неделю";
+"codex.windowMinutes" = "%d минут";
+"media.previous" = "Назад";
+"media.pause" = "Пауза";
+"media.next" = "Далее";
+"media.commandFailed" = "Не удалось управлять проигрывателем.";
+
+"volume.output.hint" = "Щелчок — выключить звук; правый щелчок — выход";
+
+"codex.refreshNow" = "Обновить сейчас";
+"display.title" = "Дисплей";
+"display.settings" = "Настройки дисплея…";
+"display.darkMode" = "Тёмный режим";
+"display.nightShift" = "Night Shift";
+"display.trueTone" = "True Tone";
+"display.on" = "Вкл.";
+"display.off" = "Выкл.";
+"display.unavailable" = "Недоступно";
+"display.actionFailed" = "Не удалось изменить настройку дисплея.";
+
+"sound.title" = "Звук";
+"sound.settings" = "Настройки звука…";
+
+"media.progress" = "Позиция воспроизведения";
+
+"menu.compactQuit" = "Выход";
+
+"menu.compactSettings" = "Настройки";
+
+"media.play" = "Воспроизвести";
+
+"weather.unavailable" = "Weather unavailable";
+"weather.clear" = "Clear";
+"weather.partlyCloudy" = "Partly cloudy";
+"weather.cloudy" = "Cloudy";
+"weather.fog" = "Fog";
+"weather.rain" = "Rain";
+"weather.snow" = "Snow";
+"weather.thunderstorm" = "Thunderstorm";
+"weather.unknown" = "Unknown condition";
+"settings.clockFormat" = "Time format";
+"settings.clock12" = "12-hour";
+"settings.clock24" = "24-hour";
+"settings.weatherShortcut" = "Weather setup";
+"settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
+"settings.weatherOpenShortcut" = "Open weather shortcut";
+
+"weather.title" = "Weather";
+"weather.temperature" = "Temperature";
+"weather.condition" = "Conditions";
+"weather.source" = "Source";
+"weather.updated" = "Updated %@";
+"weather.loading" = "Loading weather…";
+"weather.openApp" = "Open Weather";
+
+"weather.low" = "Low";
+"weather.high" = "High";
+"weather.hourly" = "Hourly Forecast";
+"weather.forecastUnavailable" = "Forecast unavailable";
+
+"weather.currentLocation" = "Current Location";
+
+"settings.weatherAddCurrent" = "Add current weather";
+
+"settings.weatherAddForecast" = "Add forecast";
+
+"settings.weatherInstallHelp" = "Shortcuts are included. Add both and confirm system permissions once. Detailed forecasts load only when the weather menu opens.";
+
+"settings.audio.scrollVolume" = "Scroll to adjust volume";
+"settings.audio.scrollVolumeDescription" = "Scroll up or down in the popup to adjust volume. Lists and weather forecasts keep their normal scrolling.";
+
+"settings.about.upstream" = "Based on Status Trio";

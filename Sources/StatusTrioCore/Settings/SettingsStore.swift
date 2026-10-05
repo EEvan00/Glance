@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import Combine
 import Foundation
 
@@ -250,10 +251,32 @@ final class SettingsStore: ObservableObject {
         )
     }
 
+    @Published var scrollToAdjustVolume: Bool {
+        didSet { defaults.set(scrollToAdjustVolume, forKey: "scrollToAdjustVolume") }
+    }
+
+    @Published var uses24HourClock: Bool {
+        didSet { defaults.set(uses24HourClock, forKey: "uses24HourClock") }
+    }
+
+    var weatherShortcutName: String { BundledWeatherShortcut.current.rawValue }
+    var weatherForecastShortcutName: String { BundledWeatherShortcut.forecast.rawValue }
+
     private let defaults: UserDefaults
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
+        if defaults === UserDefaults.standard,
+           Bundle.main.bundleIdentifier == "io.github.EEvan00.Glance",
+           !defaults.bool(forKey: "glanceImportedLegacyPreferences") {
+            let legacy = defaults.persistentDomain(forName: "io.github.404404.StatusTrio") ?? [:]
+            for (key, value) in legacy where !key.hasPrefix("SU") && !key.hasPrefix("NS") {
+                if defaults.object(forKey: key) == nil { defaults.set(value, forKey: key) }
+            }
+            defaults.set(true, forKey: "glanceImportedLegacyPreferences")
+        }
+        self.scrollToAdjustVolume = defaults.object(forKey: "scrollToAdjustVolume") as? Bool ?? false
+        self.uses24HourClock = defaults.object(forKey: "uses24HourClock") as? Bool ?? true
         let storedIconSize = (defaults.object(forKey: Self.iconSizeDefaultsKey) as? NSNumber)?.doubleValue
         let storedCriticalThreshold = (defaults.object(forKey: Self.batteryCriticalThresholdDefaultsKey) as? NSNumber)?.doubleValue
         let storedBatterySymbolScale = (defaults.object(forKey: Self.batterySymbolScaleDefaultsKey) as? NSNumber)?.doubleValue

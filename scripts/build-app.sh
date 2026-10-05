@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
+# Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 set -euo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIGURATION="${1:-release}"
 OPEN_APP="${2:-open}"
-BUNDLE_ID="${BUNDLE_ID:-io.github.404404.StatusTrio}"
-APP_NAME="${APP_NAME:-Status Trio}"
+BUNDLE_ID="${BUNDLE_ID:-io.github.EEvan00.Glance}"
+APP_NAME="${APP_NAME:-Glance}"
 APP_VERSION="${APP_VERSION:-}"
 BUILD_NUMBER="${BUILD_NUMBER:-}"
 FORK_REVISION="${FORK_REVISION:-$(/usr/libexec/PlistBuddy -c "Print :StatusTrioForkRevision" "$ROOT/Support/Info.plist")}"
@@ -82,7 +83,7 @@ fi
 
 swift "${SWIFT_BUILD_ARGS[@]}"
 BIN_PATH="$(swift "${SWIFT_BUILD_ARGS[@]}" --show-bin-path)"
-APP_DIR="$ROOT/dist/StatusTrio.app"
+APP_DIR="$ROOT/dist/Glance.app"
 CONTENTS="$APP_DIR/Contents"
 ICON_SOURCE="$ROOT/Support/AppIcon.svg"
 ICONSET_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/StatusTrio.XXXXXX")"
@@ -122,8 +123,10 @@ if [[ ! -d "$CORE_RESOURCE_BUNDLE" ]]; then
 fi
 
 cp "$BIN_PATH/StatusTrio" "$CONTENTS/MacOS/StatusTrio"
+cp "$BIN_PATH/libStatusTrioMediaBridge.dylib" "$CONTENTS/Frameworks/libStatusTrioMediaBridge.dylib"
 cp -R "$CORE_RESOURCE_BUNDLE" "$CONTENTS/Resources/"
 cp "$BIN_PATH/StatusTrioMagSafeHelper" "$CONTENTS/Resources/StatusTrioMagSafeHelper"
+cp "$ROOT/LICENSE" "$ROOT/NOTICE" "$CONTENTS/Resources/"
 cp "$ROOT/Support/com.status-trio.magsafe-helper.plist" "$CONTENTS/Library/LaunchDaemons/com.status-trio.magsafe-helper.plist"
 MAGSAFE_HELPER_LABEL="$BUNDLE_ID.MagSafeHelper"
 /usr/libexec/PlistBuddy \
@@ -221,6 +224,7 @@ if [[ "$SIGNING_IDENTITY" != "-" ]]; then
     fi
 fi
 
+codesign "${SIGNING_ARGS[@]}" "$CONTENTS/Frameworks/libStatusTrioMediaBridge.dylib"
 codesign "${SIGNING_ARGS[@]}" "$CONTENTS/Frameworks/Sparkle.framework"
 codesign "${SIGNING_ARGS[@]}" "$CONTENTS/Resources/StatusTrioMagSafeHelper"
 codesign "${SIGNING_ARGS[@]}" "$APP_DIR"

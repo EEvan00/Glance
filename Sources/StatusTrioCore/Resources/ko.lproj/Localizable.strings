@@ -1,14 +1,15 @@
-"menu.version" = "Status Trio %@";
+/* Glance modifications by EEvan00, 2026. Original project notices: NOTICE. */
+"menu.version" = "Glance %@";
 "menu.settings" = "설정…";
-"menu.quit" = "Status Trio 종료";
+"menu.quit" = "Glance 종료";
 "menu.checkForUpdates" = "업데이트 확인…";
 "settings.title" = "설정";
 "settings.language" = "언어";
 "settings.language.followSystem" = "시스템 설정 따르기";
 "settings.language.description" = "변경 사항은 즉시 적용됩니다.";
 "settings.launchAtLogin" = "로그인 시 실행";
-"settings.launchAtLogin.description" = "로그인할 때 Status Trio를 자동으로 실행합니다.";
-"settings.launchAtLogin.requiresApproval" = "승인 대기 중입니다. '시스템 설정 › 일반 › 로그인 항목'에서 Status Trio를 허용하세요.";
+"settings.launchAtLogin.description" = "로그인할 때 Glance를 자동으로 실행합니다.";
+"settings.launchAtLogin.requiresApproval" = "승인 대기 중입니다. '시스템 설정 › 일반 › 로그인 항목'에서 Glance를 허용하세요.";
 "settings.launchAtLogin.openLoginItems" = "로그인 항목 열기";
 "settings.launchAtLogin.failure" = "로그인 항목을 업데이트하지 못했습니다. '시스템 설정 › 일반 › 로그인 항목'에서 관리할 수 있습니다.";
 "settings.iconSize" = "아이콘 표시 크기";
@@ -34,13 +35,13 @@
 "settings.audio.orderDescription" = "장치를 드래그하여 볼륨 팝오버의 표시 순서를 변경합니다. 새 장치는 끝에 표시됩니다.";
 "settings.audio.orderEmpty" = "사용 가능한 출력 장치가 없습니다.";
 "settings.about.version" = "버전 %@";
-"settings.about.description" = "Wi-Fi, 배터리, 음량을 하나의 간결한 메뉴 막대 아이콘으로 결합한 네이티브 macOS 앱입니다. iPhone Duo의 결합 상태 막대 아이콘에서 영감을 받아 Mac에서는 셀룰러 데이터 대신 음량을 표시합니다.";
+"settings.about.description" = "A compact macOS menu bar panel for system controls, now playing, weather, and Codex usage.";
 "settings.about.project" = "웹사이트";
 "settings.about.repository" = "GitHub";
 "settings.about.author" = "작성자";
 "settings.about.authorRole" = "제작자 및 유지관리자";
 "settings.about.website" = "웹사이트";
-"settings.about.copyright" = "© lingyired";
+"settings.about.copyright" = "Glance modifications maintained by EEvan00. Based on Status Trio, © 2026 lingyired.";
 "settings.battery.title" = "배터리 표시";
 "settings.battery.showPercentage" = "배터리 잔량 표시";
 "settings.battery.showChargingIndicator" = "충전 또는 전원 연결 시 번개 표시";
@@ -111,7 +112,7 @@
 "accessibility.battery" = "배터리 %d%%";
 "accessibility.volume" = "볼륨 %@";
 "settings.refreshInterval" = "상태 새로 고침 간격";
-"settings.refreshInterval.description" = "Status Trio가 변경 사항을 확인하는 빈도입니다. 더 자주 확인하면 CPU 사용량이 늘어납니다.";
+"settings.refreshInterval.description" = "Glance가 변경 사항을 확인하는 빈도입니다. 더 자주 확인하면 CPU 사용량이 늘어납니다.";
 "settings.refreshInterval.value" = "%d초";
 "settings.popup.order" = "팝오버 순서";
 "settings.popup.order.description" = "항목을 드래그하여 팝오버에서 표시되는 순서를 변경합니다.";
@@ -205,3 +206,86 @@
 "magsafe.error.uninstall" = "The MagSafe helper could not be removed.";
 "magsafe.error.write" = "The MagSafe indicator setting could not be applied.";
 "magsafe.privateAPIWarning" = "Uses a private, firmware-dependent SMC control. It changes the light only, not charging.";
+
+/* Compact controls and usage */
+"brightness.title" = "밝기";
+"codex.remaining" = "%d%% 남음";
+"codex.reset" = "%@ 초기화";
+"codex.resetFull" = "%@ 초기화";
+"codex.updated" = "%@ 업데이트";
+"codex.loading" = "불러오는 중…";
+"codex.unavailable" = "사용 불가";
+"codex.cached" = "캐시 · 새로고침 불가";
+"codex.fiveHours" = "5시간";
+"codex.weekly" = "주간";
+"codex.windowMinutes" = "%d분";
+"media.previous" = "이전";
+"media.pause" = "일시 정지";
+"media.next" = "다음";
+"media.commandFailed" = "플레이어를 제어할 수 없습니다.";
+
+"volume.output.hint" = "클릭하여 음소거, 오른쪽 클릭하여 출력 선택";
+
+"codex.refreshNow" = "지금 새로 고침";
+"display.title" = "디스플레이";
+"display.settings" = "디스플레이 설정…";
+"display.darkMode" = "다크 모드";
+"display.nightShift" = "Night Shift";
+"display.trueTone" = "True Tone";
+"display.on" = "켬";
+"display.off" = "끔";
+"display.unavailable" = "사용 불가";
+"display.actionFailed" = "디스플레이 설정을 변경할 수 없습니다.";
+
+"sound.title" = "사운드";
+"sound.settings" = "사운드 설정…";
+
+"media.progress" = "재생 위치";
+
+"menu.compactQuit" = "종료";
+
+"menu.compactSettings" = "설정";
+
+"media.play" = "재생";
+
+"weather.unavailable" = "Weather unavailable";
+"weather.clear" = "Clear";
+"weather.partlyCloudy" = "Partly cloudy";
+"weather.cloudy" = "Cloudy";
+"weather.fog" = "Fog";
+"weather.rain" = "Rain";
+"weather.snow" = "Snow";
+"weather.thunderstorm" = "Thunderstorm";
+"weather.unknown" = "Unknown condition";
+"settings.clockFormat" = "Time format";
+"settings.clock12" = "12-hour";
+"settings.clock24" = "24-hour";
+"settings.weatherShortcut" = "Weather setup";
+"settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
+"settings.weatherOpenShortcut" = "Open weather shortcut";
+
+"weather.title" = "Weather";
+"weather.temperature" = "Temperature";
+"weather.condition" = "Conditions";
+"weather.source" = "Source";
+"weather.updated" = "Updated %@";
+"weather.loading" = "Loading weather…";
+"weather.openApp" = "Open Weather";
+
+"weather.low" = "Low";
+"weather.high" = "High";
+"weather.hourly" = "Hourly Forecast";
+"weather.forecastUnavailable" = "Forecast unavailable";
+
+"weather.currentLocation" = "Current Location";
+
+"settings.weatherAddCurrent" = "Add current weather";
+
+"settings.weatherAddForecast" = "Add forecast";
+
+"settings.weatherInstallHelp" = "Shortcuts are included. Add both and confirm system permissions once. Detailed forecasts load only when the weather menu opens.";
+
+"settings.audio.scrollVolume" = "Scroll to adjust volume";
+"settings.audio.scrollVolumeDescription" = "Scroll up or down in the popup to adjust volume. Lists and weather forecasts keep their normal scrolling.";
+
+"settings.about.upstream" = "Based on Status Trio";

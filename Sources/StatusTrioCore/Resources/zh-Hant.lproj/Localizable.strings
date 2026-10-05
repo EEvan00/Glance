@@ -1,14 +1,15 @@
-"menu.version" = "Status Trio %@";
+/* Glance modifications by EEvan00, 2026. Original project notices: NOTICE. */
+"menu.version" = "Glance %@";
 "menu.settings" = "設定…";
-"menu.quit" = "結束 Status Trio";
+"menu.quit" = "結束 Glance";
 "menu.checkForUpdates" = "檢查更新…";
 "settings.title" = "設定";
 "settings.language" = "語言";
 "settings.language.followSystem" = "跟隨系統";
 "settings.language.description" = "變更會立即套用。";
 "settings.launchAtLogin" = "開機時啟動";
-"settings.launchAtLogin.description" = "登入系統後自動啟動 Status Trio。";
-"settings.launchAtLogin.requiresApproval" = "等待授權。請在「系統設定 › 一般 › 登入項目」中允許 Status Trio。";
+"settings.launchAtLogin.description" = "登入系統後自動啟動 Glance。";
+"settings.launchAtLogin.requiresApproval" = "等待授權。請在「系統設定 › 一般 › 登入項目」中允許 Glance。";
 "settings.launchAtLogin.openLoginItems" = "打開登入項目設定";
 "settings.launchAtLogin.failure" = "無法更新登入項目，可在「系統設定 › 一般 › 登入項目」中手動管理。";
 "settings.iconSize" = "圖示顯示尺寸";
@@ -34,13 +35,13 @@
 "settings.audio.orderDescription" = "拖移裝置可調整音量彈出式視窗中的顯示順序。新裝置會排在最後。";
 "settings.audio.orderEmpty" = "沒有可用的輸出裝置。";
 "settings.about.version" = "版本 %@";
-"settings.about.description" = "將 Wi-Fi、電池和音量整合為一個簡潔選單列狀態圖示的原生 macOS 應用程式。靈感源自 iPhone Duo 的組合狀態列圖示，並在 Mac 上以音量取代行動網路。";
+"settings.about.description" = "精简的 macOS 菜单栏控制面板，集中显示系统状态、正在播放、天气与 Codex 额度。";
 "settings.about.project" = "專案首頁";
 "settings.about.repository" = "GitHub";
 "settings.about.author" = "作者";
 "settings.about.authorRole" = "作者與維護者";
 "settings.about.website" = "作者首頁";
-"settings.about.copyright" = "© lingyired";
+"settings.about.copyright" = "Glance 改进版本由 EEvan00 维护。基于 Status Trio，原项目 © 2026 lingyired。";
 "settings.battery.title" = "電池顯示";
 "settings.battery.showPercentage" = "顯示電量數字";
 "settings.battery.showChargingIndicator" = "充電/連接電源時顯示閃電";
@@ -111,7 +112,7 @@
 "accessibility.battery" = "電池 %d%%";
 "accessibility.volume" = "音量 %@";
 "settings.refreshInterval" = "狀態重新整理間隔";
-"settings.refreshInterval.description" = "Status Trio 檢查狀態變化的頻率。重新整理越快，CPU 使用率越高。";
+"settings.refreshInterval.description" = "Glance 檢查狀態變化的頻率。重新整理越快，CPU 使用率越高。";
 "settings.refreshInterval.value" = "%d 秒";
 "settings.popup.order" = "彈出式視窗排序";
 "settings.popup.order.description" = "拖移項目以調整它們在彈出式視窗中的順序。";
@@ -205,3 +206,86 @@
 "magsafe.error.uninstall" = "無法移除 MagSafe 輔助程式。";
 "magsafe.error.write" = "無法套用 MagSafe 指示燈設定。";
 "magsafe.privateAPIWarning" = "此功能使用取決於韌體的私有 SMC 控制；它只改變燈光，不影響充電。";
+
+/* Compact controls and usage */
+"brightness.title" = "亮度";
+"codex.remaining" = "剩餘 %d%%";
+"codex.reset" = "%@ 重置";
+"codex.resetFull" = "%@ 重置";
+"codex.updated" = "%@ 更新";
+"codex.loading" = "載入中…";
+"codex.unavailable" = "暫不可用";
+"codex.cached" = "快取 · 更新失敗";
+"codex.fiveHours" = "5 小時";
+"codex.weekly" = "每週";
+"codex.windowMinutes" = "%d 分鐘";
+"media.previous" = "上一首";
+"media.pause" = "暫停";
+"media.next" = "下一首";
+"media.commandFailed" = "無法控制此播放器。";
+
+"volume.output.hint" = "點擊靜音；右鍵選擇聲音輸出";
+
+"codex.refreshNow" = "立即更新";
+"display.title" = "顯示器";
+"display.settings" = "顯示器設定…";
+"display.darkMode" = "深色模式";
+"display.nightShift" = "夜覽";
+"display.trueTone" = "原彩顯示";
+"display.on" = "開";
+"display.off" = "關";
+"display.unavailable" = "無法使用";
+"display.actionFailed" = "無法更改顯示器設定。";
+
+"sound.title" = "聲音";
+"sound.settings" = "聲音設定…";
+
+"media.progress" = "播放進度";
+
+"menu.compactQuit" = "結束";
+
+"menu.compactSettings" = "設定";
+
+"media.play" = "播放";
+
+"weather.unavailable" = "天氣暫不可用";
+"weather.clear" = "晴";
+"weather.partlyCloudy" = "晴间多云";
+"weather.cloudy" = "阴";
+"weather.fog" = "雾";
+"weather.rain" = "雨";
+"weather.snow" = "雪";
+"weather.thunderstorm" = "雷雨";
+"weather.unknown" = "天气状况未知";
+"settings.clockFormat" = "时间格式";
+"settings.clock12" = "12 小时制";
+"settings.clock24" = "24 小时制";
+"settings.weatherShortcut" = "天气设置";
+"settings.weatherShortcutDescription" = "使用内置快捷指令获取 Apple 天气。缓存 15 分钟，关闭弹窗取消请求。";
+"settings.weatherOpenShortcut" = "打开天气快捷指令";
+
+"weather.title" = "天氣";
+"weather.temperature" = "溫度";
+"weather.condition" = "天氣狀況";
+"weather.source" = "來源";
+"weather.updated" = "更新於 %@";
+"weather.loading" = "正在取得天氣…";
+"weather.openApp" = "開啟天氣";
+
+"weather.low" = "最低";
+"weather.high" = "最高";
+"weather.hourly" = "每小時預報";
+"weather.forecastUnavailable" = "暫時無法取得預報";
+
+"weather.currentLocation" = "当前位置";
+
+"settings.weatherAddCurrent" = "添加当前天气";
+
+"settings.weatherAddForecast" = "添加天气预报";
+
+"settings.weatherInstallHelp" = "快捷指令已内置。首次使用请分别添加并确认系统权限。详细预报仅在打开天气菜单时获取。";
+
+"settings.audio.scrollVolume" = "滚动调节音量";
+"settings.audio.scrollVolumeDescription" = "在弹窗内上下滚动调节音量。列表和天气预报区域保持正常滚动。";
+
+"settings.about.upstream" = "原项目致谢";

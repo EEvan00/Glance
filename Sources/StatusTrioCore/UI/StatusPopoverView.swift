@@ -1,8 +1,10 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
+import AppKit
 import SwiftUI
 
 @MainActor
 enum StatusPresentation {
-    static let statusItemAccessibilityLabel = "Status Trio"
+    static let statusItemAccessibilityLabel = "Glance"
 
     static func statusItemAccessibilityValue(
         _ snapshot: StatusSnapshot,
@@ -243,17 +245,26 @@ enum StatusPresentation {
 }
 
 
-private enum PopoverPanel {
+private enum PopoverPanel: Equatable {
+    case display
     case summary
     case battery
     case wifi(showDetails: Bool)
     case bluetooth
+    case output
+    case codex
+    case weather
 }
 
 struct StatusPopoverView: View {
     @ObservedObject var store: SystemStatusStore
     @ObservedObject var settings: SettingsStore
     @ObservedObject var magSafeLED: MagSafeLEDController
+    @ObservedObject var codexUsage: CodexUsageController
+    @ObservedObject var weather: WeatherController
+    @ObservedObject var weatherForecast: WeatherController
+    @ObservedObject var nowPlaying: NowPlayingController
+    @ObservedObject var brightness: BrightnessController
     @EnvironmentObject private var localization: Localization
     let requestWiFiNameAccess: () -> Void
     let openBatterySettings: () -> Void
@@ -261,6 +272,7 @@ struct StatusPopoverView: View {
     let openLocationSettings: () -> Void
     let openBluetoothSettings: () -> Void
     let openSettings: () -> Void
+    let openWeather: () -> Void
     let openSoundSettings: () -> Void
     let quit: () -> Void
     @State private var panel: PopoverPanel = .summary
@@ -286,6 +298,14 @@ struct StatusPopoverView: View {
                     onOpenLocationSettings: openLocationSettings,
                     showsDetailsInitially: showDetails
                 )
+            case .display:
+                DisplayControlsView(brightness: brightness, onBack: { panel = .summary })
+            case .output:
+                SoundControlsView(store: store, settings: settings, onBack: { panel = .summary }, onOpenSettings: openSoundSettings)
+            case .weather:
+                WeatherDetailsView(controller: weather, forecast: weatherForecast, settings: settings, onBack: { panel = .summary }, onOpenWeather: openWeather)
+            case .codex:
+                CodexUsageView(controller: codexUsage, onBack: { panel = .summary })
             case .bluetooth:
                 BluetoothDeviceListView(
                     controller: store.bluetoothDevices,
@@ -294,83 +314,157 @@ struct StatusPopoverView: View {
                 )
             }
         }
-        .padding(14)
-        .frame(width: 330)
+        .padding(.horizontal, panel == .summary ? 0 : CompactPopupLayout.contentInset)
+        .padding(CompactPopupLayout.gap)
+        .frame(width: 284)
     }
 
     private var summary: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ForEach(settings.popupSectionOrder) { section in
-                popupSection(section)
-
-                if section != settings.popupSectionOrder.last {
-                    Divider()
+        VStack(spacing: CompactPopupLayout.gap) {
+            HStack(alignment: .top, spacing: CompactPopupLayout.gap) {
+                VStack(spacing: 0) {
+                    cell(symbol: "battery.100",
+                         title: StatusPresentation.batteryTitle(store.popupSnapshot.battery, localization: localization),
+                         subtitle: store.popupSnapshot.battery.isConnectedToPower ? "Source: Power" : "Source: Battery") {
+                        magSafeLED.refreshAvailability()
+                        panel = .battery
+                    }
+                    PopupDivider().padding(.horizontal, 8)
+                    cell(symbol: "wifi", title: localization.string(.wifiTitle),
+                         subtitle: StatusPresentation.wifiSubtitle(store.popupSnapshot.wifi, localization: localization)) {
+                        store.activateWiFiPanel()
+                        panel = .wifi(showDetails: false)
+                    }
+                }
+                .systemModuleSurface()
+                VStack(spacing: 0) {
+                    cell(symbol: "bluetooth", title: localization.string(.bluetoothTitle), subtitle: bluetoothSummary) {
+                        store.activateBluetoothPanel()
+                        panel = .bluetooth
+                    }
+                    PopupDivider().padding(.horizontal, 8)
+                    cell(symbol: "terminal", title: codexTitle, subtitle: codexSubtitle) { panel = .codex }
+                        .help(codexHelp)
+                        .accessibilityLabel(codexHelp)
+                }
+                .systemModuleSurface()
+            }
+            VStack(spacing: CompactPopupLayout.gap) {
+                BrightnessControlsView(controller: brightness, onOpenDisplay: { panel = .display })
+                CompactVolumeControlsView(store: store, onOpenOutput: { panel = .output })
+            }
+            .padding(CompactPopupLayout.gap)
+            .systemModuleSurface()
+            if !nowPlaying.items.isEmpty {
+                NowPlayingView(controller: nowPlaying)
+            }
+            TimelineView(.everyMinute) { context in
+                HStack(spacing: CompactPopupLayout.gap) {
+                    footerButton(.compactSettings, symbol: "gearshape", action: openSettings)
+                    Button { panel = .weather } label: {
+                        HStack(spacing: 3) {
+                            Image(systemName: weather.snapshot?.symbol ?? "cloud")
+                            Text(weather.snapshot?.temperatureText ?? "—").monospacedDigit()
+                            Text(weather.snapshot.map { $0.conditionKey == .weatherUnknown ? ($0.appleCondition ?? "—") : localization.string($0.conditionKey) } ?? "")
+                                .lineLimit(1)
+                        }
+                        .font(.system(size: 11))
+                        .frame(maxWidth: .infinity).frame(height: 24)
+                        .systemModuleSurface()
+                    }
+                    .buttonStyle(.plain)
+                    .help(weatherHelp)
+                    .accessibilityLabel(weatherHelp)
+                    Text(FooterClockFormatting.date(context.date, locale: localization.resolvedLanguage.locale, chinese: localization.resolvedLanguage.isChinese))
+                        .font(.system(size: 11)).monospacedDigit().lineLimit(1)
+                        .frame(width: 78, height: 24).systemModuleSurface()
+                        .help(context.date.formatted(date: .complete, time: .omitted))
+                    Text(FooterClockFormatting.time(context.date, uses24HourClock: settings.uses24HourClock))
+                        .font(.system(size: 11)).monospacedDigit().lineLimit(1)
+                        .frame(width: 44, height: 24).systemModuleSurface()
+                    footerButton(.compactQuit, symbol: "power", action: quit)
                 }
             }
 
-            Divider()
+        }
+        .onAppear { store.bluetoothDevices.activateIfAuthorized() }
+    }
 
-            Button {
-                openSettings()
-            } label: {
-                Text(localization.string(.menuSettings))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
+    private var weatherHelp: String {
+        let state = weather.isUnavailable ? localization.string(.weatherUnavailable) : (weather.snapshot?.temperatureText ?? "—")
+        let condition = weather.snapshot?.appleCondition ?? localization.string(.weatherUnknown)
+        return "\(condition) · \(state) · Apple Weather"
+    }
 
-            Button(localization.string(.menuQuit)) {
-                quit()
-            }
-            .buttonStyle(.plain)
-            .keyboardShortcut("q")
+    private func footerButton(_ key: LocalizationKey, symbol: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 13, weight: .medium))
+                .frame(width: 28, height: 24)
+                .systemModuleSurface()
+        }.buttonStyle(.plain)
+            .help(localization.string(key))
+            .accessibilityLabel(localization.string(key))
+    }
+
+    private var bluetoothSummary: String {
+        if let device = store.bluetoothDevices.connectedDevices.first { return device.name }
+        switch store.bluetoothDevices.availability {
+        case .available: return localization.string(.bluetoothNoConnectedDevices)
+        case .poweredOff: return localization.string(.bluetoothOff)
+        case .idle, .initializing: return localization.string(.bluetoothInitializing)
+        case .authorizationNotDetermined: return localization.string(.bluetoothAuthorizationNotDetermined)
+        case .authorizationDenied: return localization.string(.bluetoothAuthorizationDenied)
+        case .authorizationRestricted: return localization.string(.bluetoothAuthorizationRestricted)
+        case .failed: return localization.string(.bluetoothReadFailed)
+        case .unavailable: return localization.string(.bluetoothUnavailable)
         }
     }
 
-    @ViewBuilder
-    private func popupSection(_ section: PopupSection) -> some View {
-        switch section {
-        case .battery:
-            BatteryStatusView(
-                battery: store.popupSnapshot.battery,
-                onOpenDetails: {
-                    magSafeLED.refreshAvailability()
-                    panel = .battery
-                },
-                onOpenBatterySettings: openBatterySettings
-            )
-        case .network:
-            VStack(alignment: .leading, spacing: 8) {
-                WiFiStatusView(
-                    wifi: store.popupSnapshot.wifi,
-                    onOpenDetails: { showDetails in
-                        store.activateWiFiPanel()
-                        panel = .wifi(showDetails: showDetails)
-                    },
-                    onRequestNameAccess: requestWiFiNameAccess,
-                    onOpenWiFiSettings: openWiFiSettings,
-                    onOpenLocationSettings: openLocationSettings
-                )
-                Divider()
-                BluetoothStatusView(
-                    controller: store.bluetoothDevices,
-                    onOpenDetails: {
-                        store.activateBluetoothPanel()
-                        panel = .bluetooth
-                    },
-                    onOpenBluetoothSettings: openBluetoothSettings
-                )
-            }
-        case .volume:
-            VolumeControlsView(
-                settings: settings,
-                volume: store.liveVolume,
-                isEnabled: store.isVolumeControlAvailable,
-                onVolumeChange: store.setVolume,
-                onToggleMute: store.toggleMute,
-                onSelectOutputDevice: store.selectOutputDevice,
-                onOpenSoundSettings: openSoundSettings
-            )
+    private var codexTitle: String {
+        guard let window = codexUsage.snapshot?.windows.first, let percent = window.remainingPercent else { return "Codex" }
+        return "Codex · \(percent)%"
+    }
+
+    private var codexHelp: String {
+        guard let percent = codexUsage.snapshot?.windows.first?.remainingPercent else { return "Codex · \(codexSubtitle)" }
+        return "Codex · \(localization.format(.codexRemaining, percent)) · \(codexSubtitle)"
+    }
+
+    private var codexSubtitle: String {
+        if codexUsage.isUnavailable, codexUsage.snapshot != nil { return localization.string(.codexCached) }
+        if let reset = codexUsage.snapshot?.windows.first?.resetsAt {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "M/d HH:mm"
+            return localization.format(.codexReset, formatter.string(from: Date(timeIntervalSince1970: reset)))
         }
+        return localization.string(codexUsage.isLoading ? .codexLoading : .codexUnavailable)
+    }
+
+    private func cell(symbol: String, title: String, subtitle: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Group {
+                    if symbol == "bluetooth", let image = NSImage(named: NSImage.bluetoothTemplateName) {
+                        Image(nsImage: image).resizable().scaledToFit().frame(width: 16, height: 22)
+                    } else {
+                        Image(systemName: symbol).font(.system(size: 14))
+                    }
+                }.frame(width: 22)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title).font(.system(size: 12, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.85)
+                    Text(subtitle).font(.system(size: 10)).foregroundStyle(.primary.opacity(0.78)).lineLimit(1)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                PopupChevron()
+            }
+            .padding(.horizontal, CompactPopupLayout.gap)
+            .frame(maxWidth: .infinity)
+            .frame(height: 40)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(title), \(subtitle)")
+        .help("\(title) · \(subtitle)")
     }
 }

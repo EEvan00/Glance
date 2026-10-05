@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import CoreWLAN
 import Foundation
 import Security
@@ -30,7 +31,7 @@ extension WiFiCredentialStoring {
 final class KeychainWiFiPasswordStore: WiFiCredentialStoring, @unchecked Sendable {
     private let appService: String
 
-    init(appService: String = "io.github.404404.StatusTrio.wifi-password") {
+    init(appService: String = "io.github.EEvan00.Glance.wifi-password") {
         self.appService = appService
     }
 

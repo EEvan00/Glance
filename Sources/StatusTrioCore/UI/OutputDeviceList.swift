@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import SwiftUI
 
 struct OutputDeviceList: View {
@@ -33,7 +34,7 @@ struct OutputDeviceList: View {
                         }
                     } label: {
                         HStack(spacing: 8) {
-                            Image(systemName: "chevron.down")
+                            PopupChevron(symbol: "chevron.down")
                                 .font(.caption.weight(.semibold))
                                 .rotationEffect(.degrees(isExpanded ? 180 : 0))
 

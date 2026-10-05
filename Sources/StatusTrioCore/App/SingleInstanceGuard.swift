@@ -1,16 +1,17 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import Darwin
 import Foundation
 
 final class SingleInstanceGuard {
     static var defaultLockPath: String {
         FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/StatusTrio", isDirectory: true)
+            .appendingPathComponent("Library/Application Support/Glance", isDirectory: true)
             .appendingPathComponent(lockFileName(for: Bundle.main.bundleIdentifier))
             .path
     }
 
     static func lockFileName(for bundleIdentifier: String?) -> String {
-        let fallbackIdentifier = "io.github.404404.StatusTrio"
+        let fallbackIdentifier = "io.github.EEvan00.Glance"
         let identifier = bundleIdentifier?
             .trimmingCharacters(in: .whitespacesAndNewlines)
         let resolvedIdentifier = identifier.flatMap { $0.isEmpty ? nil : $0 }

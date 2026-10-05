@@ -1,7 +1,8 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import Foundation
 
 enum AppMetadata {
-    static let defaultName = "Status Trio"
+    static let defaultName = "Glance"
     private static let nameKeys = ["CFBundleDisplayName", "CFBundleName"]
 
     static var name: String {
@@ -27,17 +28,17 @@ enum AppMetadata {
         return value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : value
     }
 
-    static let repositoryDisplayName = "github.com/404404/status-trio"
-    static let repositoryURL = URL(string: "https://github.com/404404/status-trio")!
-    static let projectHomepageURL = URL(string: "http://statustrio.lingai.net/")!
-    static let authorName = "lingyired"
-    static let authorURL = URL(string: "https://github.com/lingyired")!
-    static let authorWebsiteURL = URL(string: "https://lingai.net/")!
+    static let repositoryDisplayName = "github.com/EEvan00/Glance"
+    static let repositoryURL = URL(string: "https://github.com/EEvan00/Glance")!
+    static let projectHomepageURL = URL(string: "https://github.com/EEvan00/Glance")!
+    static let authorName = "EEvan00"
+    static let authorURL = URL(string: "https://github.com/EEvan00")!
+    static let upstreamURL = URL(string: "https://github.com/lingyired/status-trio")!
+    static let repositoryIsAvailable = true
 
     static var versionDisplayString: String {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
-        let forkRevision = Bundle.main.infoDictionary?["StatusTrioForkRevision"] as? Int ?? 1
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
-        return "\(version) — Fork \(forkRevision) (build \(build))"
+        return "\(version) (build \(build))"
     }
 }

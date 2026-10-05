@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import AppKit
 
 @MainActor
@@ -23,6 +24,12 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         let environment = AppEnvironment.live()
         self.environment = environment
         environment.store.start()
+        // Show the bundled setup once; importing and permissions remain system-confirmed.
+        let defaults = UserDefaults.standard
+        if !defaults.bool(forKey: "weatherShortcutSetupShown") {
+            defaults.set(true, forKey: "weatherShortcutSetupShown")
+            environment.settingsWindowController.show()
+        }
     }
 
     public func applicationWillTerminate(_ notification: Notification) {

@@ -1,3 +1,5 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
+import AppKit
 import SwiftUI
 
 struct BasicsSettingsPane: View {
@@ -53,7 +55,30 @@ struct BasicsSettingsPane: View {
 
             Divider()
 
-            popupOrderSection
+            PreferenceRow(label: .settingsClockFormat, placesControlInline: true) {
+                Picker(localization.string(.settingsClockFormat), selection: $store.uses24HourClock) {
+                    Text(localization.string(.settingsClock12)).tag(false)
+                    Text(localization.string(.settingsClock24)).tag(true)
+                }
+                .labelsHidden()
+                .frame(width: 180)
+            }
+
+            Divider()
+
+            PreferenceRow(label: .settingsWeatherShortcut, description: .settingsWeatherShortcutDescription) {
+                VStack(alignment: .leading, spacing: 4) {
+                    WeatherShortcutInstallButtons(localization: localization)
+                    Text(localization.string(.settingsWeatherInstallHelp))
+                        .font(.caption).foregroundStyle(.secondary)
+                    Button(localization.string(.settingsWeatherOpenShortcut)) {
+                        var url = URLComponents(string: "shortcuts://open-shortcut")!
+                        url.queryItems = [URLQueryItem(name: "name", value: store.weatherShortcutName)]
+                        if let url = url.url { NSWorkspace.shared.open(url) }
+                    }
+                    .buttonStyle(.link).font(.caption)
+                }
+            }
         }
     }
 
@@ -87,44 +112,6 @@ struct BasicsSettingsPane: View {
                 .frame(width: 92, alignment: .trailing)
             }
         }
-    }
-
-    private var popupOrderSection: some View {
-        PreferenceRow(
-            label: .settingsPopupOrder,
-            description: .settingsPopupOrderDescription
-        ) {
-            List {
-                ForEach(store.popupSectionOrder) { section in
-                    HStack(spacing: 8) {
-                        Image(systemName: section.systemImage)
-                            .foregroundStyle(.secondary)
-                            .frame(width: 18)
-
-                        Text(localization.string(section.titleKey))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        Image(systemName: "line.3.horizontal")
-                            .font(.caption)
-                            .foregroundStyle(.tertiary)
-                            .accessibilityHidden(true)
-                    }
-                    .padding(.vertical, 2)
-                }
-                .onMove { source, destination in
-                    store.movePopupSections(
-                        fromOffsets: source,
-                        toOffset: destination
-                    )
-                }
-            }
-            .listStyle(.inset)
-            .frame(height: popupOrderListHeight)
-        }
-    }
-
-    private var popupOrderListHeight: CGFloat {
-        min(max(CGFloat(store.popupSectionOrder.count) * 28 + 8, 44), 168)
     }
 
     private var launchAtLoginSection: some View {

@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import SwiftUI
 
 struct BatteryStatusView: View {
@@ -27,7 +28,7 @@ struct BatteryStatusView: View {
                     }
 
                     Spacer()
-                    Image(systemName: "chevron.right")
+                    PopupChevron()
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.tertiary)
                 }

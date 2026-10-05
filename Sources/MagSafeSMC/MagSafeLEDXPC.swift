@@ -1,7 +1,8 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import Foundation
 
 public enum MagSafeLEDXPC {
-    public static let defaultBundleIdentifier = "io.github.404404.StatusTrio"
+    public static let defaultBundleIdentifier = "io.github.EEvan00.Glance"
 
     public static func serviceName(bundleIdentifier: String?) -> String {
         "\(bundleIdentifier ?? defaultBundleIdentifier).MagSafeHelper"

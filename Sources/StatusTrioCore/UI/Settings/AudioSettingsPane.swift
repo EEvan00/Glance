@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import SwiftUI
 
 struct AudioSettingsPane: View {
@@ -7,6 +8,14 @@ struct AudioSettingsPane: View {
 
     var body: some View {
         PreferencesPane {
+            PreferenceCheckboxRow(
+                label: .settingsAudioScrollVolume,
+                description: .settingsAudioScrollVolumeDescription,
+                isOn: $store.scrollToAdjustVolume
+            )
+
+            Divider()
+
             PreferenceRow(
                 label: .settingsAudioMaximumVisible,
                 description: .settingsAudioMaximumVisibleDescription

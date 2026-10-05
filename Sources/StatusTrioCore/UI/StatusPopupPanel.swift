@@ -1,14 +1,16 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import AppKit
 
 /// A menu-bar panel without NSPopover's system-drawn arrow.
 @MainActor
 final class StatusPopupPanel: NSPanel, NSWindowDelegate {
-    static let cornerRadius: CGFloat = 6
+    static let cornerRadius: CGFloat = 12
     var onClose: (() -> Void)?
     var preventsAutomaticDismissal: (() -> Bool)?
     private var sizeObservation: NSKeyValueObservation?
     private var anchor = NSRect.zero
     private var screenFrame = NSRect.zero
+    private var menuBarBottom: CGFloat = 0
 
     init() {
         super.init(contentRect: .zero, styleMask: [.borderless], backing: .buffered, defer: false)
@@ -29,6 +31,7 @@ final class StatusPopupPanel: NSPanel, NSWindowDelegate {
         guard let window = view.window, let controller = contentViewController else { return }
         anchor = window.convertToScreen(view.convert(rect, to: nil))
         screenFrame = window.screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? .zero
+        menuBarBottom = min(window.frame.minY, screenFrame.maxY)
         let content = controller.view
         content.wantsLayer = true
         content.layer?.cornerRadius = Self.cornerRadius
@@ -48,11 +51,16 @@ final class StatusPopupPanel: NSPanel, NSWindowDelegate {
         var size = controller.preferredContentSize
         if size.width <= 0 || size.height <= 0 { size = controller.view.fittingSize }
         guard size.width > 0, size.height > 0 else { return }
-        size.width = min(size.width, screenFrame.width)
-        size.height = min(size.height, screenFrame.height)
+        setFrame(Self.frame(for: size, anchor: anchor, screenFrame: screenFrame, menuBarBottom: menuBarBottom), display: true)
+    }
+
+    static func frame(for requestedSize: NSSize, anchor: NSRect, screenFrame: NSRect, menuBarBottom: CGFloat) -> NSRect {
+        let top = min(anchor.minY, menuBarBottom, screenFrame.maxY)
+        let size = NSSize(width: min(requestedSize.width, screenFrame.width),
+                          height: min(requestedSize.height, max(0, top - screenFrame.minY)))
         let x = max(screenFrame.minX, min(anchor.midX - size.width / 2, screenFrame.maxX - size.width))
-        let y = max(screenFrame.minY, anchor.minY - size.height - 6)
-        setFrame(NSRect(origin: NSPoint(x: x, y: y), size: size), display: true)
+        let y = max(screenFrame.minY, top - size.height)
+        return NSRect(origin: NSPoint(x: x, y: y), size: size)
     }
 
     override func performClose(_ sender: Any?) {

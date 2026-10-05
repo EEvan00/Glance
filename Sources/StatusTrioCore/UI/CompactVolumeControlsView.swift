@@ -1,0 +1,42 @@
+import SwiftUI
+
+struct CompactVolumeControlsView: View {
+    @ObservedObject var store: SystemStatusStore
+    @EnvironmentObject private var localization: Localization
+    var onOpenOutput: (() -> Void)? = nil
+    @State private var value = 0.0
+    @State private var isAdjusting = false
+    @State private var lastWrite = Date.distantPast
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Button { store.toggleMute() } label: {
+                Image(systemName: store.liveVolume.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                    .font(.system(size: 14)).frame(width: 22, height: 24)
+            }
+            .buttonStyle(.plain).disabled(!store.isVolumeControlAvailable)
+            .accessibilityLabel(localization.string(store.liveVolume.isMuted ? .volumeUnmuted : .volumeMuted))
+            CapsuleSlider(value: $value, label: localization.string(.volumeAccessibilityLabel),
+                          isEnabled: store.isVolumeControlAvailable, onChange: { scalar, final in
+                let now = Date()
+                if final || now.timeIntervalSince(lastWrite) >= 1.0 / 30 {
+                    lastWrite = now
+                    store.setVolume(scalar)
+                }
+            }, onEditingChanged: { isAdjusting = $0 }) {
+                EmptyView()
+            }
+            .contextMenu {
+                if let onOpenOutput { Button(localization.string(.volumeOutputTitle), action: onOpenOutput) }
+                Button(localization.string(store.liveVolume.isMuted ? .volumeUnmuted : .volumeMuted)) { store.toggleMute() }
+            }
+            .accessibilityAction(named: Text(localization.string(store.liveVolume.isMuted ? .volumeUnmuted : .volumeMuted))) { store.toggleMute() }
+            if let onOpenOutput {
+                Button(action: onOpenOutput) { PopupChevron() }
+                    .buttonStyle(.plain).accessibilityLabel(localization.string(.volumeOutputTitle))
+            }
+        }
+        .onAppear { value = store.liveVolume.scalar ?? 0 }
+        .onChange(of: store.liveVolume.scalar) { _, scalar in if !isAdjusting { value = scalar ?? 0 } }
+    }
+}

@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import SwiftUI
 
 struct MagSafeLEDView: View {
@@ -6,24 +7,27 @@ struct MagSafeLEDView: View {
     let onBack: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            header
-            content
-            if let errorKey {
-                Text(localization.string(errorKey))
-                    .font(.caption)
-                    .foregroundStyle(.red)
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 12) {
+                header
+                content
+                if let errorKey {
+                    Text(localization.string(errorKey))
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
             }
             Text(localization.string(.magSafePrivateAPIWarning))
                 .font(.caption2)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
+                .popupFooterInsets()
         }
     }
 
     private var header: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: CompactPopupLayout.gap) {
             Button(action: onBack) {
-                Image(systemName: "chevron.backward")
+                PopupChevron(symbol: "chevron.backward")
             }
             .buttonStyle(.plain)
             .accessibilityLabel(localization.string(.commonBack))
@@ -39,13 +43,13 @@ struct MagSafeLEDView: View {
         case .unsupported:
             Text(localization.string(.magSafeUnsupported))
                 .font(.callout)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
         case .needsInstallation:
             Toggle(localization.string(.magSafeLight), isOn: .constant(true))
                 .disabled(true)
             Text(localization.string(.magSafeInstallExplanation))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
             Button(localization.string(.magSafeInstallHelper)) {
                 controller.installHelper()
             }
@@ -53,7 +57,7 @@ struct MagSafeLEDView: View {
         case .requiresApproval:
             Text(localization.string(.settingsLaunchAtLoginRequiresApproval))
                 .font(.callout)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
             Button(localization.string(.settingsLaunchAtLoginOpenLoginItems)) {
                 controller.openHelperSettings()
             }
@@ -72,7 +76,7 @@ struct MagSafeLEDView: View {
                 controller.isLightEnabled ? .magSafeFollowsSystem : .magSafeOff
             ))
             .font(.caption)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.primary.opacity(0.78))
             Divider()
             Button(localization.string(.magSafeUninstallHelper)) {
                 controller.uninstallHelper()

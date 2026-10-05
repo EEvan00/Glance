@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import SwiftUI
 
 struct BluetoothStatusView: View {
@@ -17,12 +18,12 @@ struct BluetoothStatusView: View {
                             .font(.headline)
                         Text(summary)
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.primary.opacity(0.78))
                             .lineLimit(1)
                             .truncationMode(.tail)
                     }
                     Spacer()
-                    Image(systemName: "chevron.right")
+                    PopupChevron()
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.tertiary)
                 }
@@ -34,7 +35,7 @@ struct BluetoothStatusView: View {
             Button(localization.string(.bluetoothActionOpenSettings), systemImage: "gearshape", action: onOpenBluetoothSettings)
                 .labelStyle(.iconOnly)
                 .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
                 .help(localization.string(.bluetoothActionOpenSettings))
                 .frame(width: 24, height: 24)
         }
@@ -76,9 +77,9 @@ struct BluetoothDeviceListView: View {
     var body: some View {
         let groups = BluetoothDevicePresentation.grouped(controller.devices)
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
+            HStack(spacing: CompactPopupLayout.gap) {
                 Button(action: onBack) {
-                    Image(systemName: "chevron.backward")
+                    PopupChevron(symbol: "chevron.backward")
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(localization.string(.commonBack))
@@ -105,14 +106,17 @@ struct BluetoothDeviceListView: View {
                     message
                     Text(localization.string(.bluetoothPairedDeviceLimit))
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.primary.opacity(0.78))
                 }
             }
             .frame(maxHeight: 330)
 
-            Divider()
-            Button(localization.string(.bluetoothActionOpenSettings), action: onOpenBluetoothSettings)
-                .buttonStyle(.plain)
+            VStack(alignment: .leading, spacing: 0) {
+                PopupDivider()
+                Button(localization.string(.bluetoothActionOpenSettings), action: onOpenBluetoothSettings)
+                    .buttonStyle(.plain)
+                    .popupFooterInsets()
+            }
         }
         .onAppear { controller.activate() }
         .onDisappear { controller.deactivate() }
@@ -122,19 +126,19 @@ struct BluetoothDeviceListView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
             ForEach(devices) { device in
                 HStack(spacing: 10) {
                     Image(systemName: icon(for: device.kind))
                         .frame(width: 16)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.primary.opacity(0.78))
                     Text(device.name)
                         .lineLimit(1)
                         .truncationMode(.tail)
                     Spacer()
                     Text(device.isConnected ? localization.string(.bluetoothConnected) : localization.string(.bluetoothNotConnected))
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.primary.opacity(0.78))
                 }
                 .accessibilityElement(children: .combine)
             }
@@ -150,11 +154,11 @@ struct BluetoothDeviceListView: View {
                 Text(localization.string(.bluetoothInitializing))
             }
             .font(.caption)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.primary.opacity(0.78))
         case .authorizationNotDetermined:
             Text(localization.string(.bluetoothAuthorizationNotDetermined))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
         case .authorizationDenied:
             Button(localization.string(.bluetoothAuthorizationDenied), action: onOpenBluetoothSettings)
                 .buttonStyle(.link)
@@ -162,23 +166,23 @@ struct BluetoothDeviceListView: View {
         case .authorizationRestricted:
             Text(localization.string(.bluetoothAuthorizationRestricted))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
         case .available where controller.devices.isEmpty:
             Text(localization.string(.bluetoothNoDevices))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
         case .poweredOff:
             Text(localization.string(.bluetoothOff))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
         case .unavailable:
             Text(localization.string(.bluetoothUnavailable))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
         case .failed:
             Text(localization.string(.bluetoothReadFailed))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary.opacity(0.78))
         case .available:
             EmptyView()
         }

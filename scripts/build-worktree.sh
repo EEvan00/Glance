@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 set -euo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -15,11 +16,11 @@ if [[ -z "$SUFFIX" ]]; then
     SUFFIX="worktree"
 fi
 
-DEFAULT_BUNDLE_ID="io.github.404404.StatusTrio.dev.$SUFFIX"
+DEFAULT_BUNDLE_ID="io.github.EEvan00.Glance.dev.$SUFFIX"
 DISPLAY_NAME="$(
     printf '%s' "$SUFFIX"         | tr '-' ' '         | awk '{ for (i = 1; i <= NF; i++) $i = toupper(substr($i, 1, 1)) substr($i, 2) } 1'
 )"
-DEFAULT_APP_NAME="Status Trio ($DISPLAY_NAME)"
+DEFAULT_APP_NAME="Glance ($DISPLAY_NAME)"
 BUNDLE_ID="${BUNDLE_ID:-$DEFAULT_BUNDLE_ID}"
 APP_NAME="${APP_NAME:-$DEFAULT_APP_NAME}"
 

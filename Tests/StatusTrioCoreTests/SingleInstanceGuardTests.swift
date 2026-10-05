@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import Foundation
 import XCTest
 @testable import StatusTrioCore
@@ -14,11 +15,11 @@ final class SingleInstanceGuardTests: XCTestCase {
         )
         XCTAssertEqual(
             SingleInstanceGuard.lockFileName(for: nil),
-            "io.github.404404.StatusTrio.lock"
+            "io.github.EEvan00.Glance.lock"
         )
         XCTAssertEqual(
             SingleInstanceGuard.lockFileName(for: "  "),
-            "io.github.404404.StatusTrio.lock"
+            "io.github.EEvan00.Glance.lock"
         )
     }
 

@@ -1,3 +1,4 @@
+// Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 import XCTest
 @testable import StatusTrioCore
 
@@ -20,13 +21,13 @@ final class AppMetadataTests: XCTestCase {
     }
 
     func testNameFallsBackToDefault() {
-        XCTAssertEqual(AppMetadata.name(from: [:]), "Status Trio")
+        XCTAssertEqual(AppMetadata.name(from: [:]), "Glance")
     }
 
     func testProjectHomepageURL() {
         XCTAssertEqual(
             AppMetadata.projectHomepageURL.absoluteString,
-            "http://statustrio.lingai.net/"
+            "https://github.com/EEvan00/Glance"
         )
     }
 
