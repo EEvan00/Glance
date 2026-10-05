@@ -15,6 +15,8 @@ final class StatusPopupPanel: NSPanel, NSWindowDelegate {
     init() {
         super.init(contentRect: .zero, styleMask: [.borderless], backing: .buffered, defer: false)
         isReleasedWhenClosed = false
+        // Route deactivation through dismissal so reopening cannot restore a hidden panel.
+        hidesOnDeactivate = false
         isOpaque = false
         backgroundColor = .clear
         hasShadow = true
@@ -75,6 +77,13 @@ final class StatusPopupPanel: NSPanel, NSWindowDelegate {
     }
 
     func windowDidResignKey(_ notification: Notification) {
+        dismissAutomatically()
+    }
+
+    func dismissForMouseDown(at point: NSPoint) {
+        // The status button handles its own toggle on mouse-up. Closing it on
+        // mouse-down would make that same click reopen the panel.
+        guard !frame.contains(point), !anchor.contains(point) else { return }
         dismissAutomatically()
     }
 

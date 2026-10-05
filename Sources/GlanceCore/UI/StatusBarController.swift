@@ -45,6 +45,8 @@ final class StatusBarController: NSObject {
     private var renderCache = StatusBarRenderCache()
     private var accessibilityKey: StatusBarAccessibilityKey?
     private var popoverDismissMonitor: Any?
+    private var popoverLocalDismissMonitor: Any?
+    private var popoverDeactivationObserver: NSObjectProtocol?
     private var volumeScrollMonitor: Any?
     private let volumeScrollAdjustment = PopupVolumeScrollAdjustment()
     private var volumeScrollSession = PopupVolumeScrollSession()
@@ -306,16 +308,34 @@ final class StatusBarController: NSObject {
         popoverDismissMonitor = NSEvent.addGlobalMonitorForEvents(
             matching: [.leftMouseDown, .rightMouseDown]
         ) { [weak self] _ in
-            Task { @MainActor [weak self] in
-                self?.popover.dismissAutomatically()
+            // AppKit event-monitor handlers run on the main thread. Dismiss
+            // synchronously so a queued close cannot affect a later reopening.
+            MainActor.assumeIsolated {
+                self?.popover.dismissForMouseDown(at: NSEvent.mouseLocation)
             }
+        }
+        popoverLocalDismissMonitor = NSEvent.addLocalMonitorForEvents(
+            matching: [.leftMouseDown, .rightMouseDown]
+        ) { [weak self] event in
+            MainActor.assumeIsolated {
+                self?.popover.dismissForMouseDown(at: NSEvent.mouseLocation)
+            }
+            return event
+        }
+        popoverDeactivationObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didResignActiveNotification, object: NSApp, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.popover.dismissAutomatically() }
         }
     }
 
     private func removePopoverDismissMonitor() {
-        guard let popoverDismissMonitor else { return }
-        NSEvent.removeMonitor(popoverDismissMonitor)
+        if let popoverDismissMonitor { NSEvent.removeMonitor(popoverDismissMonitor) }
+        if let popoverLocalDismissMonitor { NSEvent.removeMonitor(popoverLocalDismissMonitor) }
+        if let popoverDeactivationObserver { NotificationCenter.default.removeObserver(popoverDeactivationObserver) }
         self.popoverDismissMonitor = nil
+        popoverLocalDismissMonitor = nil
+        popoverDeactivationObserver = nil
     }
 
     private func installVolumeScrollMonitor() {
