@@ -29,11 +29,6 @@
 - (unsigned int)sendError;
 @end
 
-double GlanceMediaMetadataRetryDelay(double duration, unsigned int state, unsigned int attempt) {
-    if ((isfinite(duration) && duration > 0) || (state != 1 && state != 2) || attempt >= 4) return 0;
-    return 0.5 * (1U << attempt);
-}
-
 static void *mediaHandle;
 static void (*getClients)(dispatch_queue_t, void (^)(NSArray *));
 static void (*getPlayerForClient)(id, id, dispatch_queue_t, void (^)(id, NSError *));
@@ -45,8 +40,6 @@ static BOOL querying;
 static BOOL dirty;
 static NSArray *lastOutput;
 static dispatch_source_t queryDeadline;
-static dispatch_source_t metadataRetry;
-static NSUInteger queryGeneration;
 
 static BOOL loadRuntime(void) {
     mediaHandle = dlopen("/System/Library/PrivateFrameworks/MediaRemote.framework/MediaRemote", RTLD_LAZY);
@@ -100,14 +93,10 @@ static BOOL sameTarget(id requested, id resolved) {
         [[ap identifier] length] > 0 && [[ap identifier] isEqual:[bp identifier]];
 }
 
-static void queryWithRetryAttempt(unsigned int attempt);
-static void query(void) { queryWithRetryAttempt(0); }
-
-static void queryWithRetryAttempt(unsigned int attempt) {
+static void query(void);
+static void query(void) {
     if (querying) { dirty = YES; return; }
     querying = YES;
-    NSUInteger generation = ++queryGeneration;
-    if (metadataRetry) { dispatch_source_cancel(metadataRetry); metadataRetry = nil; }
     queryDeadline = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, worker);
     dispatch_source_set_timer(queryDeadline, dispatch_time(DISPATCH_TIME_NOW, 3*NSEC_PER_SEC), DISPATCH_TIME_FOREVER, 100*NSEC_PER_MSEC);
     dispatch_source_set_event_handler(queryDeadline, ^{
@@ -173,24 +162,7 @@ static void queryWithRetryAttempt(unsigned int attempt) {
             if (queryDeadline) { dispatch_source_cancel(queryDeadline); queryDeadline = nil; }
             emit(rows);
             querying = NO;
-            if (dirty) { dirty = NO; query(); return; }
-            // Music can publish the title before its timing metadata is ready, without
-            // another notification when it arrives. Recover only this incomplete snapshot:
-            // at most four extra reads, while the popover's media process remains alive.
-            double delay = 0;
-            for (NSDictionary *row in rows) {
-                delay = MAX(delay, GlanceMediaMetadataRetryDelay([row[@"duration"] doubleValue],
-                                                            [row[@"playbackState"] unsignedIntValue], attempt));
-            }
-            if (delay > 0) {
-                metadataRetry = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, worker);
-                dispatch_source_set_timer(metadataRetry, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)),
-                                          DISPATCH_TIME_FOREVER, 100 * NSEC_PER_MSEC);
-                dispatch_source_set_event_handler(metadataRetry, ^{
-                    if (generation == queryGeneration) queryWithRetryAttempt(attempt + 1);
-                });
-                dispatch_resume(metadataRetry);
-            }
+            if (dirty) { dirty = NO; query(); }
         });
     });
 }

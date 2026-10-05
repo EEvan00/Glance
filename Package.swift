@@ -66,7 +66,7 @@ let package = Package(
         ),
         .testTarget(
             name: "GlanceCoreTests",
-            dependencies: ["GlanceCore", "MagSafeSMC", "GlanceMediaBridge"],
+            dependencies: ["GlanceCore", "MagSafeSMC"],
             path: "Tests/GlanceCoreTests"
         )
     ]
