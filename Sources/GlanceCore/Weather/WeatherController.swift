@@ -64,6 +64,12 @@ final class WeatherController: ObservableObject {
         }
     }
 
+    func refreshNow(shortcutName: String) {
+        guard visible, !isLoading else { return }
+        lastAttempt = nil
+        setVisible(true, shortcutName: shortcutName)
+    }
+
     private func stopRequest() {
         connection.stop()
         isLoading = false

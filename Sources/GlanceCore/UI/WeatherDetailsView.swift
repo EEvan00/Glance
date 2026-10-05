@@ -16,7 +16,7 @@ struct WeatherDetailsView: View {
                     .accessibilityLabel(localization.string(.commonBack))
                 Text(localization.string(.weatherTitle)).font(.headline)
                 Spacer(minLength: 4)
-                Text(forecast.snapshot?.location ?? localization.string(.weatherCurrentLocation))
+                Text((forecast.snapshot?.location ?? localization.string(.weatherCurrentLocation)).uppercased())
                     .font(.caption).foregroundStyle(.primary.opacity(0.78))
                     .lineLimit(1).truncationMode(.tail)
                     .help(forecast.snapshot?.location ?? localization.string(.weatherCurrentLocation))
@@ -28,52 +28,50 @@ struct WeatherDetailsView: View {
                         .accessibilityHidden(true)
                     Text(snapshot.temperatureText).font(.system(size: 28, weight: .medium))
                         .monospacedDigit()
+                    VStack(alignment: .leading, spacing: 2) {
+                        if let low = snapshot.low { Text("L: \(temperature(low))") }
+                        if let high = snapshot.high { Text("H: \(temperature(high))") }
+                    }.font(.caption).monospacedDigit()
                 }
                 detail(.weatherCondition, value: snapshot.appleCondition ?? localization.string(snapshot.conditionKey))
-                if let updated = forecast.updatedAt ?? controller.updatedAt {
-                    Text(localization.format(.weatherUpdated, updated.formatted(date: .omitted, time: .shortened)))
-                        .font(.caption).foregroundStyle(.primary.opacity(0.78))
-                }
+                detail(.weatherUVIndex, value: snapshot.uvIndex.map { $0.formatted() } ?? "—")
+
             } else {
                 WeatherShortcutInstallButtons(localization: localization)
                 Text(localization.string(controller.isLoading ? .weatherLoading : .weatherUnavailable))
                     .foregroundStyle(.primary.opacity(0.78))
             }
             if let snapshot = forecast.snapshot {
-                HStack {
-                    if let low = snapshot.low {
-                        Text("\(localization.string(.weatherLow)) \(WeatherSnapshot(temperature: low, code: 0, isDay: -1).temperatureText)")
-                    }
-                    Spacer()
-                    if let high = snapshot.high {
-                        Text("\(localization.string(.weatherHigh)) \(WeatherSnapshot(temperature: high, code: 0, isDay: -1).temperatureText)")
-                    }
-                }.font(.subheadline)
-                if let hourly = snapshot.hourly, !hourly.isEmpty {
+                if !snapshot.forecastEntries.isEmpty {
                     Text(localization.string(.weatherHourly)).font(.subheadline.weight(.semibold))
                     ScrollView(.horizontal) {
-                        HStack(spacing: 12) {
-                            ForEach(hourly) { hour in
-                                VStack(spacing: 6) {
-                                    Text(FooterClockFormatting.time(hour.date, uses24HourClock: settings.uses24HourClock))
-                                        .foregroundStyle(.primary.opacity(0.78))
-                                    Image(systemName: hour.symbol).font(.system(size: 16))
-                                        .accessibilityHidden(true)
-                                    Text(hour.temperatureText)
-                                }.font(.caption).monospacedDigit()
-                                    .frame(minWidth: 36)
-                                    .accessibilityElement(children: .ignore)
-                                    .accessibilityLabel("\(FooterClockFormatting.time(hour.date, uses24HourClock: settings.uses24HourClock)), \(hour.condition), \(hour.temperatureText)")
-                                    .help(hour.condition)
+                        HStack(alignment: .top, spacing: 12) {
+                            ForEach(snapshot.forecastEntries) { entry in
+                                forecastCell(entry)
                             }
                         }.padding(.vertical, 4)
-                    }.scrollIndicators(.hidden).frame(height: 70)
+                    }.scrollIndicators(.hidden).frame(height: 94)
                 }
             } else if forecast.isUnavailable {
                 Text(localization.string(.weatherForecastUnavailable)).font(.caption)
                     .foregroundStyle(.primary.opacity(0.78))
             }
             VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Text((forecast.updatedAt ?? controller.updatedAt).map {
+                        localization.format(.weatherUpdated, $0.formatted(date: .omitted, time: .shortened))
+                    } ?? localization.string(.weatherUnavailable))
+                        .font(.caption).foregroundStyle(.primary.opacity(0.78))
+                    Spacer()
+                    Button {
+                        controller.refreshNow(shortcutName: settings.weatherShortcutName)
+                        forecast.refreshNow(shortcutName: settings.weatherForecastShortcutName)
+                    } label: {
+                        Image(systemName: "arrow.clockwise").frame(width: 24, height: 24).contentShape(Rectangle())
+                    }.buttonStyle(.plain)
+                        .accessibilityLabel(localization.string(.weatherRefresh))
+                        .disabled(controller.isLoading || forecast.isLoading)
+                }.padding(.bottom, 8)
                 PopupDivider()
                 Button(localization.string(.weatherOpenApp), action: onOpenWeather)
                     .buttonStyle(.plain)
@@ -82,6 +80,45 @@ struct WeatherDetailsView: View {
         }
         .onAppear { forecast.setVisible(true, shortcutName: settings.weatherForecastShortcutName) }
         .onDisappear { forecast.setVisible(false, shortcutName: settings.weatherForecastShortcutName) }
+    }
+
+    private func temperature(_ value: Double) -> String {
+        WeatherSnapshot(temperature: value, code: 0, isDay: -1).temperatureText
+    }
+
+    private func forecastCell(_ entry: WeatherForecastEntry) -> some View {
+        let symbol: String
+        let caption: String
+        let help: String
+        let rainChance: String
+        switch entry {
+        case .hour(let hour):
+            symbol = hour.symbol
+            caption = hour.temperatureText
+            rainChance = hour.precipitationChance.map { "\(Int($0.rounded()))%" } ?? "—"
+            help = "\(hour.condition), \(localization.string(.weatherRainChance)) \(rainChance)"
+        case .sunrise:
+            symbol = "sunrise.fill"
+            caption = localization.string(.weatherSunrise)
+            help = caption
+            rainChance = ""
+        case .sunset:
+            symbol = "sunset.fill"
+            caption = localization.string(.weatherSunset)
+            help = caption
+            rainChance = ""
+        }
+        let time = FooterClockFormatting.time(entry.date, uses24HourClock: settings.uses24HourClock)
+        return VStack(spacing: 6) {
+            Text(time).foregroundStyle(.primary.opacity(0.78)).frame(height: 14)
+            Image(systemName: symbol).font(.system(size: 16)).frame(width: 24, height: 24).accessibilityHidden(true)
+            Text(caption).lineLimit(1).frame(height: 14)
+            Text(rainChance).foregroundStyle(.primary.opacity(0.78)).frame(height: 14)
+        }.font(.caption).monospacedDigit()
+            .frame(minWidth: 36)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(time), \(help), \(caption)")
+            .help(help)
     }
 
     private func detail(_ key: LocalizationKey, value: String) -> some View {

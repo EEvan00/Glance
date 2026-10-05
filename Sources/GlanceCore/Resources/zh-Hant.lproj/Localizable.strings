@@ -289,3 +289,9 @@
 "settings.audio.scrollVolumeDescription" = "在弹窗内上下滚动调节音量。列表和天气预报区域保持正常滚动。";
 
 "settings.about.upstream" = "原项目致谢";
+
+"weather.uvIndex" = "紫外线指数";
+"weather.sunrise" = "日出";
+"weather.sunset" = "日落";
+"weather.refresh" = "立即更新";
+"weather.rainChance" = "降雨概率";

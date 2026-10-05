@@ -190,6 +190,60 @@ final class MagSafeLEDControllerTests: XCTestCase {
         XCTAssertNil(controller.error)
     }
 
+    func testFailedBackgroundWriteDoesNotRetryOnEveryBatteryRefresh() async {
+        let suite = makeSuite()
+        defer { clear(suite) }
+        suite.defaults.set(false, forKey: MagSafeLEDController.defaultsKey)
+        let controller = makeController(defaults: suite.defaults,
+                                        writer: RecordingMagSafeCommandWriter(error: TestFailure.write))
+        controller.reapplyIfNeeded()
+        await waitUntilIdle(controller)
+        XCTAssertEqual(controller.error, .writeFailed)
+        controller.reapplyIfNeeded()
+        XCTAssertFalse(controller.isBusy)
+        await waitUntilIdle(controller)
+    }
+
+    func testExplicitRecoveryRemovesUnresponsiveRegistrationWithoutAnotherWrite() async {
+        let suite = makeSuite()
+        defer { clear(suite) }
+        suite.defaults.set(false, forKey: MagSafeLEDController.defaultsKey)
+        let manager = RecordingMagSafeHelperManager(status: .enabled)
+        let controller = MagSafeLEDController(
+            defaults: suite.defaults, hardwareProbe: SupportedMagSafeProbe(), helperManager: manager,
+            commandWriter: RecordingMagSafeCommandWriter(error: TestFailure.write))
+        controller.reapplyIfNeeded()
+        await waitUntilIdle(controller)
+        controller.removeUnresponsiveHelper()
+        await waitUntilIdle(controller)
+        XCTAssertEqual(manager.uninstallCount, 1)
+        XCTAssertEqual(controller.availability, .needsInstallation)
+        XCTAssertNil(controller.error)
+        XCTAssertFalse(controller.isLightEnabled)
+    }
+
+    func testUnresponsiveHelperRemovalCanRetryAfterUnregisterFails() async {
+        let suite = makeSuite()
+        defer { clear(suite) }
+        suite.defaults.set(false, forKey: MagSafeLEDController.defaultsKey)
+        let manager = RecordingMagSafeHelperManager(status: .enabled)
+        manager.uninstallError = TestFailure.write
+        let controller = MagSafeLEDController(
+            defaults: suite.defaults, hardwareProbe: SupportedMagSafeProbe(), helperManager: manager,
+            commandWriter: RecordingMagSafeCommandWriter(error: TestFailure.write))
+        controller.reapplyIfNeeded()
+        await waitUntilIdle(controller)
+        controller.removeUnresponsiveHelper()
+        await waitUntilIdle(controller)
+        XCTAssertEqual(controller.error, .uninstallFailed)
+        manager.uninstallError = nil
+        controller.removeUnresponsiveHelper()
+        await waitUntilIdle(controller)
+        XCTAssertEqual(manager.uninstallCount, 2)
+        XCTAssertEqual(controller.availability, .needsInstallation)
+        XCTAssertNil(controller.error)
+    }
+
     func testUninstallDoesNotRemoveHelperWhenSystemResetFails() async {
         let suite = makeSuite()
         defer { clear(suite) }
@@ -288,6 +342,7 @@ private final class RecordingMagSafeHelperManager: MagSafeLEDHelperManaging, @un
     var status: MagSafeLEDHelperStatus
     var statusAfterInstall: MagSafeLEDHelperStatus?
     var installError: Error?
+    var uninstallError: Error?
     private(set) var installCount = 0
     private(set) var uninstallCount = 0
 
@@ -303,6 +358,7 @@ private final class RecordingMagSafeHelperManager: MagSafeLEDHelperManaging, @un
 
     func uninstall() async throws {
         uninstallCount += 1
+        if let uninstallError { throw uninstallError }
         status = .notRegistered
     }
 

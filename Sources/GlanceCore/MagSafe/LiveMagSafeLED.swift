@@ -126,17 +126,24 @@ final class MagSafeLEDXPCRequestCoordinator: @unchecked Sendable {
     }
 }
 
-private final class MagSafeLEDXPCRequest: @unchecked Sendable {
+final class MagSafeLEDXPCRequest: @unchecked Sendable {
     private let lock = NSLock()
     private var connection: NSXPCConnection?
     private var continuation: CheckedContinuation<Bool, Error>?
+    private var timeoutWorkItem: DispatchWorkItem?
 
     init(
         connection: NSXPCConnection,
-        continuation: CheckedContinuation<Bool, Error>
+        continuation: CheckedContinuation<Bool, Error>,
+        timeout: TimeInterval = 5
     ) {
         self.connection = connection
         self.continuation = continuation
+        let deadline = DispatchWorkItem { [weak self] in
+            self?.finish(.failure(MagSafeLEDCommandError.timedOut))
+        }
+        timeoutWorkItem = deadline
+        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + timeout, execute: deadline)
     }
 
     func finish(_ result: Result<Bool, Error>) {
@@ -148,14 +155,18 @@ private final class MagSafeLEDXPCRequest: @unchecked Sendable {
         self.continuation = nil
         let connection = self.connection
         self.connection = nil
+        let deadline = timeoutWorkItem
+        timeoutWorkItem = nil
         lock.unlock()
 
+        deadline?.cancel()
         continuation.resume(with: result)
         connection?.invalidate()
     }
 }
 
 private enum MagSafeLEDCommandError: Error {
+    case timedOut
     case rejected
     case invalidProxy
     case connectionInterrupted

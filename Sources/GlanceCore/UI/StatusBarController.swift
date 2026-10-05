@@ -226,11 +226,16 @@ final class StatusBarController: NSObject {
         }
     }
 
+    func automaticDismissalIsBlocked() -> Bool {
+        // A background MagSafe write does not need the popup to stay open.
+        // Protect only interactive connection flows (and attached sheets in the panel).
+        store.wifiNetworks.state.isConnectionFlow
+            || store.wifiNetworks.hotspots.connectingID != nil
+    }
+
     private func configurePopover() {
         popover.preventsAutomaticDismissal = { [weak self] in
-            self?.store.wifiNetworks.state.isConnectionFlow == true
-                || self?.store.wifiNetworks.hotspots.connectingID != nil
-                || self?.magSafeLED.isBusy == true
+            self?.automaticDismissalIsBlocked() == true
         }
         popover.onClose = { [weak self] in
             self?.popoverDidClose()

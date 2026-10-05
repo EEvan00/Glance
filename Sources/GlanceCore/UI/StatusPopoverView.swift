@@ -344,7 +344,6 @@ struct StatusPopoverView: View {
                     }
                     PopupDivider().padding(.horizontal, 8)
                     cell(symbol: "terminal", title: codexTitle, subtitle: codexSubtitle) { panel = .codex }
-                        .help(codexHelp)
                         .accessibilityLabel(codexHelp)
                 }
                 .systemModuleSurface()
@@ -373,8 +372,8 @@ struct StatusPopoverView: View {
                         .systemModuleSurface()
                     }
                     .buttonStyle(.plain)
-                    .help(weatherHelp)
                     .accessibilityLabel(weatherHelp)
+                    .help(Text(weatherHelp))
                     Text(FooterClockFormatting.date(context.date, locale: localization.resolvedLanguage.locale, chinese: localization.resolvedLanguage.isChinese))
                         .font(.system(size: 11)).monospacedDigit().lineLimit(1)
                         .frame(width: 78, height: 24).systemModuleSurface()
@@ -393,7 +392,7 @@ struct StatusPopoverView: View {
     private var weatherHelp: String {
         let state = weather.isUnavailable ? localization.string(.weatherUnavailable) : (weather.snapshot?.temperatureText ?? "—")
         let condition = weather.snapshot?.appleCondition ?? localization.string(.weatherUnknown)
-        return "\(condition) · \(state) · Apple Weather"
+        return "\(condition) · \(state) · \(localization.string(.weatherUVIndex)) \(weather.snapshot?.uvIndex.map { $0.formatted() } ?? "—")"
     }
 
     private func footerButton(_ key: LocalizationKey, symbol: String, action: @escaping () -> Void) -> some View {
@@ -465,6 +464,5 @@ struct StatusPopoverView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(title), \(subtitle)")
-        .help("\(title) · \(subtitle)")
     }
 }

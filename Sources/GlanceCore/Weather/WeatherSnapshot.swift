@@ -9,12 +9,15 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
     var high: Double? = nil
     var location: String? = nil
     var hourly: [WeatherHour]? = nil
+    var uvIndex: Double? = nil
+    var sunrise: Date? = nil
+    var sunset: Date? = nil
 
     enum CodingKeys: String, CodingKey {
         case temperature = "temperature_2m"
         case code = "weather_code"
         case isDay = "is_day"
-        case appleCondition, low, high, hourly, location
+        case appleCondition, low, high, hourly, location, uvIndex, sunrise, sunset
     }
 
     static func fromShortcut(_ output: String) -> WeatherSnapshot? {
@@ -35,11 +38,13 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
         guard !condition.isEmpty, condition.count <= 160 else { return nil }
         let value = condition.lowercased()
         let code: Int
-        if value.contains("thunder") || value.contains("雷") { code = 95 }
+        if value.contains("clear") { code = 0 }
+        else if value.contains("thunder") || value.contains("雷") { code = 95 }
         else if value.contains("snow") || value.contains("sleet") || value.contains("雪") { code = 71 }
         else if value.contains("rain") || value.contains("drizzle") || value.contains("shower") || value.contains("雨") { code = 61 }
         else if value.contains("fog") || value.contains("haze") || value.contains("mist") || value.contains("雾") || value.contains("霧") { code = 45 }
-        else if value.contains("partly") || value.contains("mostly clear") || value.contains("mostly sunny") || value.contains("晴间") { code = 2 }
+        else if value.contains("wind") || value.contains("breez") || value.contains("风") || value.contains("風") { code = 100 }
+        else if value.contains("partly") || value.contains("mostly sunny") || value.contains("晴间") { code = 2 }
         else if value.contains("cloud") || value.contains("overcast") || value.contains("云") || value.contains("雲") || value.contains("阴") || value.contains("陰") { code = 3 }
         else if value.contains("clear") || value.contains("sunny") || value == "晴" { code = 0 }
         else { code = 999 }
@@ -50,13 +55,14 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
 
     var symbol: String {
         switch code {
-        case 0: return isDay == -1 ? "thermometer.medium" : (isDay == 1 ? "sun.max.fill" : "moon.fill")
-        case 1, 2: return isDay == -1 ? "cloud.fill" : (isDay == 1 ? "cloud.sun.fill" : "cloud.moon.fill")
+        case 0: return isDay == 0 ? "moon.fill" : "sun.max.fill"
+        case 1, 2: return isDay == 0 ? "cloud.moon.fill" : "cloud.sun.fill"
         case 3: return "cloud.fill"
         case 45, 48: return "cloud.fog.fill"
         case 51...67, 80...82: return "cloud.rain.fill"
         case 71...77, 85, 86: return "cloud.snow.fill"
         case 95...99: return "cloud.bolt.rain.fill"
+        case 100: return "wind"
         default: return "questionmark"
         }
     }
@@ -74,6 +80,16 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
         }
     }
 
+    var forecastEntries: [WeatherForecastEntry] {
+        let hours = hourly ?? []
+        guard let first = hours.first, let last = hours.last else { return [] }
+        var entries = hours.map { WeatherForecastEntry.hour($0) }
+        let end = last.date.addingTimeInterval(3600)
+        if let sunrise, sunrise >= first.date, sunrise < end { entries.append(.sunrise(sunrise)) }
+        if let sunset, sunset >= first.date, sunset < end { entries.append(.sunset(sunset)) }
+        return entries.sorted { $0.date < $1.date }
+    }
+
     var temperatureText: String {
         temperature.isFinite && abs(temperature) < 1000 ? "\(Int(temperature.rounded()))°" : "—"
     }
@@ -84,21 +100,59 @@ struct WeatherHour: Decodable, Equatable, Sendable, Identifiable {
     let temperature: Double
     let code: Int
     let condition: String
+    var isDay: Int = -1
+    var precipitationChance: Double? = nil
     var id: Date { date }
-    var symbol: String { WeatherSnapshot(temperature: temperature, code: code, isDay: -1).symbol }
+    var symbol: String {
+        if condition.localizedCaseInsensitiveContains("clear") {
+            let daytime = isDay == -1 ? (6..<18).contains(Calendar.current.component(.hour, from: date)) : isDay == 1
+            return daytime ? "sun.max.fill" : "moon.fill"
+        }
+        if isDay == -1, (0...2).contains(code) { return "cloud.fill" }
+        return WeatherSnapshot(temperature: temperature, code: code, isDay: isDay).symbol
+    }
     var temperatureText: String { WeatherSnapshot(temperature: temperature, code: code, isDay: -1).temperatureText }
+}
+
+enum WeatherForecastEntry: Equatable, Sendable, Identifiable {
+    case hour(WeatherHour)
+    case sunrise(Date)
+    case sunset(Date)
+
+    var date: Date {
+        switch self {
+        case .hour(let hour): hour.date
+        case .sunrise(let date), .sunset(let date): date
+        }
+    }
+
+    var id: String {
+        let kind: String
+        switch self {
+        case .hour: kind = "hour"
+        case .sunrise: kind = "sunrise"
+        case .sunset: kind = "sunset"
+        }
+        return "\(kind)-\(date.timeIntervalSince1970)"
+    }
 }
 
 private extension WeatherSnapshot {
     mutating func readForecast(lines: [String]) {
-        guard !lines.isEmpty, lines.count <= 120 else { return }
-        let markers: Set<String> = ["LOW", "HIGH", "DATES", "HOURS", "LOCATION"]
+        guard !lines.isEmpty, lines.count <= 200 else { return }
+        let markers: Set<String> = ["LOW", "HIGH", "DATES", "HOURS", "LOCATION", "UV", "SUNRISE", "SUNSET", "RAIN_CHANCES"]
         var sections: [String: [String]] = [:]
         var current: String?
         for line in lines {
             if markers.contains(line) { current = line; sections[line] = [] }
             else if let current { sections[current, default: []].append(line) }
         }
+        if let values = sections["UV"], values.count == 1,
+           let value = Double(values[0].replacingOccurrences(of: ",", with: ".")),
+           value.isFinite, (0...30).contains(value) { uvIndex = value }
+        let solarFormatter = ISO8601DateFormatter()
+        if let values = sections["SUNRISE"], values.count == 1 { sunrise = solarFormatter.date(from: values[0]) }
+        if let values = sections["SUNSET"], values.count == 1 { sunset = solarFormatter.date(from: values[0]) }
         if let city = sections["LOCATION"], city.count == 1, city[0].count <= 80,
            !city[0].unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) }) {
             location = city[0]
@@ -117,13 +171,33 @@ private extension WeatherSnapshot {
         fractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         guard let expression = try? NSRegularExpression(pattern: #"^[-+]?[0-9]+(?:[.,][0-9]+)?\s*[°º]\s*[CF]"#, options: .caseInsensitive) else { return }
         var entries: [WeatherHour] = []
-        for (dateText, conditionText) in zip(dates, conditions) {
+        for (index, pair) in zip(dates, conditions).enumerated() {
+            let (dateText, conditionText) = pair
             guard let date = formatter.date(from: dateText) ?? fractional.date(from: dateText),
                   let match = expression.firstMatch(in: conditionText, range: NSRange(conditionText.startIndex..., in: conditionText)),
                   let range = Range(match.range, in: conditionText),
                   let weather = Self.fromShortcut(String(conditionText[range]) + "\n" + conditionText),
                   entries.last.map({ date > $0.date }) ?? true else { return }
-            entries.append(WeatherHour(date: date, temperature: weather.temperature, code: weather.code, condition: weather.appleCondition ?? conditionText))
+            let daylight: Int
+            if let sunrise, let sunset, sunrise < sunset,
+               let solarDate = sections["SUNRISE"]?.first,
+               dateText.prefix(10) == solarDate.prefix(10) {
+                daylight = date >= sunrise && date < sunset ? 1 : 0
+            } else {
+                daylight = -1
+            }
+            let probability: Double?
+            if let values = sections["RAIN_CHANCES"], values.count == dates.count {
+                let text = values[index].replacingOccurrences(of: ",", with: ".")
+                if let value = Double(text.replacingOccurrences(of: "%", with: "").trimmingCharacters(in: .whitespaces)),
+                   value.isFinite {
+                    let percent = !text.contains("%") && (0...1).contains(value) ? value * 100 : value
+                    probability = (0...100).contains(percent) ? percent : nil
+                } else { probability = nil }
+            } else { probability = nil }
+            entries.append(WeatherHour(date: date, temperature: weather.temperature, code: weather.code,
+                                      condition: weather.appleCondition ?? conditionText, isDay: daylight,
+                                      precipitationChance: probability))
         }
         hourly = Array(entries.prefix(24))
     }

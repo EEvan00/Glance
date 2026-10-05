@@ -37,6 +37,14 @@ final class WeatherTests: XCTestCase {
         XCTAssertFalse(controller.isLoading)
         XCTAssertEqual(controller.snapshot?.appleCondition, "Cloudy")
         XCTAssertNotNil(controller.updatedAt)
+        try "#!/bin/sh\nif [ \"$2\" = \"fail\" ]; then exit 1; fi\ncat > /dev/null\nprintf '19°C\\nRain\\nUV\\n2\\n' > \"$6\"\n".write(to: executable, atomically: true, encoding: .utf8)
+        controller.setVisible(true, shortcutName: "good")
+        XCTAssertFalse(controller.isLoading)
+        XCTAssertEqual(controller.snapshot?.temperature, 18)
+        controller.refreshNow(shortcutName: "good")
+        for _ in 0..<250 where controller.isLoading { try await Task.sleep(for: .milliseconds(20)) }
+        XCTAssertEqual(controller.snapshot?.temperature, 19)
+        XCTAssertEqual(controller.snapshot?.uvIndex, 2)
         controller.setVisible(true, shortcutName: "fail")
         for _ in 0..<250 where controller.isLoading { try await Task.sleep(for: .milliseconds(20)) }
         XCTAssertNil(controller.snapshot)
@@ -64,7 +72,7 @@ final class WeatherTests: XCTestCase {
     }
 
     func testShortcutConditionChangesIconAndPreservesUnknownText() throws {
-        XCTAssertEqual(WeatherSnapshot.fromShortcut("18°C\nClear")?.symbol, "thermometer.medium")
+        XCTAssertEqual(WeatherSnapshot.fromShortcut("18°C\nClear")?.symbol, "sun.max.fill")
         XCTAssertEqual(WeatherSnapshot.fromShortcut("18°C\nLight Rain")?.symbol, "cloud.rain.fill")
         XCTAssertEqual(WeatherSnapshot.fromShortcut("-2°C\n雪")?.symbol, "cloud.snow.fill")
         let unknown = try XCTUnwrap(WeatherSnapshot.fromShortcut("18°C\nUnexpected Condition"))
@@ -108,6 +116,45 @@ final class WeatherTests: XCTestCase {
         let value = try JSONDecoder().decode(WeatherSnapshot.self, from: Data(#"{"temperature_2m":-2.6,"weather_code":0,"is_day":0}"#.utf8))
         XCTAssertEqual(value.temperatureText, "-3°")
         XCTAssertEqual(value.symbol, "moon.fill")
+    }
+
+    func testWindAndClearConditionsUseWeatherSymbols() throws {
+        XCTAssertEqual(WeatherSnapshot.fromShortcut("18°C\nWindy")?.symbol, "wind")
+        XCTAssertEqual(WeatherSnapshot.fromShortcut("18°C\nMostly Clear")?.symbol, "sun.max.fill")
+    }
+
+    func testExtendedWeatherDetailsAreOptionalAndValidated() throws {
+        let value = try XCTUnwrap(WeatherSnapshot.fromShortcut("18°C\nCloudy\nUV\n3\nSUNRISE\n2026-10-06T06:25:00+11:00\nSUNSET\n2026-10-06T19:04:00+11:00"))
+        XCTAssertEqual(value.uvIndex, 3)
+        XCTAssertNotNil(value.sunrise)
+        XCTAssertNotNil(value.sunset)
+        XCTAssertNil(WeatherSnapshot.fromShortcut("18°C\nCloudy\nUV\n-1")?.uvIndex)
+    }
+
+    func testHourlyClearAfterSunsetUsesMoonInsteadOfSun() throws {
+        let value = try XCTUnwrap(WeatherSnapshot.fromShortcut("18°C\nCloudy\nSUNRISE\n2026-10-06T06:25:00+11:00\nSUNSET\n2026-10-06T19:04:00+11:00\nDATES\n2026-10-06T12:00:00+11:00\n2026-10-06T20:00:00+11:00\nHOURS\n18°C and Clear\n17°C and Mostly Clear"))
+        XCTAssertEqual(value.hourly?.first?.symbol, "sun.max.fill")
+        XCTAssertEqual(value.hourly?.last?.symbol, "moon.fill")
+    }
+
+    func testSolarEventsAreInsertedChronologicallyIntoHourlyForecast() throws {
+        let value = try XCTUnwrap(WeatherSnapshot.fromShortcut("18°C\nClear\nSUNRISE\n2026-10-06T06:25:00+11:00\nSUNSET\n2026-10-06T19:04:00+11:00\nDATES\n2026-10-06T06:00:00+11:00\n2026-10-06T19:00:00+11:00\nHOURS\n18°C and Mostly Clear\n17°C and Clear"))
+        XCTAssertEqual(value.forecastEntries.count, 4)
+        XCTAssertEqual(value.forecastEntries.map(\.date), value.forecastEntries.map(\.date).sorted())
+        XCTAssertEqual(Set(value.forecastEntries.map(\.id)).count, 4)
+    }
+
+    func testHourlyRainChanceMatchesHoursAndDoesNotInventMissingValues() throws {
+        let base = "18°C\nCloudy\nDATES\n2026-10-06T06:00:00+11:00\n2026-10-06T07:00:00+11:00\nHOURS\n18°C and Rain\n17°C and Cloudy\nRAIN_CHANCES\n"
+        let value = try XCTUnwrap(WeatherSnapshot.fromShortcut(base + "80%\n0.25"))
+        XCTAssertEqual(value.hourly?.first?.precipitationChance, 80)
+        XCTAssertEqual(value.hourly?.last?.precipitationChance, 25)
+        let mismatched = try XCTUnwrap(WeatherSnapshot.fromShortcut(base + "80%"))
+        XCTAssertNil(mismatched.hourly?.first?.precipitationChance)
+        XCTAssertEqual(mismatched.hourly?.count, 2)
+        let invalid = try XCTUnwrap(WeatherSnapshot.fromShortcut(base + "101%\n-5%"))
+        XCTAssertNil(invalid.hourly?.first?.precipitationChance)
+        XCTAssertNil(invalid.hourly?.last?.precipitationChance)
     }
 
     func testUnknownWeatherDoesNotPretendToBeSunny() throws {

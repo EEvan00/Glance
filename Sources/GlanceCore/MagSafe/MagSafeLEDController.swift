@@ -50,6 +50,7 @@ final class MagSafeLEDController: ObservableObject {
     @Published private(set) var availability: MagSafeLEDAvailability
     @Published private(set) var error: MagSafeLEDError?
     @Published private(set) var isBusy = false
+    @Published private(set) var needsHelperRecovery = false
 
     private let defaults: UserDefaults
     private let hardwareProbe: any MagSafeLEDHardwareProbing
@@ -93,9 +94,11 @@ final class MagSafeLEDController: ObservableObject {
                 self.isLightEnabled = enabled
                 self.defaults.set(enabled, forKey: Self.defaultsKey)
                 self.error = nil
+                self.needsHelperRecovery = false
                 self.isBusy = false
             } catch {
                 guard let self else { return }
+                self.needsHelperRecovery = true
                 self.error = .writeFailed
                 self.isBusy = false
             }
@@ -103,16 +106,18 @@ final class MagSafeLEDController: ObservableObject {
     }
 
     func reapplyIfNeeded() {
-        guard availability == .ready, !isLightEnabled, !isBusy else { return }
+        guard availability == .ready, !isLightEnabled, !isBusy, error == nil else { return }
         isBusy = true
         Task { [weak self, commandWriter] in
             do {
                 try await commandWriter.write(.off)
                 guard let self else { return }
                 self.error = nil
+                self.needsHelperRecovery = false
                 self.isBusy = false
             } catch {
                 guard let self else { return }
+                self.needsHelperRecovery = true
                 self.error = .writeFailed
                 self.isBusy = false
             }
@@ -133,6 +138,7 @@ final class MagSafeLEDController: ObservableObject {
                 )
                 if self.availability == .ready {
                     try await commandWriter.write(self.isLightEnabled ? .system : .off)
+                    self.needsHelperRecovery = false
                 }
                 self.isBusy = false
             } catch {
@@ -144,6 +150,7 @@ final class MagSafeLEDController: ObservableObject {
                 if self.availability == .requiresApproval {
                     self.error = nil
                 } else {
+                    self.needsHelperRecovery = self.availability == .ready
                     self.error = .installFailed
                 }
                 self.isBusy = false
@@ -162,6 +169,28 @@ final class MagSafeLEDController: ObservableObject {
                 try await helperManager.uninstall()
                 self.isLightEnabled = true
                 self.defaults.set(true, forKey: Self.defaultsKey)
+                self.needsHelperRecovery = false
+                self.availability = .needsInstallation
+                self.isBusy = false
+            } catch {
+                guard let self else { return }
+                self.error = .uninstallFailed
+                self.isBusy = false
+            }
+        }
+    }
+
+    func removeUnresponsiveHelper() {
+        // Explicit recovery after a failed command: another reset write would
+        // just wait on the same unavailable service. Preserve the stored choice.
+        guard availability == .ready, !isBusy, needsHelperRecovery else { return }
+        isBusy = true
+        Task { [weak self, helperManager] in
+            do {
+                try await helperManager.uninstall()
+                guard let self else { return }
+                self.error = nil
+                self.needsHelperRecovery = false
                 self.availability = .needsInstallation
                 self.isBusy = false
             } catch {

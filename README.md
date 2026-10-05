@@ -12,7 +12,7 @@ Glance is based on [Status Trio](https://github.com/lingyired/status-trio), orig
 - Compact system status cards and brightness / volume controls with detail menus.
 - Now Playing controls; a single session includes a seek bar, while simultaneous sessions use a divider because app-specific seeking is unreliable on some sources.
 - Codex usage refreshes when opening the popup, with a manual refresh button.
-- Apple Weather through two bundled system shortcuts. Current weather is cached for 15 minutes; detailed daily / hourly forecasts load only when the weather detail menu opens.
+- Apple Weather through two bundled system shortcuts, with UV, daily low/high, sunrise/sunset events and hourly rain chances. Current weather is cached for 15 minutes; detailed forecasts load only when the weather detail menu opens, with a manual refresh button.
 - Date, weekday and selectable 12 / 24-hour time display.
 - Optional popup scrolling to adjust volume, **off by default**.
 - Existing MagSafe LED controls retained from Status Trio.
@@ -38,7 +38,7 @@ First launch opens Settings. Add both bundled shortcuts and confirm the system p
 
 The project repository is [EEvan00/Glance](https://github.com/EEvan00/Glance), currently private. No public release has been published. Automatic updates remain disabled until Glance has its own Sparkle signing keys and update feed. Future releases use `.github/workflows/release.yml`, explicit version/build numbers and bilingual English / Chinese notes.
 
-Local packages are ad-hoc signed. Developer ID signing and notarization are not configured.
+Local packages are ad-hoc signed. Developer ID signing and notarization are not configured. macOS launch constraints currently reject the ad-hoc Glance MagSafe helper on the tested Mac, so LED control is unavailable there. Command timeouts and explicit removal handle an unresponsive helper; the ordinary status and weather controls do not require it.
 
 ## License and acknowledgements
 

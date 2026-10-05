@@ -4,6 +4,23 @@ import Testing
 
 @MainActor
 struct StatusPopupPanelTests {
+    @Test func backgroundLEDReapplyDoesNotPreventDismissal() {
+        let name = "Glance.PopupLEDGuard.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        defer { defaults.removePersistentDomain(forName: name) }
+        defaults.set(false, forKey: MagSafeLEDController.defaultsKey)
+        let led = MagSafeLEDController(defaults: defaults, hardwareProbe: PopupLEDProbe(),
+                                       helperManager: PopupLEDHelper(), commandWriter: PopupLEDWriter())
+        led.reapplyIfNeeded()
+        #expect(led.isBusy)
+        let controller = StatusBarController(
+            store: SystemStatusStore(batteryMonitor: BatteryMonitor(), wifiMonitor: WiFiMonitor(),
+                                     volumeMonitor: VolumeMonitor()),
+            settings: SettingsStore(defaults: defaults), magSafeLED: led,
+            localization: Localization(), openSettings: {}, quitAction: {})
+        #expect(controller.automaticDismissalIsBlocked() == false)
+    }
+
     @Test func deactivationDoesNotSilentlyHidePanel() {
         let panel = StatusPopupPanel()
         #expect(panel.hidesOnDeactivate == false)
@@ -72,4 +89,17 @@ struct StatusPopupPanelTests {
         panel.cancelOperation(nil)
         #expect(panel.isVisible == false)
     }
+}
+
+private struct PopupLEDProbe: MagSafeLEDHardwareProbing {
+    func supportsLEDControl() -> Bool { true }
+}
+private struct PopupLEDHelper: MagSafeLEDHelperManaging {
+    var status: MagSafeLEDHelperStatus { .enabled }
+    func install() async throws {}
+    func uninstall() async throws {}
+    func openSystemSettings() {}
+}
+private struct PopupLEDWriter: MagSafeLEDCommandWriting {
+    func write(_ mode: MagSafeLEDMode) async throws { await Task.yield() }
 }

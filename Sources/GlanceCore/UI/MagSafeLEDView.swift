@@ -79,7 +79,11 @@ struct MagSafeLEDView: View {
             .foregroundStyle(.primary.opacity(0.78))
             Divider()
             Button(localization.string(.magSafeUninstallHelper)) {
-                controller.uninstallHelper()
+                if controller.needsHelperRecovery {
+                    controller.removeUnresponsiveHelper()
+                } else {
+                    controller.uninstallHelper()
+                }
             }
             .buttonStyle(.plain)
             .foregroundStyle(.red)

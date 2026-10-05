@@ -289,3 +289,9 @@
 "settings.audio.scrollVolumeDescription" = "Scroll up or down in the popup to adjust volume. Lists and weather forecasts keep their normal scrolling.";
 
 "settings.about.upstream" = "Based on Status Trio";
+
+"weather.uvIndex" = "UV Index";
+"weather.sunrise" = "Sunrise";
+"weather.sunset" = "Sunset";
+"weather.refresh" = "Refresh now";
+"weather.rainChance" = "Chance of rain";
