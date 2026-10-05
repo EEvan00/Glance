@@ -26,7 +26,7 @@ DMG_BASENAME="$(read_config dmg_name)"
 DMG_BASENAME="${DMG_BASENAME%.dmg}"
 SPARKLE_ENABLED_DEFAULT="$(read_config sparkle_enabled)"
 VERSION="${VERSION:-$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Support/Info.plist)}"
-FORK_REVISION="${FORK_REVISION:-$(/usr/libexec/PlistBuddy -c 'Print :StatusTrioForkRevision' Support/Info.plist)}"
+FORK_REVISION="${FORK_REVISION:-$(/usr/libexec/PlistBuddy -c 'Print :GlanceForkRevision' Support/Info.plist)}"
 BUILD="${BUILD:-$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' Support/Info.plist)}"
 TAG="${TAG:-v$VERSION}"
 PUBLISH="${PUBLISH:-true}"
@@ -63,7 +63,7 @@ elif [[ -n "$SU_FEED_URL" ]]; then
     exit 2
 fi
 
-TEMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/StatusTrioRelease.XXXXXX")"
+TEMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/GlanceRelease.XXXXXX")"
 trap 'rm -rf "$TEMP_ROOT"' EXIT
 APPCAST_PATH="$TEMP_ROOT/appcast.xml"
 APPCAST_SHA=""

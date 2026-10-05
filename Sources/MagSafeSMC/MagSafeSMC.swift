@@ -107,8 +107,8 @@ private final class SMCConnection {
         IOServiceClose(connection)
     }
 
-    func keyInfo(_ key: String) -> StatusTrioSMCKeyInfoData? {
-        var input = StatusTrioSMCParamStruct()
+    func keyInfo(_ key: String) -> GlanceSMCKeyInfoData? {
+        var input = GlanceSMCParamStruct()
         input.key = fourCharacterCode(key)
         input.data8 = Self.getKeyInfo
         guard let output = call(input), output.result == Self.success else { return nil }
@@ -116,7 +116,7 @@ private final class SMCConnection {
     }
 
     func writeByte(_ value: UInt8, key: String) -> Bool {
-        var input = StatusTrioSMCParamStruct()
+        var input = GlanceSMCParamStruct()
         input.key = fourCharacterCode(key)
         input.keyInfo.dataSize = 1
         input.data8 = Self.writeKey
@@ -129,7 +129,7 @@ private final class SMCConnection {
 
     func readBytes(key: String) -> [UInt8]? {
         guard let info = keyInfo(key), info.dataSize <= 32 else { return nil }
-        var input = StatusTrioSMCParamStruct()
+        var input = GlanceSMCParamStruct()
         input.key = fourCharacterCode(key)
         input.keyInfo = info
         input.data8 = Self.readKey
@@ -139,15 +139,15 @@ private final class SMCConnection {
         }
     }
 
-    private func call(_ value: StatusTrioSMCParamStruct) -> StatusTrioSMCParamStruct? {
+    private func call(_ value: GlanceSMCParamStruct) -> GlanceSMCParamStruct? {
         var input = value
-        var output = StatusTrioSMCParamStruct()
-        var outputSize = MemoryLayout<StatusTrioSMCParamStruct>.stride
+        var output = GlanceSMCParamStruct()
+        var outputSize = MemoryLayout<GlanceSMCParamStruct>.stride
         let result = IOConnectCallStructMethod(
             connection,
             Self.handleEvent,
             &input,
-            MemoryLayout<StatusTrioSMCParamStruct>.stride,
+            MemoryLayout<GlanceSMCParamStruct>.stride,
             &output,
             &outputSize
         )

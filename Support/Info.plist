@@ -5,7 +5,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Glance</string>
 	<key>CFBundleExecutable</key>
-	<string>StatusTrio</string>
+	<string>Glance</string>
 	<key>CFBundleIdentifier</key>
 	<string>io.github.EEvan00.Glance</string>
 	<key>CFBundleIconFile</key>
@@ -20,7 +20,7 @@
 	<string>1.0.0</string>
 	<key>CFBundleVersion</key>
 	<string>9</string>
-	<key>StatusTrioForkRevision</key>
+	<key>GlanceForkRevision</key>
 	<integer>2</integer>
 	<key>LSMinimumSystemVersion</key>
 	<string>15.0</string>
@@ -34,7 +34,7 @@
 	<string>Used only when you open Wi-Fi details to read network names, scan results, and connection information.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Used only when you open Bluetooth details to show paired-device connection status.</string>
-	<key>StatusTrioEnableSparkle</key>
+	<key>GlanceEnableSparkle</key>
 	<false/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Glance modifications © 2026 EEvan00. Based on Status Trio © 2026 lingyired.</string>

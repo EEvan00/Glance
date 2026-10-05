@@ -11,7 +11,7 @@ on:
         required: false
         type: string
       fork_revision:
-        description: "Positive numeric fork revision for this upstream version. Defaults to StatusTrioForkRevision in Support/Info.plist."
+        description: "Positive numeric fork revision for this upstream version. Defaults to GlanceForkRevision in Support/Info.plist."
         required: false
         type: string
       build:
@@ -88,7 +88,7 @@ jobs:
           set -euo pipefail
 
           PLIST_VERSION="$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" Support/Info.plist)"
-          PLIST_FORK_REVISION="$(/usr/libexec/PlistBuddy -c "Print :StatusTrioForkRevision" Support/Info.plist)"
+          PLIST_FORK_REVISION="$(/usr/libexec/PlistBuddy -c "Print :GlanceForkRevision" Support/Info.plist)"
           PLIST_BUILD="$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" Support/Info.plist)"
 
           VERSION="${VERSION_INPUT:-${PLIST_VERSION}}"
@@ -220,13 +220,13 @@ jobs:
           KEY_PATH="${RUNNER_TEMP}/AuthKey_${NOTARY_API_KEY_ID}.p8"
           printf '%s' "${NOTARY_API_PRIVATE_KEY}" > "${KEY_PATH}"
 
-          xcrun notarytool store-credentials "status-trio-notary" \
+          xcrun notarytool store-credentials "glance-notary" \
             --key "${KEY_PATH}" \
             --key-id "${NOTARY_API_KEY_ID}" \
             --issuer "${NOTARY_API_ISSUER_ID}"
           rm -f "${KEY_PATH}"
 
-          echo "NOTARY_PROFILE=status-trio-notary" >> "${GITHUB_ENV}"
+          echo "NOTARY_PROFILE=glance-notary" >> "${GITHUB_ENV}"
 
       - name: Prepare release notes
         if: ${{ env.PUBLISH == 'true' }}
@@ -295,8 +295,8 @@ jobs:
 
           if [[ "${TEST_EXIT_CODE}" -ne 0 ]]; then
             echo "SwiftPM resource bundle diagnostics:"
-            find .build -name 'StatusTrio_StatusTrioCore.bundle' -type d -print
-            find .build -name 'StatusTrio_StatusTrioCore.bundle' -type d -exec find {} -maxdepth 4 -print \;
+            find .build -name 'Glance_GlanceCore.bundle' -type d -print
+            find .build -name 'Glance_GlanceCore.bundle' -type d -exec find {} -maxdepth 4 -print \;
             find .build -name 'Localizable.strings' -print | head -n 50
           fi
 

@@ -28,7 +28,7 @@ bash scripts/build-app.sh release no-open
 open dist/Glance.app
 ```
 
-The app has its own bundle identifier: `io.github.EEvan00.Glance`. Internal SwiftPM target names retain `StatusTrio` for compatibility. Glance copies existing local Status Trio preferences once on first launch; OS permissions and login-item registration are separate for the new app identity.
+The app has its own bundle identifier: `io.github.EEvan00.Glance`. SwiftPM package, source modules and test target use the Glance name (`Glance`, `GlanceCore`, `GlanceCoreTests`). Glance copies existing local Status Trio preferences once on first launch; OS permissions and login-item registration are separate for the new app identity.
 
 ## Weather setup
 

@@ -3,19 +3,19 @@
 import PackageDescription
 
 let package = Package(
-    name: "StatusTrio",
+    name: "Glance",
     defaultLocalization: "en",
     platforms: [.macOS(.v15)],
     products: [
-        .executable(name: "StatusTrio", targets: ["StatusTrio"]),
-        .library(name: "StatusTrioMediaBridge", type: .dynamic, targets: ["StatusTrioMediaBridge"]),
-        .executable(name: "StatusTrioMagSafeHelper", targets: ["StatusTrioMagSafeHelper"])
+        .executable(name: "Glance", targets: ["Glance"]),
+        .library(name: "GlanceMediaBridge", type: .dynamic, targets: ["GlanceMediaBridge"]),
+        .executable(name: "GlanceMagSafeHelper", targets: ["GlanceMagSafeHelper"])
     ],
     dependencies: [
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.0.0")
     ],
     targets: [
-        .target(name: "StatusTrioMediaBridge", linkerSettings: [.linkedFramework("Foundation")]),
+        .target(name: "GlanceMediaBridge", linkerSettings: [.linkedFramework("Foundation")]),
         .target(name: "DisplayFeaturesBridge", linkerSettings: [.linkedFramework("Foundation")]),
         .target(name: "HotspotBridge", linkerSettings: [.linkedFramework("CoreWLAN")]),
         .target(
@@ -29,14 +29,14 @@ let package = Package(
             linkerSettings: [.linkedFramework("IOKit")]
         ),
         .target(
-            name: "StatusTrioCore",
+            name: "GlanceCore",
             dependencies: [
                 "HotspotBridge",
                 "DisplayFeaturesBridge",
                 "MagSafeSMC",
                 .product(name: "Sparkle", package: "Sparkle")
             ],
-            path: "Sources/StatusTrioCore",
+            path: "Sources/GlanceCore",
             resources: [.process("Resources")],
             linkerSettings: [
                 .linkedFramework("AppKit"),
@@ -54,20 +54,20 @@ let package = Package(
             ]
         ),
         .executableTarget(
-            name: "StatusTrio",
-            dependencies: ["StatusTrioCore"],
-            path: "Sources/StatusTrio"
+            name: "Glance",
+            dependencies: ["GlanceCore"],
+            path: "Sources/Glance"
         ),
         .executableTarget(
-            name: "StatusTrioMagSafeHelper",
+            name: "GlanceMagSafeHelper",
             dependencies: ["MagSafeSMC"],
-            path: "Sources/StatusTrioMagSafeHelper",
+            path: "Sources/GlanceMagSafeHelper",
             linkerSettings: [.linkedFramework("Security")]
         ),
         .testTarget(
-            name: "StatusTrioCoreTests",
-            dependencies: ["StatusTrioCore", "MagSafeSMC"],
-            path: "Tests/StatusTrioCoreTests"
+            name: "GlanceCoreTests",
+            dependencies: ["GlanceCore", "MagSafeSMC", "GlanceMediaBridge"],
+            path: "Tests/GlanceCoreTests"
         )
     ]
 )

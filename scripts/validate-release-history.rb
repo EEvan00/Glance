@@ -10,7 +10,7 @@ def run_command(*command)
   output
 end
 def legacy_metadata(repo, asset)
-  Dir.mktmpdir("StatusTrioHistory") do |directory|
+  Dir.mktmpdir("GlanceHistory") do |directory|
     dmg = File.join(directory, asset.fetch("name"))
     File.binwrite(dmg, run_command("gh", "api", "repos/#{repo}/releases/assets/#{asset.fetch("id")}", "-H", "Accept: application/octet-stream"))
     mount = File.join(directory, "mount")
