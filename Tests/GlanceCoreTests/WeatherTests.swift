@@ -137,6 +137,20 @@ final class WeatherTests: XCTestCase {
         XCTAssertEqual(value.hourly?.last?.symbol, "moon.fill")
     }
 
+    func testSolarEventsRemainAvailableAcrossMidnight() throws {
+        let value = try XCTUnwrap(WeatherSnapshot.fromShortcut("18°C\nClear\nSUNRISE\n2026-10-06T06:25:00+11:00\n2026-10-07T06:24:00+11:00\nSUNSET\n2026-10-06T19:04:00+11:00\n2026-10-07T19:05:00+11:00\nDATES\n2026-10-06T23:00:00+11:00\n2026-10-07T12:00:00+11:00\n2026-10-07T23:00:00+11:00\nHOURS\n18°C and Clear\n20°C and Clear\n17°C and Clear"))
+        XCTAssertEqual(value.forecastEntries.count, 5)
+        XCTAssertEqual(value.hourly?.map(\.isDay), [0, 1, 0])
+        let events = value.forecastEntries.filter {
+            if case .hour = $0 { return false }
+            return true
+        }
+        XCTAssertEqual(events.map(\.date), [
+            ISO8601DateFormatter().date(from: "2026-10-07T06:24:00+11:00")!,
+            ISO8601DateFormatter().date(from: "2026-10-07T19:05:00+11:00")!
+        ])
+    }
+
     func testSolarEventsAreInsertedChronologicallyIntoHourlyForecast() throws {
         let value = try XCTUnwrap(WeatherSnapshot.fromShortcut("18°C\nClear\nSUNRISE\n2026-10-06T06:25:00+11:00\nSUNSET\n2026-10-06T19:04:00+11:00\nDATES\n2026-10-06T06:00:00+11:00\n2026-10-06T19:00:00+11:00\nHOURS\n18°C and Mostly Clear\n17°C and Clear"))
         XCTAssertEqual(value.forecastEntries.count, 4)

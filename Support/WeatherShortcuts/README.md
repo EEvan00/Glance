@@ -10,4 +10,6 @@ shortcuts sign --mode anyone --input "Support/WeatherShortcuts/Glance Weather Fo
 
 Current weather outputs temperature, condition and a `UV` section. Detailed weather also outputs `LOW`, `HIGH`, `DATES`, `HOURS`, `LOCATION`, `SUNRISE`, `SUNSET` and `RAIN_CHANCES` (one value per hourly date). Dates use ISO 8601 with time zone offsets. Keep the section markers unchanged: `WeatherSnapshot.fromShortcut` parses them.
 
+`SUNRISE` and `SUNSET` contain one date per day from the existing daily forecast. Glance inserts the events that fall inside the hourly forecast range, so tomorrow's solar events remain visible after today's sunset without another weather request. Single-date output from older installed shortcuts remains supported.
+
 Updating the bundled resources does not replace installed shortcuts automatically. Use the Add current weather and Add forecast buttons in Settings, then choose Replace in Shortcuts. The app keeps the existing 15-minute cache and only loads detailed forecasts while the weather menu is open. Manual refresh bypasses the cache once.

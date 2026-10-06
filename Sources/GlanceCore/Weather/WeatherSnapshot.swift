@@ -12,12 +12,14 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
     var uvIndex: Double? = nil
     var sunrise: Date? = nil
     var sunset: Date? = nil
+    var sunrises: [Date]? = nil
+    var sunsets: [Date]? = nil
 
     enum CodingKeys: String, CodingKey {
         case temperature = "temperature_2m"
         case code = "weather_code"
         case isDay = "is_day"
-        case appleCondition, low, high, hourly, location, uvIndex, sunrise, sunset
+        case appleCondition, low, high, hourly, location, uvIndex, sunrise, sunset, sunrises, sunsets
     }
 
     static func fromShortcut(_ output: String) -> WeatherSnapshot? {
@@ -85,8 +87,12 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
         guard let first = hours.first, let last = hours.last else { return [] }
         var entries = hours.map { WeatherForecastEntry.hour($0) }
         let end = last.date.addingTimeInterval(3600)
-        if let sunrise, sunrise >= first.date, sunrise < end { entries.append(.sunrise(sunrise)) }
-        if let sunset, sunset >= first.date, sunset < end { entries.append(.sunset(sunset)) }
+        for date in sunrises ?? sunrise.map({ [$0] }) ?? [] where date >= first.date && date < end {
+            entries.append(.sunrise(date))
+        }
+        for date in sunsets ?? sunset.map({ [$0] }) ?? [] where date >= first.date && date < end {
+            entries.append(.sunset(date))
+        }
         return entries.sorted { $0.date < $1.date }
     }
 
@@ -151,8 +157,10 @@ private extension WeatherSnapshot {
            let value = Double(values[0].replacingOccurrences(of: ",", with: ".")),
            value.isFinite, (0...30).contains(value) { uvIndex = value }
         let solarFormatter = ISO8601DateFormatter()
-        if let values = sections["SUNRISE"], values.count == 1 { sunrise = solarFormatter.date(from: values[0]) }
-        if let values = sections["SUNSET"], values.count == 1 { sunset = solarFormatter.date(from: values[0]) }
+        sunrises = sections["SUNRISE"].map { $0.compactMap { solarFormatter.date(from: $0) } }
+        sunsets = sections["SUNSET"].map { $0.compactMap { solarFormatter.date(from: $0) } }
+        sunrise = sunrises?.first
+        sunset = sunsets?.first
         if let city = sections["LOCATION"], city.count == 1, city[0].count <= 80,
            !city[0].unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) }) {
             location = city[0]
@@ -179,9 +187,10 @@ private extension WeatherSnapshot {
                   let weather = Self.fromShortcut(String(conditionText[range]) + "\n" + conditionText),
                   entries.last.map({ date > $0.date }) ?? true else { return }
             let daylight: Int
-            if let sunrise, let sunset, sunrise < sunset,
-               let solarDate = sections["SUNRISE"]?.first,
-               dateText.prefix(10) == solarDate.prefix(10) {
+            if let solarDay = zip(sections["SUNRISE"] ?? [], sections["SUNSET"] ?? [])
+                .first(where: { $0.0.prefix(10) == dateText.prefix(10) && $0.1.prefix(10) == dateText.prefix(10) }),
+               let sunrise = solarFormatter.date(from: solarDay.0),
+               let sunset = solarFormatter.date(from: solarDay.1), sunrise < sunset {
                 daylight = date >= sunrise && date < sunset ? 1 : 0
             } else {
                 daylight = -1

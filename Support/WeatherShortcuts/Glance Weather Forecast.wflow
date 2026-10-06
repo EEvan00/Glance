@@ -350,7 +350,7 @@
 						<key>OutputName</key>
 						<string>Weather Conditions</string>
 						<key>OutputUUID</key>
-						<string>80D436B2-8120-4A37-A44E-5413904CA0B1</string>
+						<string>0EBE59BD-06AD-41AE-A965-BAF2F6AFB6DC</string>
 						<key>Type</key>
 						<string>ActionOutput</string>
 					</dict>
@@ -410,7 +410,7 @@
 						<key>OutputName</key>
 						<string>Weather Conditions</string>
 						<key>OutputUUID</key>
-						<string>80D436B2-8120-4A37-A44E-5413904CA0B1</string>
+						<string>0EBE59BD-06AD-41AE-A965-BAF2F6AFB6DC</string>
 						<key>Type</key>
 						<string>ActionOutput</string>
 					</dict>
