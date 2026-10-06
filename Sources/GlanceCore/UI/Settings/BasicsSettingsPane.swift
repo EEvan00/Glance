@@ -61,6 +61,10 @@ struct BasicsSettingsPane: View {
 
             Divider()
 
+            PreferenceCheckboxRow(label: .settingsCardTextAutoShrink, isOn: $store.automaticallyShrinksCardText)
+
+            Divider()
+
             refreshIntervalSection
 
             Divider()

@@ -266,6 +266,10 @@ final class SettingsStore: ObservableObject {
         didSet { defaults.set(screenshotDestination.rawValue, forKey: "screenshotDestination") }
     }
 
+    @Published var automaticallyShrinksCardText: Bool {
+        didSet { defaults.set(automaticallyShrinksCardText, forKey: "automaticallyShrinksCardText") }
+    }
+
     @Published var showsClockSeconds: Bool {
         didSet { defaults.set(showsClockSeconds, forKey: "showsClockSeconds") }
     }
@@ -293,6 +297,7 @@ final class SettingsStore: ObservableObject {
         self.scrollToAdjustVolume = defaults.object(forKey: "scrollToAdjustVolume") as? Bool ?? false
         self.screenshotMode = defaults.string(forKey: "screenshotMode").flatMap(ScreenshotMode.init(rawValue:)) ?? .toolbar
         self.screenshotDestination = defaults.string(forKey: "screenshotDestination").flatMap(ScreenshotDestination.init(rawValue:)) ?? .desktop
+        self.automaticallyShrinksCardText = defaults.object(forKey: "automaticallyShrinksCardText") as? Bool ?? true
         self.showsClockSeconds = defaults.bool(forKey: "showsClockSeconds")
         self.uses24HourClock = defaults.object(forKey: "uses24HourClock") as? Bool ?? true
         let storedIconSize = (defaults.object(forKey: Self.iconSizeDefaultsKey) as? NSNumber)?.doubleValue

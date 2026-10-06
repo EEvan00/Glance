@@ -10,7 +10,7 @@
 "settings.launchAtLogin" = "Lancer à l’ouverture de session";
 "settings.launchAtLogin.description" = "Démarre Glance automatiquement à l’ouverture de session.";
 "settings.launchAtLogin.requiresApproval" = "En attente d’approbation. Autorisez Glance dans Réglages Système › Général › Ouverture.";
-"settings.launchAtLogin.openLoginItems" = "Ouvrir les éléments d’ouverture";
+"settings.launchAtLogin.openLoginItems" = "Ouvrir les éléments d’ouverture…";
 "settings.launchAtLogin.failure" = "Impossible de mettre à jour l’élément d’ouverture. Gérez-le dans Réglages Système › Général › Ouverture.";
 "settings.iconSize" = "Taille de l’icône";
 "settings.iconSize.accessibilityValue" = "%d points";
@@ -66,7 +66,7 @@
 "battery.state.lowPowerMode" = "Mode économie d’énergie";
 "battery.state.connectedToPower" = "Sur secteur";
 "battery.state.onBattery" = "Sur batterie";
-"battery.action.openSettings" = "Ouvrir les réglages de batterie";
+"battery.action.openSettings" = "Ouvrir les réglages de batterie…";
 "battery.accessibility.value" = "Batterie %d%%";
 "common.parenthetical" = "%@ (%@)";
 "common.labelValue" = "%@, %@";
@@ -89,8 +89,8 @@
 "wifi.subtitle.shared" = "Partage d’internet";
 "wifi.subtitle.unavailable" = "Impossible de lire l’état du réseau";
 "wifi.action.requestNameAccess" = "Autoriser la localisation pour afficher le nom du Wi‑Fi";
-"wifi.action.openLocationSettings" = "Autoriser la localisation dans Réglages";
-"wifi.action.openSettings" = "Ouvrir les réglages Wi‑Fi";
+"wifi.action.openLocationSettings" = "Autoriser la localisation dans Réglages…";
+"wifi.action.openSettings" = "Ouvrir les réglages Wi‑Fi…";
 "wifi.accessibility.withSSID" = "Wi‑Fi %@, %@";
 "ethernet.accessibility.connected" = "Ethernet connecté";
 "volume.title" = "Volume · %d%%";
@@ -106,7 +106,7 @@
 "volume.output.unknownDevice" = "Périphérique de sortie inconnu";
 "volume.output.expand" = "Développer";
 "volume.output.collapse" = "Réduire";
-"volume.action.openSettings" = "Ouvrir les réglages du son";
+"volume.action.openSettings" = "Ouvrir les réglages du son…";
 "volume.accessibility.label" = "Volume";
 "accessibility.status" = "%@, %@, %@";
 "accessibility.battery" = "Batterie %d%%";
@@ -168,7 +168,7 @@
 "wifi.security.open" = "Open";
 "wifi.security.enterprise" = "Enterprise";
 "bluetooth.title" = "Bluetooth";
-"bluetooth.action.openSettings" = "Open Bluetooth Settings";
+"bluetooth.action.openSettings" = "Open Bluetooth Settings…";
 "bluetooth.refresh" = "Refresh devices";
 "bluetooth.off" = "Bluetooth is off.";
 "bluetooth.unavailable" = "Bluetooth is unavailable.";
@@ -244,7 +244,7 @@
 
 "menu.compactQuit" = "Quitter";
 
-"menu.compactSettings" = "Réglages";
+"menu.compactSettings" = "Réglages…";
 
 "media.play" = "Lire";
 
@@ -262,7 +262,7 @@
 "settings.clock24" = "24-hour";
 "settings.weatherShortcut" = "Weather setup";
 "settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
-"settings.weatherOpenShortcut" = "Open weather shortcut";
+"settings.weatherOpenShortcut" = "Open weather shortcut…";
 
 "weather.title" = "Weather";
 "weather.temperature" = "Temperature";
@@ -270,7 +270,7 @@
 "weather.source" = "Source";
 "weather.updated" = "Updated %@";
 "weather.loading" = "Loading weather…";
-"weather.openApp" = "Open Weather";
+"weather.openApp" = "Open Weather…";
 
 "weather.low" = "Low";
 "weather.high" = "High";
@@ -279,9 +279,9 @@
 
 "weather.currentLocation" = "Current Location";
 
-"settings.weatherAddCurrent" = "Add current weather";
+"settings.weatherAddCurrent" = "Add current weather…";
 
-"settings.weatherAddForecast" = "Add forecast";
+"settings.weatherAddForecast" = "Add forecast…";
 
 "settings.weatherInstallHelp" = "Shortcuts are included. Add both and confirm system permissions once. Detailed forecasts load only when the weather menu opens.";
 
@@ -311,7 +311,7 @@
 "claude.connect" = "Connect Claude Code";
 "claude.connectHelp" = "Connect your existing Claude Code status line. Glance preserves its output and reads local 5-hour and weekly limits after your next response. No API tokens are used.";
 "claude.setupFailed" = "Install and run Claude Code first, then try connecting again.";
-"shortcut.manageRemove" = "Remove in Shortcuts";
+"shortcut.manageRemove" = "Remove in Shortcuts…";
 "shortcut.removeHelp" = "Delete it in the system Shortcuts library. Returning to Glance updates its installation status.";
 "shortcut.discoveryFailed" = "Unable to check shortcuts. Click refresh to try again.";
 
@@ -325,7 +325,7 @@
 "performance.pressure.critical" = "Critical";
 "performance.memoryHelp" = "Usage includes app, wired and compressed memory, excluding reclaimable cache.";
 "performance.unavailable" = "Performance unavailable";
-"performance.openActivityMonitor" = "Open Activity Monitor";
+"performance.openActivityMonitor" = "Open Activity Monitor…";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "RAM %@";
 
@@ -340,11 +340,11 @@
 "timer.custom" = "Durée personnalisée";
 "timer.minuteUnit" = "min";
 "timer.start" = "Démarrer";
-"footer.openCalendar" = "Ouvrir Calendrier";
-"footer.openClock" = "Ouvrir Horloge";
+"footer.openCalendar" = "Ouvrir Calendrier…";
+"footer.openClock" = "Ouvrir Horloge…";
 "timer.notificationBody" = "Le compte à rebours est terminé.";
 "timer.notificationHelp" = "Les notifications sont indisponibles. La barre des menus clignotera à la fin.";
-"timer.openNotifications" = "Ouvrir les réglages des notifications";
+"timer.openNotifications" = "Ouvrir les réglages des notifications…";
 
 "compact.battery" = "Batterie";
 "compact.unavailable" = "Indisponible";
@@ -374,3 +374,10 @@
 "settings.screenshotDesktop" = "Bureau (fichier PNG)";
 "settings.screenshotClipboard" = "Presse-papiers";
 "screenshot.failed" = "Impossible de lancer l’outil de capture. Veuillez réessayer.";
+
+"bluetooth.connect" = "Connecter";
+"bluetooth.disconnect" = "Déconnecter";
+"bluetooth.connectionFailed" = "Impossible de modifier la connexion. Réessayez ou utilisez les réglages Bluetooth.";
+"bluetooth.deviceSettings" = "Ouvrir les réglages des AirPods…";
+
+"settings.cardTextAutoShrink" = "Réduire automatiquement le texte des cartes si l’espace est limité";

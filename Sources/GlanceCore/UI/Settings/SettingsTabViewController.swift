@@ -1,10 +1,13 @@
 import AppKit
+import Combine
 import SwiftUI
 
 @MainActor
 final class SettingsTabViewController: NSTabViewController {
     static let contentWidth: CGFloat = 450
+    static let maximumContentHeight: CGFloat = 480
 
+    private var heightCancellable: AnyCancellable?
     private let store: SettingsStore
     private let statusStore: SystemStatusStore
     private let localization: Localization
@@ -30,6 +33,11 @@ final class SettingsTabViewController: NSTabViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         buildTabs()
+        heightCancellable = NotificationCenter.default.publisher(for: SettingsPaneLayout.didChangeHeight)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                Task { @MainActor [weak self] in self?.updateWindowSize() }
+            }
     }
 
     override func viewDidAppear() {
@@ -62,16 +70,12 @@ final class SettingsTabViewController: NSTabViewController {
     var desiredContentSize: NSSize {
         guard tabViewItems.indices.contains(selectedTabViewItemIndex),
               let currentView = tabViewItems[selectedTabViewItemIndex].viewController?.view else {
-            return NSSize(width: Self.contentWidth, height: 220)
+            return NSSize(width: Self.contentWidth, height: 150)
         }
-
         currentView.frame.size.width = Self.contentWidth
         currentView.layoutSubtreeIfNeeded()
-        let fittingSize = currentView.fittingSize
-        return NSSize(
-            width: Self.contentWidth,
-            height: max(150, ceil(fittingSize.height))
-        )
+        return NSSize(width: Self.contentWidth,
+                      height: min(Self.maximumContentHeight, max(150, ceil(currentView.fittingSize.height))))
     }
 
     private func buildTabs() {

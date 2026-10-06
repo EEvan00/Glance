@@ -87,6 +87,7 @@ enum LocalizationKey: String, CaseIterable, Hashable, Sendable {
     case settingsScreenshotDesktop = "settings.screenshotDesktop"
     case settingsScreenshotClipboard = "settings.screenshotClipboard"
     case screenshotFailed = "screenshot.failed"
+    case settingsCardTextAutoShrink = "settings.cardTextAutoShrink"
     case settingsClockSeconds = "settings.clockSeconds"
     case settingsClockFormat = "settings.clockFormat"
     case settingsClock12 = "settings.clock12"
@@ -276,6 +277,10 @@ enum LocalizationKey: String, CaseIterable, Hashable, Sendable {
     case wifiSecurityOpen = "wifi.security.open"
     case wifiSecurityEnterprise = "wifi.security.enterprise"
 
+    case bluetoothConnect = "bluetooth.connect"
+    case bluetoothDisconnect = "bluetooth.disconnect"
+    case bluetoothConnectionFailed = "bluetooth.connectionFailed"
+    case bluetoothDeviceSettings = "bluetooth.deviceSettings"
     case bluetoothTitle = "bluetooth.title"
     case bluetoothActionOpenSettings = "bluetooth.action.openSettings"
     case bluetoothRefresh = "bluetooth.refresh"

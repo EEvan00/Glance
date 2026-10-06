@@ -10,7 +10,7 @@
 "settings.launchAtLogin" = "開機時啟動";
 "settings.launchAtLogin.description" = "登入系統後自動啟動 Glance。";
 "settings.launchAtLogin.requiresApproval" = "等待授權。請在「系統設定 › 一般 › 登入項目」中允許 Glance。";
-"settings.launchAtLogin.openLoginItems" = "打開登入項目設定";
+"settings.launchAtLogin.openLoginItems" = "打開登入項目設定…";
 "settings.launchAtLogin.failure" = "無法更新登入項目，可在「系統設定 › 一般 › 登入項目」中手動管理。";
 "settings.iconSize" = "圖示顯示尺寸";
 "settings.iconSize.accessibilityValue" = "%d 點";
@@ -66,7 +66,7 @@
 "battery.state.lowPowerMode" = "低耗電模式";
 "battery.state.connectedToPower" = "已連接電源";
 "battery.state.onBattery" = "電池供電";
-"battery.action.openSettings" = "打開電池設定";
+"battery.action.openSettings" = "打開電池設定…";
 "battery.accessibility.value" = "電池 %d%%";
 "common.parenthetical" = "%@（%@）";
 "common.labelValue" = "%@ %@";
@@ -89,8 +89,8 @@
 "wifi.subtitle.shared" = "正在分享網際網路";
 "wifi.subtitle.unavailable" = "無法讀取網路狀態";
 "wifi.action.requestNameAccess" = "允許定位以顯示 Wi-Fi 名稱";
-"wifi.action.openLocationSettings" = "前往設定允許定位";
-"wifi.action.openSettings" = "打開 Wi-Fi 設定";
+"wifi.action.openLocationSettings" = "前往設定允許定位…";
+"wifi.action.openSettings" = "打開 Wi-Fi 設定…";
 "wifi.accessibility.withSSID" = "Wi-Fi %@，%@";
 "ethernet.accessibility.connected" = "乙太網路已連接";
 "volume.title" = "音量 · %d%%";
@@ -106,7 +106,7 @@
 "volume.output.unknownDevice" = "未知輸出裝置";
 "volume.output.expand" = "展開";
 "volume.output.collapse" = "收合";
-"volume.action.openSettings" = "打開聲音設定";
+"volume.action.openSettings" = "打開聲音設定…";
 "volume.accessibility.label" = "音量";
 "accessibility.status" = "%@，%@，%@";
 "accessibility.battery" = "電池 %d%%";
@@ -168,7 +168,7 @@
 "wifi.security.open" = "Open";
 "wifi.security.enterprise" = "Enterprise";
 "bluetooth.title" = "Bluetooth";
-"bluetooth.action.openSettings" = "Open Bluetooth Settings";
+"bluetooth.action.openSettings" = "Open Bluetooth Settings…";
 "bluetooth.refresh" = "Refresh devices";
 "bluetooth.off" = "Bluetooth is off.";
 "bluetooth.unavailable" = "Bluetooth is unavailable.";
@@ -244,7 +244,7 @@
 
 "menu.compactQuit" = "結束";
 
-"menu.compactSettings" = "設定";
+"menu.compactSettings" = "設定…";
 
 "media.play" = "播放";
 
@@ -262,7 +262,7 @@
 "settings.clock24" = "24 小时制";
 "settings.weatherShortcut" = "天气设置";
 "settings.weatherShortcutDescription" = "使用内置快捷指令获取 Apple 天气。缓存 15 分钟，关闭弹窗取消请求。";
-"settings.weatherOpenShortcut" = "打开天气快捷指令";
+"settings.weatherOpenShortcut" = "打开天气快捷指令…";
 
 "weather.title" = "天氣";
 "weather.temperature" = "溫度";
@@ -270,7 +270,7 @@
 "weather.source" = "來源";
 "weather.updated" = "更新於 %@";
 "weather.loading" = "正在取得天氣…";
-"weather.openApp" = "開啟天氣";
+"weather.openApp" = "開啟天氣…";
 
 "weather.low" = "最低";
 "weather.high" = "最高";
@@ -279,9 +279,9 @@
 
 "weather.currentLocation" = "当前位置";
 
-"settings.weatherAddCurrent" = "添加当前天气";
+"settings.weatherAddCurrent" = "添加当前天气…";
 
-"settings.weatherAddForecast" = "添加天气预报";
+"settings.weatherAddForecast" = "添加天气预报…";
 
 "settings.weatherInstallHelp" = "快捷指令已内置。首次使用请分别添加并确认系统权限。详细预报仅在打开天气菜单时获取。";
 
@@ -311,7 +311,7 @@
 "claude.connect" = "连接 Claude Code";
 "claude.connectHelp" = "连接现有 Claude Code 状态栏。Glance 保留原有输出，在下一次回复后读取本地 5 小时和周额度，不读取 API 密钥。";
 "claude.setupFailed" = "请先安装并运行 Claude Code，然后重试连接。";
-"shortcut.manageRemove" = "在快捷指令中移除";
+"shortcut.manageRemove" = "在快捷指令中移除…";
 "shortcut.removeHelp" = "在系统快捷指令库中删除，返回 Glance 后更新安装状态。";
 "shortcut.discoveryFailed" = "无法检查快捷指令，请点击刷新重试。";
 
@@ -325,7 +325,7 @@
 "performance.pressure.critical" = "较高";
 "performance.memoryHelp" = "使用量包含应用、有线及压缩内存，不包含可回收缓存。";
 "performance.unavailable" = "性能数据不可用";
-"performance.openActivityMonitor" = "打开活动监视器";
+"performance.openActivityMonitor" = "打开活动监视器…";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "記憶體 %@";
 
@@ -340,11 +340,11 @@
 "timer.custom" = "自訂時間";
 "timer.minuteUnit" = "分鐘";
 "timer.start" = "開始";
-"footer.openCalendar" = "打開行事曆";
-"footer.openClock" = "打開時鐘";
+"footer.openCalendar" = "打開行事曆…";
+"footer.openClock" = "打開時鐘…";
 "timer.notificationBody" = "倒數計時已結束。";
 "timer.notificationHelp" = "通知無法使用，時間到時仍會在選單列閃動提醒。";
-"timer.openNotifications" = "打開通知設定";
+"timer.openNotifications" = "打開通知設定…";
 
 "compact.battery" = "電池";
 "compact.unavailable" = "無法使用";
@@ -374,3 +374,10 @@
 "settings.screenshotDesktop" = "桌面（PNG 檔案）";
 "settings.screenshotClipboard" = "剪貼簿";
 "screenshot.failed" = "無法啟動截圖工具，請重試。";
+
+"bluetooth.connect" = "連線";
+"bluetooth.disconnect" = "中斷連線";
+"bluetooth.connectionFailed" = "無法更改連線，請重試或使用藍牙設定。";
+"bluetooth.deviceSettings" = "打開 AirPods 設定…";
+
+"settings.cardTextAutoShrink" = "空間不足時自動縮小卡片文字";

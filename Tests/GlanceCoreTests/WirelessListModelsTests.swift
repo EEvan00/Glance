@@ -268,7 +268,7 @@ final class WirelessListModelsTests: XCTestCase {
 }
 
 private final class BluetoothReaderStub: BluetoothPairedDeviceReading {
-    private let result: BluetoothWorkerResult
+    var result: BluetoothWorkerResult
     private(set) var readCount = 0
 
     init(result: BluetoothWorkerResult) {
@@ -307,5 +307,80 @@ private final class BluetoothStateMonitorStub: BluetoothStateMonitoring {
         self.authorization = authorization
         self.managerState = managerState
         onStateChange?(authorization, managerState)
+    }
+}
+
+extension WirelessListModelsTests {
+    @MainActor
+    func testBluetoothConnectionWaitsForChangedSnapshot() async throws {
+        let connected = BluetoothDevice(id: "earbuds", name: "Earbuds", kind: .audio, isConnected: true)
+        let disconnected = BluetoothDevice(id: "earbuds", name: "Earbuds", kind: .audio, isConnected: false)
+        let reader = BluetoothReaderStub(result: .success([connected]))
+        let connections = BluetoothConnectionStub()
+        let notifications = NotificationCenter()
+        let controller = BluetoothDeviceController(worker: reader, connections: connections,
+            stateMonitor: BluetoothStateMonitorStub(authorization: .allowed, managerState: .poweredOn),
+            notificationCenter: notifications, workspaceNotificationCenter: notifications)
+        controller.activate()
+        defer { controller.deactivate() }
+        for _ in 0..<100 where controller.devices.isEmpty { await Task.yield() }
+        controller.toggleConnection(to: connected)
+        connections.completion?(true)
+        for _ in 0..<100 where reader.readCount < 2 { await Task.yield() }
+        XCTAssertGreaterThanOrEqual(reader.readCount, 2)
+        XCTAssertEqual(controller.connectionDeviceID, connected.id)
+        XCTAssertTrue(controller.devices[0].isConnected)
+        reader.result = .success([disconnected])
+        for _ in 0..<100 where controller.connectionDeviceID != nil {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertEqual(controller.devices, [disconnected])
+        XCTAssertNil(controller.connectionDeviceID)
+        XCTAssertNil(controller.connectionFailedDeviceID)
+    }
+
+    @MainActor
+    func testBluetoothConnectionUsesCurrentStateAndBlocksDuplicateRequests() async {
+        let device = BluetoothDevice(id: "earbuds", name: "Earbuds", kind: .audio, isConnected: true)
+        let reader = BluetoothReaderStub(result: .success([device]))
+        let connections = BluetoothConnectionStub()
+        let notifications = NotificationCenter()
+        let controller = BluetoothDeviceController(
+            worker: reader,
+            connections: connections,
+            stateMonitor: BluetoothStateMonitorStub(authorization: .allowed, managerState: .poweredOn),
+            notificationCenter: notifications,
+            workspaceNotificationCenter: notifications
+        )
+        controller.activate()
+        defer { controller.deactivate() }
+        for _ in 0..<100 where controller.devices.isEmpty { await Task.yield() }
+        XCTAssertEqual(controller.devices, [device])
+
+        // A row may hold an older value while a refresh has already arrived.
+        let stale = BluetoothDevice(id: device.id, name: device.name, kind: .audio, isConnected: false)
+        controller.toggleConnection(to: stale)
+        controller.toggleConnection(to: stale)
+        XCTAssertEqual(connections.requests.count, 1)
+        XCTAssertEqual(connections.requests.first?.connected, false)
+        XCTAssertEqual(controller.connectionDeviceID, device.id)
+        connections.completion?(false)
+        for _ in 0..<100 where controller.connectionDeviceID != nil { await Task.yield() }
+        XCTAssertNil(controller.connectionDeviceID)
+        XCTAssertEqual(controller.connectionFailedDeviceID, device.id)
+
+        controller.deactivate()
+        controller.toggleConnection(to: device)
+        XCTAssertEqual(connections.requests.count, 1)
+    }
+}
+
+private final class BluetoothConnectionStub: BluetoothConnectionManaging {
+    var requests: [(connected: Bool, deviceID: String)] = []
+    var completion: (@Sendable (Bool) -> Void)?
+
+    func setConnected(_ connected: Bool, deviceID: String, completion: @escaping @Sendable (Bool) -> Void) {
+        requests.append((connected, deviceID))
+        self.completion = completion
     }
 }

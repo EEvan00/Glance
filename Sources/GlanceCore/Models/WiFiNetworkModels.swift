@@ -307,9 +307,81 @@ struct BluetoothDevice: Identifiable, Equatable, Sendable {
     let name: String
     let kind: BluetoothDeviceKind
     let isConnected: Bool
+    let metadata: BluetoothDeviceMetadata?
+
+    init(id: String, name: String, kind: BluetoothDeviceKind, isConnected: Bool, metadata: BluetoothDeviceMetadata? = nil) {
+        self.id = id
+        self.name = name
+        self.kind = kind
+        self.isConnected = isConnected
+        self.metadata = metadata
+    }
 }
 
 enum BluetoothDevicePresentation {
+    static func isVisibleAccessory(_ device: BluetoothDevice) -> Bool {
+        switch device.kind {
+        case .audio, .peripheral: return true
+        case .phone, .computer: return false
+        case .unknown:
+            // Continuity/synced records may be paired but have no accessory
+            // class. Keep zero-class peripherals when the OS identifies them.
+            return device.metadata?.minorType != nil || isAirPods(device)
+        }
+    }
+
+    static func isAirPods(_ device: BluetoothDevice) -> Bool {
+        symbolName(for: device).hasPrefix("airpods")
+    }
+
+    static func isAudioDevice(_ device: BluetoothDevice) -> Bool {
+        device.kind == .audio || symbolName(for: device).hasPrefix("airpods")
+    }
+
+    static func symbolName(for device: BluetoothDevice) -> String {
+        // A device can be renamed. Match recognizable product names only within
+        // compatible categories, then fall back to its Bluetooth device class.
+        if device.metadata?.vendorID == 0x004C, let product = device.metadata?.productID {
+            switch product {
+            case 0x2013, 0x2019, 0x201B: return "airpods.gen3"
+            case 0x2002, 0x200F: return "airpods"
+            case 0x200E, 0x2014, 0x2024, 0x2027: return "airpods.pro"
+            case 0x200A, 0x201F: return "airpods.max"
+            default: break
+            }
+        }
+        switch device.metadata?.minorType?.lowercased() {
+        case "keyboard": return "keyboard"
+        case "mouse": return "computermouse"
+        case "trackpad": return "rectangle.and.hand.point.up.left"
+        case "joystick", "gamepad": return "gamecontroller"
+        case "loudspeaker": return "hifispeaker"
+        default: break
+        }
+        let name = device.name.lowercased()
+        if device.kind == .audio || device.kind == .unknown {
+            if name.contains("airpods") {
+                if name.contains("max") { return "airpods.max" }
+                if name.contains("pro") { return "airpods.pro" }
+                return "airpods"
+            }
+            if name.contains("homepod mini") { return "homepodmini" }
+            if name.contains("homepod") { return "homepod" }
+        }
+        if device.kind == .peripheral || device.kind == .unknown {
+            if name.contains("trackpad") { return "rectangle.and.hand.point.up.left" }
+            if name.contains("keyboard") { return "keyboard" }
+            if name.contains("magic mouse") { return "magicmouse" }
+        }
+        switch device.kind {
+        case .computer: return "laptopcomputer"
+        case .phone: return "iphone"
+        case .audio: return "headphones"
+        case .peripheral: return "computermouse"
+        case .unknown: return "antenna.radiowaves.left.and.right"
+        }
+    }
+
     static func grouped(_ devices: [BluetoothDevice]) -> (connected: [BluetoothDevice], disconnected: [BluetoothDevice]) {
         let sorted = devices.sorted {
             $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending

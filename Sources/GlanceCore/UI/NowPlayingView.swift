@@ -40,11 +40,10 @@ struct NowPlayingView: View {
                 HStack {
                     Text(timeText(first.duration.map { $0 * (first.progress(at: date) ?? 0) } ?? first.elapsed)).font(.system(size: 10)).monospacedDigit().foregroundStyle(.primary.opacity(0.78))
                     Spacer()
-                    controls(first)
-                    Spacer()
                     Text(timeText(first.duration.flatMap { $0 > 0 ? $0 : nil })).font(.system(size: 10)).monospacedDigit().foregroundStyle(.primary.opacity(0.78))
                 }.padding(.horizontal, CompactPopupLayout.moduleTextInset)
                     .frame(height: 26)
+                    .overlay { controls(first) }
                     .offset(y: (26 - CompactPopupLayout.cardRowHeight) / 2 + CompactPopupLayout.gap + 2.3)
             } else {
                 ForEach(controller.items) { item in

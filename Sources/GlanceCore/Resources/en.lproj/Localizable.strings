@@ -10,7 +10,7 @@
 "settings.launchAtLogin" = "Launch at login";
 "settings.launchAtLogin.description" = "Start Glance automatically when you log in.";
 "settings.launchAtLogin.requiresApproval" = "Waiting for approval. Allow Glance in System Settings › General › Login Items.";
-"settings.launchAtLogin.openLoginItems" = "Open Login Items";
+"settings.launchAtLogin.openLoginItems" = "Open Login Items…";
 "settings.launchAtLogin.failure" = "Couldn’t update the login item. Manage it in System Settings › General › Login Items.";
 "settings.iconSize" = "Icon Size";
 "settings.iconSize.accessibilityValue" = "%d points";
@@ -66,7 +66,7 @@
 "battery.state.lowPowerMode" = "Low Power Mode";
 "battery.state.connectedToPower" = "Connected to power";
 "battery.state.onBattery" = "On battery";
-"battery.action.openSettings" = "Open Battery Settings";
+"battery.action.openSettings" = "Open Battery Settings…";
 "battery.accessibility.value" = "Battery %d%%";
 "common.parenthetical" = "%@ (%@)";
 "common.labelValue" = "%@, %@";
@@ -89,8 +89,8 @@
 "wifi.subtitle.shared" = "Sharing the internet";
 "wifi.subtitle.unavailable" = "Unable to read network status";
 "wifi.action.requestNameAccess" = "Allow location to show Wi-Fi name";
-"wifi.action.openLocationSettings" = "Allow location in Settings";
-"wifi.action.openSettings" = "Open Wi-Fi Settings";
+"wifi.action.openLocationSettings" = "Allow location in Settings…";
+"wifi.action.openSettings" = "Open Wi-Fi Settings…";
 "wifi.accessibility.withSSID" = "Wi-Fi %@, %@";
 "ethernet.accessibility.connected" = "Ethernet connected";
 "volume.title" = "Volume · %d%%";
@@ -106,7 +106,7 @@
 "volume.output.unknownDevice" = "Unknown output device";
 "volume.output.expand" = "Expand";
 "volume.output.collapse" = "Collapse";
-"volume.action.openSettings" = "Open Sound Settings";
+"volume.action.openSettings" = "Open Sound Settings…";
 "volume.accessibility.label" = "Volume";
 "accessibility.status" = "%@, %@, %@";
 "accessibility.battery" = "Battery %d%%";
@@ -168,7 +168,7 @@
 "wifi.security.open" = "Open";
 "wifi.security.enterprise" = "Enterprise";
 "bluetooth.title" = "Bluetooth";
-"bluetooth.action.openSettings" = "Open Bluetooth Settings";
+"bluetooth.action.openSettings" = "Open Bluetooth Settings…";
 "bluetooth.refresh" = "Refresh devices";
 "bluetooth.off" = "Bluetooth is off.";
 "bluetooth.unavailable" = "Bluetooth is unavailable.";
@@ -244,7 +244,7 @@
 
 "menu.compactQuit" = "Quit";
 
-"menu.compactSettings" = "Settings";
+"menu.compactSettings" = "Settings…";
 
 "media.play" = "Play";
 
@@ -262,7 +262,7 @@
 "settings.clock24" = "24-hour";
 "settings.weatherShortcut" = "Weather setup";
 "settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
-"settings.weatherOpenShortcut" = "Open weather shortcut";
+"settings.weatherOpenShortcut" = "Open weather shortcut…";
 
 "weather.title" = "Weather";
 "weather.temperature" = "Temperature";
@@ -270,7 +270,7 @@
 "weather.source" = "Source";
 "weather.updated" = "Updated %@";
 "weather.loading" = "Loading weather…";
-"weather.openApp" = "Open Weather";
+"weather.openApp" = "Open Weather…";
 
 "weather.low" = "Low";
 "weather.high" = "High";
@@ -279,9 +279,9 @@
 
 "weather.currentLocation" = "Current Location";
 
-"settings.weatherAddCurrent" = "Add current weather";
+"settings.weatherAddCurrent" = "Add current weather…";
 
-"settings.weatherAddForecast" = "Add forecast";
+"settings.weatherAddForecast" = "Add forecast…";
 
 "settings.weatherInstallHelp" = "Shortcuts are included. Add both and confirm system permissions once. Detailed forecasts load only when the weather menu opens.";
 
@@ -311,7 +311,7 @@
 "claude.connect" = "Connect Claude Code";
 "claude.connectHelp" = "Connect your existing Claude Code status line. Glance preserves its output and reads local 5-hour and weekly limits after your next response. No API tokens are used.";
 "claude.setupFailed" = "Install and run Claude Code first, then try connecting again.";
-"shortcut.manageRemove" = "Remove in Shortcuts";
+"shortcut.manageRemove" = "Remove in Shortcuts…";
 "shortcut.removeHelp" = "Delete it in the system Shortcuts library. Returning to Glance updates its installation status.";
 "shortcut.discoveryFailed" = "Unable to check shortcuts. Click refresh to try again.";
 
@@ -325,7 +325,7 @@
 "performance.pressure.critical" = "Critical";
 "performance.memoryHelp" = "Usage includes app, wired and compressed memory, excluding reclaimable cache.";
 "performance.unavailable" = "Performance unavailable";
-"performance.openActivityMonitor" = "Open Activity Monitor";
+"performance.openActivityMonitor" = "Open Activity Monitor…";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "RAM %@";
 
@@ -340,11 +340,11 @@
 "timer.custom" = "Custom duration";
 "timer.minuteUnit" = "min";
 "timer.start" = "Start";
-"footer.openCalendar" = "Open Calendar";
-"footer.openClock" = "Open Clock";
+"footer.openCalendar" = "Open Calendar…";
+"footer.openClock" = "Open Clock…";
 "timer.notificationBody" = "Your countdown is complete.";
 "timer.notificationHelp" = "Notifications are unavailable. The menu bar will still blink when time is up.";
-"timer.openNotifications" = "Open Notification Settings";
+"timer.openNotifications" = "Open Notification Settings…";
 
 "compact.battery" = "Battery";
 "compact.unavailable" = "Unavailable";
@@ -374,3 +374,10 @@
 "settings.screenshotDesktop" = "Desktop (PNG file)";
 "settings.screenshotClipboard" = "Clipboard";
 "screenshot.failed" = "Could not start the screenshot tool. Please try again.";
+
+"bluetooth.connect" = "Connect";
+"bluetooth.disconnect" = "Disconnect";
+"bluetooth.connectionFailed" = "Could not change the connection. Try again or use Bluetooth Settings.";
+"bluetooth.deviceSettings" = "Open AirPods settings…";
+
+"settings.cardTextAutoShrink" = "Automatically shrink card text when space is limited";

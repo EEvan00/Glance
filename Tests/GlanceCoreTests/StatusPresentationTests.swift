@@ -137,10 +137,10 @@ final class StatusPresentationTests: XCTestCase {
 
         XCTAssertEqual(localization.string(.menuSettings), "设置…")
         XCTAssertEqual(localization.string(.wifiActionRequestNameAccess), "允许定位以显示 Wi-Fi 名称")
-        XCTAssertEqual(localization.string(.wifiActionOpenLocationSettings), "去设置中允许定位")
-        XCTAssertEqual(localization.string(.wifiActionOpenSettings), "打开 Wi-Fi 设置")
-        XCTAssertEqual(localization.string(.batteryActionOpenSettings), "打开电源设置")
-        XCTAssertEqual(localization.string(.volumeActionOpenSettings), "打开声音设置")
+        XCTAssertEqual(localization.string(.wifiActionOpenLocationSettings), "去设置中允许定位…")
+        XCTAssertEqual(localization.string(.wifiActionOpenSettings), "打开 Wi-Fi 设置…")
+        XCTAssertEqual(localization.string(.batteryActionOpenSettings), "打开电源设置…")
+        XCTAssertEqual(localization.string(.volumeActionOpenSettings), "打开声音设置…")
     }
 
     func testWiFiSubtitlePrefersSSID() {

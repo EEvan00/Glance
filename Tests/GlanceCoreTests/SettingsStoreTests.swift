@@ -19,6 +19,18 @@ final class SettingsStoreTests: XCTestCase {
         XCTAssertTrue(SettingsStore(defaults: defaults).scrollToAdjustVolume)
     }
 
+    func testCardTextAutoShrinkDefaultsOnAndPersistsDisabledChoice() {
+        let suite = "Glance.CardText.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        XCTAssertTrue(SettingsStore(defaults: defaults).automaticallyShrinksCardText)
+        let settings = SettingsStore(defaults: defaults)
+        settings.automaticallyShrinksCardText = false
+        XCTAssertFalse(SettingsStore(defaults: defaults).automaticallyShrinksCardText)
+        settings.automaticallyShrinksCardText = true
+        XCTAssertTrue(SettingsStore(defaults: defaults).automaticallyShrinksCardText)
+    }
+
     func testDefaultsMatchSpecifiedRange() {
         XCTAssertEqual(SettingsStore.iconSizeRange, 16...36)
 

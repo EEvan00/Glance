@@ -51,6 +51,7 @@ final class SettingsRowHitAreaTests: XCTestCase {
             openWiFiSettings: {},
             openLocationSettings: {},
             openBluetoothSettings: {},
+            openBluetoothDeviceSettings: { _ in },
             openSettings: {},
             openCalendar: {},
             openClock: {},

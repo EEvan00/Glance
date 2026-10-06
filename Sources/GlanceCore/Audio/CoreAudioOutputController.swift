@@ -4,7 +4,7 @@ import Darwin
 import Foundation
 
 @MainActor
-final class CoreAudioOutputController: AudioOutputControlling {
+final class CoreAudioOutputController: AudioOutputControlling, BluetoothDeviceVolumeControlling {
     private let systemObjectID = AudioObjectID(kAudioObjectSystemObject)
 
     func outputDevices() -> [AudioOutputDevice] {
@@ -41,6 +41,18 @@ final class CoreAudioOutputController: AudioOutputControlling {
     func setVolume(_ scalar: Double) -> Bool {
         guard let deviceID = defaultOutputDeviceID() else { return false }
 
+        guard setVolume(scalar, deviceID: deviceID) else { return false }
+
+        if isMuted(for: deviceID) {
+            _ = setMuted(false, for: deviceID)
+        }
+        return true
+    }
+
+    /// Targets a specific device without changing the default output or mute.
+    @discardableResult
+    func setVolume(_ scalar: Double, deviceID: AudioDeviceID) -> Bool {
+        guard scalar.isFinite, deviceID != kAudioObjectUnknown else { return false }
         let volume = Float32(min(1, max(0, scalar)))
         var didSetVolume = setScalarProperty(
             volume,
@@ -64,12 +76,7 @@ final class CoreAudioOutputController: AudioOutputControlling {
             }
         }
 
-        guard didSetVolume else { return false }
-
-        if isMuted(for: deviceID) {
-            _ = setMuted(false, for: deviceID)
-        }
-        return true
+        return didSetVolume
     }
 
     @discardableResult

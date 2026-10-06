@@ -12,6 +12,11 @@ enum BluetoothWorkerResult: Sendable {
 
 protocol BluetoothPairedDeviceReading: AnyObject {
     func read(completion: @escaping @Sendable (BluetoothWorkerResult) -> Void)
+    func invalidateMetadata()
+}
+
+extension BluetoothPairedDeviceReading {
+    func invalidateMetadata() {}
 }
 
 @MainActor
@@ -27,6 +32,15 @@ protocol BluetoothStateMonitoring: AnyObject {
 /// appear as paired devices.
 final class IOBluetoothPairedDeviceWorker: @unchecked Sendable, BluetoothPairedDeviceReading {
     private let queue = DispatchQueue(label: "Glance.IOBluetoothPairedDeviceWorker")
+    // Accessed only on queue. At most one system report per minute while the
+    // popup is active; reconnecting a device invalidates the cached snapshot.
+    private var metadata: [String: BluetoothDeviceMetadata] = [:]
+    private var metadataReadAt: Date?
+    private var metadataConnectedIDs: Set<String> = []
+
+    func invalidateMetadata() {
+        queue.async { self.metadataReadAt = nil }
+    }
 
     func read(completion: @escaping @Sendable (BluetoothWorkerResult) -> Void) {
         queue.async {
@@ -47,15 +61,24 @@ final class IOBluetoothPairedDeviceWorker: @unchecked Sendable, BluetoothPairedD
                 return
             }
 
+            let connectedIDs = Set(pairedDevices.filter { $0.isConnected() }.compactMap(\.addressString))
+            if self.metadataReadAt == nil || Date().timeIntervalSince(self.metadataReadAt!) >= 60 || connectedIDs != self.metadataConnectedIDs {
+                self.metadata = SystemProfilerBluetoothMetadata.read()
+                self.metadataReadAt = Date()
+                self.metadataConnectedIDs = connectedIDs
+            }
             let devices = pairedDevices.compactMap { device -> BluetoothDevice? in
                 guard let identifier = device.addressString, !identifier.isEmpty else { return nil }
-                let name = device.nameOrAddress ?? identifier
-                return BluetoothDevice(
+                let details = self.metadata[BluetoothDeviceMetadata.addressKey(identifier)]
+                let name = details?.name ?? device.nameOrAddress ?? identifier
+                let item = BluetoothDevice(
                     id: identifier,
                     name: name,
                     kind: self.kind(for: Int(device.deviceClassMajor)),
-                    isConnected: device.isConnected()
+                    isConnected: device.isConnected(),
+                    metadata: details
                 )
+                return BluetoothDevicePresentation.isVisibleAccessory(item) ? item : nil
             }
             completion(.success(devices))
         }
@@ -135,6 +158,11 @@ final class CoreBluetoothStateMonitor: NSObject, @preconcurrency CBCentralManage
 final class BluetoothDeviceController: ObservableObject {
     @Published private(set) var devices: [BluetoothDevice] = []
     @Published private(set) var availability: BluetoothAvailability = .idle
+    @Published private(set) var connectionDeviceID: String?
+    @Published private(set) var connectionFailedDeviceID: String?
+
+    private let volumeRestorer: BluetoothVolumeRestorer
+    private let connections: any BluetoothConnectionManaging
 
     private let worker: any BluetoothPairedDeviceReading
     private let stateMonitor: any BluetoothStateMonitoring
@@ -143,16 +171,22 @@ final class BluetoothDeviceController: ObservableObject {
     private var isActive = false
     private var requestGate = AsyncRequestGate()
     private var periodicRefreshTask: Task<Void, Never>?
+    private var connectionRefreshTask: Task<Void, Never>?
+    private var connectionGeneration = 0
     private var applicationObserver: NSObjectProtocol?
     private var wakeObserver: NSObjectProtocol?
 
     init(
         worker: any BluetoothPairedDeviceReading = IOBluetoothPairedDeviceWorker(),
+        connections: any BluetoothConnectionManaging = IOBluetoothConnectionManager(),
+        volumeRestorer: BluetoothVolumeRestorer = BluetoothVolumeRestorer(),
         stateMonitor: any BluetoothStateMonitoring = CoreBluetoothStateMonitor(),
         notificationCenter: NotificationCenter = .default,
         workspaceNotificationCenter: NotificationCenter = NSWorkspace.shared.notificationCenter
     ) {
         self.worker = worker
+        self.connections = connections
+        self.volumeRestorer = volumeRestorer
         self.stateMonitor = stateMonitor
         self.notificationCenter = notificationCenter
         self.workspaceNotificationCenter = workspaceNotificationCenter
@@ -163,6 +197,7 @@ final class BluetoothDeviceController: ObservableObject {
 
     deinit {
         periodicRefreshTask?.cancel()
+        connectionRefreshTask?.cancel()
     }
 
 
@@ -186,6 +221,10 @@ final class BluetoothDeviceController: ObservableObject {
     func deactivate() {
         guard isActive else { return }
         isActive = false
+        connectionGeneration += 1
+        connectionRefreshTask?.cancel()
+        connectionRefreshTask = nil
+        connectionDeviceID = nil
         _ = requestGate.advance()
         periodicRefreshTask?.cancel()
         periodicRefreshTask = nil
@@ -194,8 +233,9 @@ final class BluetoothDeviceController: ObservableObject {
         // Closing the detail view does not invalidate the last known state.
     }
 
-    func refresh() {
-        guard isActive, availability == .available else { return }
+    func refresh(forceMetadata: Bool = false) {
+        guard isActive, availability == .available, connectionDeviceID == nil else { return }
+        if forceMetadata { worker.invalidateMetadata() }
         let request = requestGate.advance()
         worker.read { [weak self] result in
             Task { @MainActor [weak self] in
@@ -215,6 +255,63 @@ final class BluetoothDeviceController: ObservableObject {
                 }
             }
         }
+    }
+
+    func toggleConnection(to device: BluetoothDevice) {
+        guard isActive, availability == .available, connectionDeviceID == nil,
+              let current = devices.first(where: { $0.id == device.id }) else { return }
+        connectionDeviceID = current.id
+        connectionFailedDeviceID = nil
+        connectionGeneration += 1
+        let generation = connectionGeneration
+        let desired = !current.isConnected
+        if !desired { volumeRestorer.capture(current) }
+        _ = requestGate.advance()
+        connections.setConnected(desired, deviceID: current.id) { [weak self] success in
+            Task { @MainActor [weak self] in
+                guard let self, self.isActive, self.connectionGeneration == generation else { return }
+                guard success else {
+                    self.connectionDeviceID = nil
+                    self.connectionFailedDeviceID = current.id
+                    self.refresh()
+                    return
+                }
+                self.connectionRefreshTask = Task { @MainActor [weak self] in
+                    await self?.confirmConnection(deviceID: current.id, desired: desired, generation: generation)
+                }
+            }
+        }
+    }
+
+    private func confirmConnection(deviceID: String, desired: Bool, generation: Int) async {
+        var confirmed = false
+        // A successful API return is not proof that the paired-device snapshot
+        // has changed yet. Publish each fresh snapshot until it confirms the
+        // requested state, and keep the action busy in the meantime.
+        for attempt in 0..<16 {
+            guard !Task.isCancelled, isActive, connectionGeneration == generation else { return }
+            let result: BluetoothWorkerResult = await withCheckedContinuation { continuation in
+                worker.read { continuation.resume(returning: $0) }
+            }
+            guard !Task.isCancelled, isActive, connectionGeneration == generation else { return }
+            guard case let .success(updated) = result else { break }
+            devices = updated
+            if updated.first(where: { $0.id == deviceID })?.isConnected == desired {
+                if desired, volumeRestorer.restore(deviceID) == nil {
+                    // Bluetooth can connect before CoreAudio publishes the
+                    // endpoint. Wait for its persistent UID before restoring.
+                } else {
+                    confirmed = true
+                    break
+                }
+            }
+            if attempt < 15 {
+                do { try await Task.sleep(for: .milliseconds(250)) } catch { return }
+            }
+        }
+        connectionDeviceID = nil
+        connectionFailedDeviceID = confirmed ? nil : deviceID
+        connectionRefreshTask = nil
     }
 
     private func receiveSystemState(

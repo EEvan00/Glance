@@ -70,6 +70,10 @@ struct BluetoothStatusView: View {
 
 struct BluetoothDeviceListView: View {
     @ObservedObject var controller: BluetoothDeviceController
+    @ObservedObject var settings: SettingsStore
+    let volume: VolumeStatus
+    let onSelectOutputDevice: (AudioOutputDevice) -> Void
+    let onOpenDeviceSettings: (BluetoothDevice) -> Void
     @EnvironmentObject private var localization: Localization
     let onBack: () -> Void
     let onOpenBluetoothSettings: () -> Void
@@ -86,7 +90,7 @@ struct BluetoothDeviceListView: View {
                 Text(localization.string(.bluetoothTitle))
                     .font(.headline)
                 Spacer()
-                Button(action: { controller.refresh() }) {
+                Button(action: { controller.refresh(forceMetadata: true) }) {
                     Image(systemName: "arrow.clockwise")
                 }
                 .buttonStyle(.plain)
@@ -104,9 +108,6 @@ struct BluetoothDeviceListView: View {
                         }
                     }
                     message
-                    Text(localization.string(.bluetoothPairedDeviceLimit))
-                        .font(.caption2)
-                        .foregroundStyle(.primary.opacity(0.78))
                 }
             }
             .frame(maxHeight: 330)
@@ -122,25 +123,62 @@ struct BluetoothDeviceListView: View {
         .onDisappear { controller.deactivate() }
     }
 
+    @State private var expandedDeviceID: String?
+
     private func section(_ title: String, devices: [BluetoothDevice]) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.primary.opacity(0.78))
             ForEach(devices) { device in
-                HStack(spacing: 10) {
-                    Image(systemName: icon(for: device.kind))
-                        .frame(width: 16)
-                        .foregroundStyle(.primary.opacity(0.78))
-                    Text(device.name)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                    Spacer()
-                    Text(device.isConnected ? localization.string(.bluetoothConnected) : localization.string(.bluetoothNotConnected))
-                        .font(.caption)
-                        .foregroundStyle(.primary.opacity(0.78))
+                VStack(alignment: .leading, spacing: 8) {
+                    Button {
+                        expandedDeviceID = expandedDeviceID == device.id ? nil : device.id
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: BluetoothDevicePresentation.symbolName(for: device))
+                                .font(.system(size: CompactPopupLayout.moduleIconSize))
+                                .frame(width: 16)
+                                .foregroundStyle(.primary.opacity(0.78))
+                            Text(device.name)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                            Spacer()
+                            Text(device.isConnected ? localization.string(.bluetoothConnected) : localization.string(.bluetoothNotConnected))
+                                .font(.caption)
+                                .foregroundStyle(.primary.opacity(0.78))
+                            PopupChevron(symbol: expandedDeviceID == device.id ? "chevron.up" : "chevron.down")
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+
+                    if expandedDeviceID == device.id {
+                        HStack(spacing: 8) {
+                            Button(localization.string(device.isConnected ? .bluetoothDisconnect : .bluetoothConnect)) {
+                                controller.toggleConnection(to: device)
+                            }
+                            .disabled(controller.connectionDeviceID != nil)
+                            if controller.connectionDeviceID == device.id {
+                                ProgressView().controlSize(.small)
+                            }
+                        }
+                        if controller.connectionFailedDeviceID == device.id {
+                            Text(localization.string(.bluetoothConnectionFailed))
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        }
+                        if device.isConnected && BluetoothDevicePresentation.isAudioDevice(device) {
+                            Text(localization.string(.volumeOutputTitle))
+                                .font(.caption.weight(.semibold))
+                            OutputDeviceList(settings: settings, devices: volume.outputDevices, onSelect: onSelectOutputDevice)
+                            Button(localization.string(BluetoothDevicePresentation.isAirPods(device) ? .bluetoothDeviceSettings : .bluetoothActionOpenSettings)) {
+                                onOpenDeviceSettings(device)
+                            }
+                                .buttonStyle(.plain)
+                        }
+                    }
                 }
-                .accessibilityElement(children: .combine)
             }
         }
     }
@@ -188,13 +226,4 @@ struct BluetoothDeviceListView: View {
         }
     }
 
-    private func icon(for kind: BluetoothDeviceKind) -> String {
-        switch kind {
-        case .computer: "laptopcomputer"
-        case .phone: "iphone"
-        case .audio: "headphones"
-        case .peripheral: "computermouse"
-        case .unknown: "bluetooth"
-        }
-    }
 }

@@ -10,7 +10,7 @@
 "settings.launchAtLogin" = "Apri al login";
 "settings.launchAtLogin.description" = "Avvia Glance automaticamente all’accesso.";
 "settings.launchAtLogin.requiresApproval" = "In attesa di approvazione. Consenti Glance in Impostazioni di Sistema › Generali › Elementi login.";
-"settings.launchAtLogin.openLoginItems" = "Apri elementi login";
+"settings.launchAtLogin.openLoginItems" = "Apri elementi login…";
 "settings.launchAtLogin.failure" = "Impossibile aggiornare l’elemento login. Puoi gestirlo in Impostazioni di Sistema › Generali › Elementi login.";
 "settings.iconSize" = "Dimensione icona";
 "settings.iconSize.accessibilityValue" = "%d punti";
@@ -66,7 +66,7 @@
 "battery.state.lowPowerMode" = "Risparmio energia";
 "battery.state.connectedToPower" = "Alimentazione collegata";
 "battery.state.onBattery" = "A batteria";
-"battery.action.openSettings" = "Apri impostazioni batteria";
+"battery.action.openSettings" = "Apri impostazioni batteria…";
 "battery.accessibility.value" = "Batteria %d%%";
 "common.parenthetical" = "%@ (%@)";
 "common.labelValue" = "%@, %@";
@@ -89,8 +89,8 @@
 "wifi.subtitle.shared" = "Condivisione di internet";
 "wifi.subtitle.unavailable" = "Impossibile leggere lo stato della rete";
 "wifi.action.requestNameAccess" = "Consenti posizione per mostrare il nome Wi‑Fi";
-"wifi.action.openLocationSettings" = "Consenti posizione in Impostazioni";
-"wifi.action.openSettings" = "Apri impostazioni Wi‑Fi";
+"wifi.action.openLocationSettings" = "Consenti posizione in Impostazioni…";
+"wifi.action.openSettings" = "Apri impostazioni Wi‑Fi…";
 "wifi.accessibility.withSSID" = "Wi‑Fi %@, %@";
 "ethernet.accessibility.connected" = "Ethernet connesso";
 "volume.title" = "Volume · %d%%";
@@ -106,7 +106,7 @@
 "volume.output.unknownDevice" = "Dispositivo di uscita sconosciuto";
 "volume.output.expand" = "Espandi";
 "volume.output.collapse" = "Comprimi";
-"volume.action.openSettings" = "Apri impostazioni audio";
+"volume.action.openSettings" = "Apri impostazioni audio…";
 "volume.accessibility.label" = "Volume";
 "accessibility.status" = "%@, %@, %@";
 "accessibility.battery" = "Batteria %d%%";
@@ -168,7 +168,7 @@
 "wifi.security.open" = "Open";
 "wifi.security.enterprise" = "Enterprise";
 "bluetooth.title" = "Bluetooth";
-"bluetooth.action.openSettings" = "Open Bluetooth Settings";
+"bluetooth.action.openSettings" = "Open Bluetooth Settings…";
 "bluetooth.refresh" = "Refresh devices";
 "bluetooth.off" = "Bluetooth is off.";
 "bluetooth.unavailable" = "Bluetooth is unavailable.";
@@ -244,7 +244,7 @@
 
 "menu.compactQuit" = "Esci";
 
-"menu.compactSettings" = "Impostazioni";
+"menu.compactSettings" = "Impostazioni…";
 
 "media.play" = "Riproduci";
 
@@ -262,7 +262,7 @@
 "settings.clock24" = "24-hour";
 "settings.weatherShortcut" = "Weather setup";
 "settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
-"settings.weatherOpenShortcut" = "Open weather shortcut";
+"settings.weatherOpenShortcut" = "Open weather shortcut…";
 
 "weather.title" = "Weather";
 "weather.temperature" = "Temperature";
@@ -270,7 +270,7 @@
 "weather.source" = "Source";
 "weather.updated" = "Updated %@";
 "weather.loading" = "Loading weather…";
-"weather.openApp" = "Open Weather";
+"weather.openApp" = "Open Weather…";
 
 "weather.low" = "Low";
 "weather.high" = "High";
@@ -279,9 +279,9 @@
 
 "weather.currentLocation" = "Current Location";
 
-"settings.weatherAddCurrent" = "Add current weather";
+"settings.weatherAddCurrent" = "Add current weather…";
 
-"settings.weatherAddForecast" = "Add forecast";
+"settings.weatherAddForecast" = "Add forecast…";
 
 "settings.weatherInstallHelp" = "Shortcuts are included. Add both and confirm system permissions once. Detailed forecasts load only when the weather menu opens.";
 
@@ -311,7 +311,7 @@
 "claude.connect" = "Connect Claude Code";
 "claude.connectHelp" = "Connect your existing Claude Code status line. Glance preserves its output and reads local 5-hour and weekly limits after your next response. No API tokens are used.";
 "claude.setupFailed" = "Install and run Claude Code first, then try connecting again.";
-"shortcut.manageRemove" = "Remove in Shortcuts";
+"shortcut.manageRemove" = "Remove in Shortcuts…";
 "shortcut.removeHelp" = "Delete it in the system Shortcuts library. Returning to Glance updates its installation status.";
 "shortcut.discoveryFailed" = "Unable to check shortcuts. Click refresh to try again.";
 
@@ -325,7 +325,7 @@
 "performance.pressure.critical" = "Critical";
 "performance.memoryHelp" = "Usage includes app, wired and compressed memory, excluding reclaimable cache.";
 "performance.unavailable" = "Performance unavailable";
-"performance.openActivityMonitor" = "Open Activity Monitor";
+"performance.openActivityMonitor" = "Open Activity Monitor…";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "RAM %@";
 
@@ -340,11 +340,11 @@
 "timer.custom" = "Durata personalizzata";
 "timer.minuteUnit" = "min";
 "timer.start" = "Avvia";
-"footer.openCalendar" = "Apri Calendario";
-"footer.openClock" = "Apri Orologio";
+"footer.openCalendar" = "Apri Calendario…";
+"footer.openClock" = "Apri Orologio…";
 "timer.notificationBody" = "Il conto alla rovescia è terminato.";
 "timer.notificationHelp" = "Le notifiche non sono disponibili. La barra dei menu lampeggerà alla fine.";
-"timer.openNotifications" = "Apri impostazioni notifiche";
+"timer.openNotifications" = "Apri impostazioni notifiche…";
 
 "compact.battery" = "Batteria";
 "compact.unavailable" = "Non disponibile";
@@ -374,3 +374,10 @@
 "settings.screenshotDesktop" = "Scrivania (file PNG)";
 "settings.screenshotClipboard" = "Appunti";
 "screenshot.failed" = "Impossibile avviare lo strumento screenshot. Riprova.";
+
+"bluetooth.connect" = "Connetti";
+"bluetooth.disconnect" = "Disconnetti";
+"bluetooth.connectionFailed" = "Impossibile modificare la connessione. Riprova o usa le impostazioni Bluetooth.";
+"bluetooth.deviceSettings" = "Apri impostazioni AirPods…";
+
+"settings.cardTextAutoShrink" = "Riduci automaticamente il testo delle schede quando lo spazio è limitato";

@@ -280,6 +280,7 @@ struct StatusPopoverView: View {
     let openWiFiSettings: () -> Void
     let openLocationSettings: () -> Void
     let openBluetoothSettings: () -> Void
+    let openBluetoothDeviceSettings: (BluetoothDevice) -> Void
     let openSettings: () -> Void
     let openCalendar: () -> Void
     let openClock: () -> Void
@@ -330,6 +331,10 @@ struct StatusPopoverView: View {
             case .bluetooth:
                 BluetoothDeviceListView(
                     controller: store.bluetoothDevices,
+                    settings: settings,
+                    volume: store.snapshot.volume,
+                    onSelectOutputDevice: { store.selectOutputDevice($0) },
+                    onOpenDeviceSettings: openBluetoothDeviceSettings,
                     onBack: { panel = .summary },
                     onOpenBluetoothSettings: openBluetoothSettings
                 )
@@ -572,12 +577,12 @@ struct StatusPopoverView: View {
                 }.frame(width: CompactPopupLayout.unit)
                     .offset(x: 1)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.system(size: 12, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.85)
-                    Text(subtitle).font(.system(size: 10)).foregroundStyle(.primary.opacity(0.78)).lineLimit(1).minimumScaleFactor(0.85)
+                    Text(title).font(.system(size: 12, weight: .semibold)).lineLimit(1).minimumScaleFactor(settings.automaticallyShrinksCardText ? 0.85 : 1)
+                    Text(subtitle).font(.system(size: 10)).foregroundStyle(.primary.opacity(0.78)).lineLimit(1).minimumScaleFactor(settings.automaticallyShrinksCardText ? 0.85 : 1)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, CompactPopupLayout.gap)
-                PopupChevron(alignsToModuleEdge: true)
+                PopupChevron(alignsToModuleEdge: true, fitsSymbolWidth: true)
                     .padding(.leading, CompactPopupLayout.gap)
             }
             .frame(maxWidth: .infinity)

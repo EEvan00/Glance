@@ -10,7 +10,7 @@
 "settings.launchAtLogin" = "ログイン時に起動";
 "settings.launchAtLogin.description" = "ログイン時に Glance を自動で起動します。";
 "settings.launchAtLogin.requiresApproval" = "承認待ちです。「システム設定 › 一般 › ログイン項目」で Glance を許可してください。";
-"settings.launchAtLogin.openLoginItems" = "ログイン項目を開く";
+"settings.launchAtLogin.openLoginItems" = "ログイン項目を開く…";
 "settings.launchAtLogin.failure" = "ログイン項目を更新できませんでした。「システム設定 › 一般 › ログイン項目」で管理できます。";
 "settings.iconSize" = "アイコンの表示サイズ";
 "settings.iconSize.accessibilityValue" = "%d ポイント";
@@ -66,7 +66,7 @@
 "battery.state.lowPowerMode" = "低電力モード";
 "battery.state.connectedToPower" = "電源に接続";
 "battery.state.onBattery" = "バッテリー駆動";
-"battery.action.openSettings" = "バッテリー設定を開く";
+"battery.action.openSettings" = "バッテリー設定を開く…";
 "battery.accessibility.value" = "バッテリー %d%%";
 "common.parenthetical" = "%@（%@）";
 "common.labelValue" = "%@ %@";
@@ -89,8 +89,8 @@
 "wifi.subtitle.shared" = "インターネットを共有中";
 "wifi.subtitle.unavailable" = "ネットワーク状態を読み取れません";
 "wifi.action.requestNameAccess" = "位置情報を許可してWi-Fi名を表示";
-"wifi.action.openLocationSettings" = "設定で位置情報を許可";
-"wifi.action.openSettings" = "Wi-Fi設定を開く";
+"wifi.action.openLocationSettings" = "設定で位置情報を許可…";
+"wifi.action.openSettings" = "Wi-Fi設定を開く…";
 "wifi.accessibility.withSSID" = "Wi-Fi %@、%@";
 "ethernet.accessibility.connected" = "イーサネット接続済み";
 "volume.title" = "音量 · %d%%";
@@ -106,7 +106,7 @@
 "volume.output.unknownDevice" = "不明な出力デバイス";
 "volume.output.expand" = "展開";
 "volume.output.collapse" = "折りたたむ";
-"volume.action.openSettings" = "サウンド設定を開く";
+"volume.action.openSettings" = "サウンド設定を開く…";
 "volume.accessibility.label" = "音量";
 "accessibility.status" = "%@、%@、%@";
 "accessibility.battery" = "バッテリー %d%%";
@@ -168,7 +168,7 @@
 "wifi.security.open" = "Open";
 "wifi.security.enterprise" = "Enterprise";
 "bluetooth.title" = "Bluetooth";
-"bluetooth.action.openSettings" = "Open Bluetooth Settings";
+"bluetooth.action.openSettings" = "Open Bluetooth Settings…";
 "bluetooth.refresh" = "Refresh devices";
 "bluetooth.off" = "Bluetooth is off.";
 "bluetooth.unavailable" = "Bluetooth is unavailable.";
@@ -244,7 +244,7 @@
 
 "menu.compactQuit" = "終了";
 
-"menu.compactSettings" = "設定";
+"menu.compactSettings" = "設定…";
 
 "media.play" = "再生";
 
@@ -262,7 +262,7 @@
 "settings.clock24" = "24-hour";
 "settings.weatherShortcut" = "Weather setup";
 "settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
-"settings.weatherOpenShortcut" = "Open weather shortcut";
+"settings.weatherOpenShortcut" = "Open weather shortcut…";
 
 "weather.title" = "Weather";
 "weather.temperature" = "Temperature";
@@ -270,7 +270,7 @@
 "weather.source" = "Source";
 "weather.updated" = "Updated %@";
 "weather.loading" = "Loading weather…";
-"weather.openApp" = "Open Weather";
+"weather.openApp" = "Open Weather…";
 
 "weather.low" = "Low";
 "weather.high" = "High";
@@ -279,9 +279,9 @@
 
 "weather.currentLocation" = "Current Location";
 
-"settings.weatherAddCurrent" = "Add current weather";
+"settings.weatherAddCurrent" = "Add current weather…";
 
-"settings.weatherAddForecast" = "Add forecast";
+"settings.weatherAddForecast" = "Add forecast…";
 
 "settings.weatherInstallHelp" = "Shortcuts are included. Add both and confirm system permissions once. Detailed forecasts load only when the weather menu opens.";
 
@@ -311,7 +311,7 @@
 "claude.connect" = "Connect Claude Code";
 "claude.connectHelp" = "Connect your existing Claude Code status line. Glance preserves its output and reads local 5-hour and weekly limits after your next response. No API tokens are used.";
 "claude.setupFailed" = "Install and run Claude Code first, then try connecting again.";
-"shortcut.manageRemove" = "Remove in Shortcuts";
+"shortcut.manageRemove" = "Remove in Shortcuts…";
 "shortcut.removeHelp" = "Delete it in the system Shortcuts library. Returning to Glance updates its installation status.";
 "shortcut.discoveryFailed" = "Unable to check shortcuts. Click refresh to try again.";
 
@@ -325,7 +325,7 @@
 "performance.pressure.critical" = "Critical";
 "performance.memoryHelp" = "Usage includes app, wired and compressed memory, excluding reclaimable cache.";
 "performance.unavailable" = "Performance unavailable";
-"performance.openActivityMonitor" = "Open Activity Monitor";
+"performance.openActivityMonitor" = "Open Activity Monitor…";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "RAM %@";
 
@@ -340,11 +340,11 @@
 "timer.custom" = "カスタム時間";
 "timer.minuteUnit" = "分";
 "timer.start" = "開始";
-"footer.openCalendar" = "カレンダーを開く";
-"footer.openClock" = "時計を開く";
+"footer.openCalendar" = "カレンダーを開く…";
+"footer.openClock" = "時計を開く…";
 "timer.notificationBody" = "カウントダウンが終了しました。";
 "timer.notificationHelp" = "通知を利用できません。終了時にはメニューバーが点滅します。";
-"timer.openNotifications" = "通知設定を開く";
+"timer.openNotifications" = "通知設定を開く…";
 
 "compact.battery" = "電池";
 "compact.unavailable" = "利用不可";
@@ -374,3 +374,10 @@
 "settings.screenshotDesktop" = "デスクトップ（PNG）";
 "settings.screenshotClipboard" = "クリップボード";
 "screenshot.failed" = "スクリーンショットツールを起動できませんでした。再試行してください。";
+
+"bluetooth.connect" = "接続";
+"bluetooth.disconnect" = "接続解除";
+"bluetooth.connectionFailed" = "接続を変更できませんでした。再試行するか、Bluetooth設定を使用してください。";
+"bluetooth.deviceSettings" = "AirPods設定を開く…";
+
+"settings.cardTextAutoShrink" = "スペースが足りないときにカードの文字を自動縮小";

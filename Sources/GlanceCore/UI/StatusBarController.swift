@@ -300,6 +300,7 @@ final class StatusBarController: NSObject {
                 openWiFiSettings: handleOpenWiFiSettings,
                 openLocationSettings: handleOpenLocationSettings,
                 openBluetoothSettings: handleOpenBluetoothSettings,
+                openBluetoothDeviceSettings: { [weak self] device in self?.handleOpenBluetoothDeviceSettings(device) },
                 openSettings: handleOpenSettings,
                 openCalendar: { [weak self] in
                     self?.popover.performClose(nil)
@@ -584,6 +585,18 @@ final class StatusBarController: NSObject {
     private func handleOpenBluetoothSettings() {
         popover.performClose(nil)
         Self.openSystemSettings(Self.bluetoothSettingsURLs)
+    }
+
+    private func handleOpenBluetoothDeviceSettings(_ device: BluetoothDevice) {
+        popover.performClose(nil)
+        Self.openSystemSettings(Self.bluetoothDeviceSettingsURLs(for: device))
+    }
+
+    static func bluetoothDeviceSettingsURLs(for device: BluetoothDevice) -> [URL] {
+        if BluetoothDevicePresentation.isAirPods(device) {
+            return [URL(string: "x-apple.systempreferences:com.apple.HeadphoneSettings")!]
+        }
+        return bluetoothSettingsURLs
     }
 
     static let batterySettingsURLs = [

@@ -4,6 +4,7 @@ import SwiftUI
 struct PopupChevron: View {
     var symbol = "chevron.right"
     var alignsToModuleEdge = false
+    var fitsSymbolWidth = false
 
     private var isHorizontal: Bool {
         symbol == "chevron.right" || symbol == "chevron.backward"
@@ -13,7 +14,7 @@ struct PopupChevron: View {
         Image(systemName: symbol)
             .font(.system(size: alignsToModuleEdge ? 12 : 11, weight: alignsToModuleEdge ? .medium : .semibold))
             .foregroundStyle(.secondary)
-            .frame(width: isHorizontal ? (alignsToModuleEdge ? CompactPopupLayout.unit : 12) : 28,
+            .frame(width: isHorizontal ? (fitsSymbolWidth ? nil : (alignsToModuleEdge ? CompactPopupLayout.unit : 12)) : 28,
                    height: 24, alignment: alignsToModuleEdge ? .trailing : .center)
             .padding(.trailing, alignsToModuleEdge ? CompactPopupLayout.moduleTextInset : 0)
             .contentShape(ChevronHitArea(expands: isHorizontal))
