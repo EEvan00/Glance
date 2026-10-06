@@ -15,15 +15,11 @@ enum BundledWeatherShortcut: String, CaseIterable {
 
 struct WeatherShortcutInstallButtons: View {
     @ObservedObject var localization: Localization
-
+    var purpose: ShortcutManagementView.Purpose = .missingOnly
     var body: some View {
-        HStack {
-            Button(localization.string(.settingsWeatherAddCurrent)) {
-                BundledWeatherShortcut.current.openInstaller()
-            }
-            Button(localization.string(.settingsWeatherAddForecast)) {
-                BundledWeatherShortcut.forecast.openInstaller()
-            }
-        }.buttonStyle(.bordered).controlSize(.small)
+        ShortcutManagementView(items: [
+            .init(name: BundledWeatherShortcut.current.rawValue, addLabel: .settingsWeatherAddCurrent, resource: BundledWeatherShortcut.current.url),
+            .init(name: BundledWeatherShortcut.forecast.rawValue, addLabel: .settingsWeatherAddForecast, resource: BundledWeatherShortcut.forecast.url)
+        ], purpose: purpose)
     }
 }

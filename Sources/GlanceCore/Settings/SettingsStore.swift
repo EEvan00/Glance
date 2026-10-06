@@ -251,6 +251,10 @@ final class SettingsStore: ObservableObject {
         )
     }
 
+    @Published var popupUtility: PopupUtility {
+        didSet { defaults.set(popupUtility.rawValue, forKey: "popupUtility") }
+    }
+
     @Published var scrollToAdjustVolume: Bool {
         didSet { defaults.set(scrollToAdjustVolume, forKey: "scrollToAdjustVolume") }
     }
@@ -275,6 +279,7 @@ final class SettingsStore: ObservableObject {
             }
             defaults.set(true, forKey: "glanceImportedLegacyPreferences")
         }
+        self.popupUtility = defaults.string(forKey: "popupUtility").flatMap(PopupUtility.init(rawValue:)) ?? .performance
         self.scrollToAdjustVolume = defaults.object(forKey: "scrollToAdjustVolume") as? Bool ?? false
         self.uses24HourClock = defaults.object(forKey: "uses24HourClock") as? Bool ?? true
         let storedIconSize = (defaults.object(forKey: Self.iconSizeDefaultsKey) as? NSNumber)?.doubleValue

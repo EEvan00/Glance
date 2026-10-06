@@ -38,6 +38,8 @@ final class SettingsRowHitAreaTests: XCTestCase {
             store: store,
             settings: settings,
             magSafeLED: .unavailable(),
+            performance: PerformanceController(),
+            claudeUsage: ClaudeUsageController(),
             codexUsage: CodexUsageController(),
             weather: WeatherController(),
             weatherForecast: WeatherController(),

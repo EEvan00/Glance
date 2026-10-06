@@ -23,6 +23,9 @@ final class StatusBarController: NSObject {
 
     private let statusItem: NSStatusItem
     private let popover = StatusPopupPanel()
+    private let performance = PerformanceController()
+    private let claudeUsage = ClaudeUsageController()
+    private var utilityCancellable: AnyCancellable?
     private let codexUsage = CodexUsageController()
     private let weather = WeatherController()
     private let weatherForecast = WeatherController()
@@ -83,6 +86,13 @@ final class StatusBarController: NSObject {
             .sink { [weak self] _ in
                 self?.renderLatestSnapshot()
             }
+
+        utilityCancellable = settings.$popupUtility.removeDuplicates().sink { [weak self] utility in
+            guard let self else { return }
+            self.performance.setVisible(self.popover.isShown && utility == .performance)
+            self.codexUsage.setVisible(self.popover.isShown && utility == .codex)
+            self.claudeUsage.setVisible(self.popover.isShown && utility == .claude)
+        }
 
         iconSizeCancellable = settings.$iconSize
             .removeDuplicates()
@@ -249,6 +259,8 @@ final class StatusBarController: NSObject {
                 store: store,
                 settings: settings,
                 magSafeLED: magSafeLED,
+                performance: performance,
+                claudeUsage: claudeUsage,
                 codexUsage: codexUsage,
                 weather: weather,
                 weatherForecast: weatherForecast,
@@ -289,7 +301,9 @@ final class StatusBarController: NSObject {
         } else {
             store.setPopoverVisible(true)
             brightness.refresh()
-            codexUsage.setVisible(true)
+            performance.setVisible(settings.popupUtility == .performance)
+            codexUsage.setVisible(settings.popupUtility == .codex)
+            claudeUsage.setVisible(settings.popupUtility == .claude)
             weather.setVisible(true, shortcutName: settings.weatherShortcutName)
             nowPlaying.setVisible(true)
             installPopoverContentIfNeeded()
@@ -422,7 +436,9 @@ final class StatusBarController: NSObject {
         removePopoverDismissMonitor()
         removeVolumeScrollMonitor()
         store.setPopoverVisible(false)
+        performance.setVisible(false)
         codexUsage.setVisible(false)
+        claudeUsage.setVisible(false)
         weather.setVisible(false, shortcutName: settings.weatherShortcutName)
         weatherForecast.setVisible(false, shortcutName: settings.weatherForecastShortcutName)
         nowPlaying.setVisible(false)

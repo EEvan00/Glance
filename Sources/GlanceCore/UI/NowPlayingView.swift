@@ -96,7 +96,7 @@ private struct MediaSeekSlider: View {
 
     var body: some View {
         if item.progress(at: .now) != nil {
-            Slider(value: $draft, in: 0...1, onEditingChanged: { editing in
+            MediaProgressSlider(value: $draft, onEditingChanged: { editing in
                 isEditing = editing
                 if editing {
                     seekSession.begin(item)
@@ -117,7 +117,7 @@ private struct MediaSeekSlider: View {
                 if !isEditing { draft = item.progress(at: date) ?? 0 }
             }
             .onDisappear { seekSession.cancel(); isEditing = false }
-            .controlSize(.mini).tint(Color(white: 0.72))
+            .controlSize(.mini)
             .disabled(item.canSeek != true)
             .accessibilityLabel("\(localization.string(.mediaProgress)) · \(item.source)")
             .frame(height: 12)

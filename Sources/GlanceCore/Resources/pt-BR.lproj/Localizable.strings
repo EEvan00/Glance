@@ -302,3 +302,29 @@
 "battery.chargeToFull.unavailable" = "O macOS não permite retomar a carga no momento.";
 "battery.chargeToFull.accepted" = "Solicitação enviada ao macOS. Aguardando a retomada da carga.";
 "battery.chargeToFull.failed" = "Não foi possível retomar a carga. Tente novamente ou use o menu Bateria do macOS.";
+
+"settings.popupUtility" = "Popup module";
+"settings.popupUtility.description" = "Choose Performance, Codex usage or Claude usage. Only the selected service is read.";
+"utility.codex" = "Codex usage";
+"utility.claude" = "Claude usage";
+"claude.unavailable" = "No Claude usage data";
+"claude.connect" = "Connect Claude Code";
+"claude.connectHelp" = "Connect your existing Claude Code status line. Glance preserves its output and reads local 5-hour and weekly limits after your next response. No API tokens are used.";
+"claude.setupFailed" = "Install and run Claude Code first, then try connecting again.";
+"shortcut.manageRemove" = "Remove in Shortcuts";
+"shortcut.removeHelp" = "Delete it in the system Shortcuts library. Returning to Glance updates its installation status.";
+"shortcut.discoveryFailed" = "Unable to check shortcuts. Click refresh to try again.";
+
+"performance.title" = "Performance";
+"performance.summary" = "CPU %@ · Memory %@";
+"performance.cpu" = "CPU usage";
+"performance.memory" = "Memory used";
+"performance.pressure" = "Memory pressure";
+"performance.pressure.normal" = "Normal";
+"performance.pressure.warning" = "Warning";
+"performance.pressure.critical" = "Critical";
+"performance.memoryHelp" = "Usage includes app, wired and compressed memory, excluding reclaimable cache.";
+"performance.unavailable" = "Performance unavailable";
+"performance.openActivityMonitor" = "Open Activity Monitor";
+"performance.cpuShort" = "CPU %@";
+"performance.memoryShort" = "RAM %@";

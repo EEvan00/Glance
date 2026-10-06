@@ -302,3 +302,29 @@
 "battery.chargeToFull.unavailable" = "macOS 目前不允許暫時恢復充電。";
 "battery.chargeToFull.accepted" = "已向 macOS 傳送要求，正在等待恢復充電。";
 "battery.chargeToFull.failed" = "無法恢復充電，請重試或使用 macOS 電池選單。";
+
+"settings.popupUtility" = "弹窗模块";
+"settings.popupUtility.description" = "选择系统性能、Codex 额度或 Claude 额度，仅读取选中的服务。";
+"utility.codex" = "Codex 额度";
+"utility.claude" = "Claude 额度";
+"claude.unavailable" = "暂无 Claude 额度数据";
+"claude.connect" = "连接 Claude Code";
+"claude.connectHelp" = "连接现有 Claude Code 状态栏。Glance 保留原有输出，在下一次回复后读取本地 5 小时和周额度，不读取 API 密钥。";
+"claude.setupFailed" = "请先安装并运行 Claude Code，然后重试连接。";
+"shortcut.manageRemove" = "在快捷指令中移除";
+"shortcut.removeHelp" = "在系统快捷指令库中删除，返回 Glance 后更新安装状态。";
+"shortcut.discoveryFailed" = "无法检查快捷指令，请点击刷新重试。";
+
+"performance.title" = "系统性能";
+"performance.summary" = "CPU %@ · 内存 %@";
+"performance.cpu" = "CPU 使用率";
+"performance.memory" = "内存使用量";
+"performance.pressure" = "内存压力";
+"performance.pressure.normal" = "正常";
+"performance.pressure.warning" = "偏高";
+"performance.pressure.critical" = "较高";
+"performance.memoryHelp" = "使用量包含应用、有线及压缩内存，不包含可回收缓存。";
+"performance.unavailable" = "性能数据不可用";
+"performance.openActivityMonitor" = "打开活动监视器";
+"performance.cpuShort" = "CPU %@";
+"performance.memoryShort" = "記憶體 %@";

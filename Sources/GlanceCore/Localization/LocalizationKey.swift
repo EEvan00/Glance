@@ -1,5 +1,15 @@
 // Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 enum LocalizationKey: String, CaseIterable, Hashable, Sendable {
+    case settingsPopupUtility = "settings.popupUtility"
+    case settingsPopupUtilityDescription = "settings.popupUtility.description"
+    case utilityCodex = "utility.codex"
+    case utilityClaude = "utility.claude"
+    case claudeUnavailable = "claude.unavailable"
+    case claudeConnect = "claude.connect"
+    case claudeConnectHelp = "claude.connectHelp"
+    case claudeSetupFailed = "claude.setupFailed"
+
+
     case menuVersion = "menu.version"
     case menuCheckForUpdates = "menu.checkForUpdates"
     case menuSettings = "menu.settings"
@@ -285,6 +295,24 @@ enum LocalizationKey: String, CaseIterable, Hashable, Sendable {
     case mediaPlay = "media.play"
     case mediaNext = "media.next"
     case mediaCommandFailed = "media.commandFailed"
+
+    case performanceTitle = "performance.title"
+    case performanceCPUShort = "performance.cpuShort"
+    case performanceMemoryShort = "performance.memoryShort"
+    case performanceSummary = "performance.summary"
+    case performanceCPU = "performance.cpu"
+    case performanceMemory = "performance.memory"
+    case performancePressure = "performance.pressure"
+    case performancePressureNormal = "performance.pressure.normal"
+    case performancePressureWarning = "performance.pressure.warning"
+    case performancePressureCritical = "performance.pressure.critical"
+    case performanceMemoryHelp = "performance.memoryHelp"
+    case performanceUnavailable = "performance.unavailable"
+    case performanceOpenActivityMonitor = "performance.openActivityMonitor"
+
+    case shortcutManageRemove = "shortcut.manageRemove"
+    case shortcutRemoveHelp = "shortcut.removeHelp"
+    case shortcutDiscoveryFailed = "shortcut.discoveryFailed"
 
     case accessibilityStatus = "accessibility.status"
     case accessibilityBattery = "accessibility.battery"

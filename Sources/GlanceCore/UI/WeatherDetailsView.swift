@@ -37,7 +37,6 @@ struct WeatherDetailsView: View {
                 detail(.weatherUVIndex, value: snapshot.uvIndex.map { $0.formatted() } ?? "—")
 
             } else {
-                WeatherShortcutInstallButtons(localization: localization)
                 Text(localization.string(controller.isLoading ? .weatherLoading : .weatherUnavailable))
                     .foregroundStyle(.primary.opacity(0.78))
             }
@@ -56,6 +55,7 @@ struct WeatherDetailsView: View {
                 Text(localization.string(.weatherForecastUnavailable)).font(.caption)
                     .foregroundStyle(.primary.opacity(0.78))
             }
+            WeatherShortcutInstallButtons(localization: localization)
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text((forecast.updatedAt ?? controller.updatedAt).map {

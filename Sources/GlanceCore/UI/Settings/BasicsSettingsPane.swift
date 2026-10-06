@@ -51,6 +51,16 @@ struct BasicsSettingsPane: View {
 
             Divider()
 
+            PreferenceRow(label: .settingsPopupUtility, description: .settingsPopupUtilityDescription, placesControlInline: true) {
+                Picker(localization.string(.settingsPopupUtility), selection: $store.popupUtility) {
+                    ForEach(PopupUtility.allCases) { utility in
+                        Text(localization.string(utility.labelKey)).tag(utility)
+                    }
+                }.labelsHidden().frame(width: 220)
+            }
+
+            Divider()
+
             refreshIntervalSection
 
             Divider()
@@ -65,20 +75,11 @@ struct BasicsSettingsPane: View {
             }
 
             Divider()
-
-            PreferenceRow(label: .settingsWeatherShortcut, description: .settingsWeatherShortcutDescription) {
-                VStack(alignment: .leading, spacing: 4) {
-                    WeatherShortcutInstallButtons(localization: localization)
-                    Text(localization.string(.settingsWeatherInstallHelp))
-                        .font(.caption).foregroundStyle(.secondary)
-                    Button(localization.string(.settingsWeatherOpenShortcut)) {
-                        var url = URLComponents(string: "shortcuts://open-shortcut")!
-                        url.queryItems = [URLQueryItem(name: "name", value: store.weatherShortcutName)]
-                        if let url = url.url { NSWorkspace.shared.open(url) }
-                    }
-                    .buttonStyle(.link).font(.caption)
-                }
+            PreferenceRow(label: .settingsWeatherShortcut) {
+                WeatherShortcutInstallButtons(localization: localization, purpose: .installedOnly)
             }
+
+
         }
     }
 

@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct CodexUsageView: View {
-    @ObservedObject var controller: CodexUsageController
+struct ClaudeUsageView: View {
+    @ObservedObject var controller: ClaudeUsageController
     @EnvironmentObject private var localization: Localization
     let onBack: () -> Void
 
@@ -11,7 +11,7 @@ struct CodexUsageView: View {
                 HStack(spacing: CompactPopupLayout.gap) {
                     Button(action: onBack) { PopupChevron(symbol: "chevron.backward") }
                         .buttonStyle(.plain).accessibilityLabel(localization.string(.commonBack))
-                    Text("Codex").font(.headline)
+                    Text("Claude").font(.headline)
                     Spacer()
                     if controller.isLoading { ProgressView().controlSize(.small) }
                 }
@@ -36,11 +36,16 @@ struct CodexUsageView: View {
                         }
                     }
                 } else {
-                    Text(localization.string(controller.isLoading ? .codexLoading : .codexUnavailable)).foregroundStyle(.primary.opacity(0.78))
+                    Text(localization.string(controller.isLoading ? .codexLoading : .claudeUnavailable)).foregroundStyle(.primary.opacity(0.78))
                 }
                 if controller.isUnavailable, controller.snapshot != nil {
                     Text(localization.string(.codexCached)).font(.caption).foregroundStyle(.primary.opacity(0.78))
                 }
+            }
+            if controller.snapshot == nil {
+                Text(localization.string(.claudeConnectHelp)).font(.caption).foregroundStyle(.secondary).lineLimit(nil).fixedSize(horizontal: false, vertical: true)
+                Button(localization.string(.claudeConnect)) { controller.connect() }.buttonStyle(.bordered)
+                if controller.setupFailed { Text(localization.string(.claudeSetupFailed)).font(.caption).foregroundStyle(.secondary).lineLimit(nil).fixedSize(horizontal: false, vertical: true) }
             }
             HStack {
                 if let updated = controller.updatedAt {
@@ -59,21 +64,5 @@ struct CodexUsageView: View {
             }
             .popupFooterInsets()
         }
-    }
-}
-
-@MainActor
-func remainingLabel(_ window: CodexUsageWindow, localization: Localization) -> String {
-    guard let remaining = window.remainingPercent else { return "—" }
-    return localization.format(.codexRemaining, remaining)
-}
-
-@MainActor
-func windowLabel(_ window: CodexUsageWindow, localization: Localization) -> String {
-    switch window.windowDurationMins {
-    case 300: return localization.string(.codexFiveHours)
-    case 10080: return localization.string(.codexWeekly)
-    case .some(let minutes): return localization.format(.codexWindowMinutes, minutes)
-    case .none: return window.id
     }
 }

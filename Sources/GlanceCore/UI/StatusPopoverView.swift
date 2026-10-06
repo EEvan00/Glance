@@ -256,6 +256,8 @@ private enum PopoverPanel: Equatable {
     case bluetooth
     case output
     case codex
+    case claude
+    case performance
     case weather
 }
 
@@ -263,6 +265,8 @@ struct StatusPopoverView: View {
     @ObservedObject var store: SystemStatusStore
     @ObservedObject var settings: SettingsStore
     @ObservedObject var magSafeLED: MagSafeLEDController
+    @ObservedObject var performance: PerformanceController
+    @ObservedObject var claudeUsage: ClaudeUsageController
     @ObservedObject var codexUsage: CodexUsageController
     @ObservedObject var weather: WeatherController
     @ObservedObject var weatherForecast: WeatherController
@@ -310,6 +314,10 @@ struct StatusPopoverView: View {
                 SoundControlsView(store: store, settings: settings, onBack: { panel = .summary }, onOpenSettings: openSoundSettings)
             case .weather:
                 WeatherDetailsView(controller: weather, forecast: weatherForecast, settings: settings, onBack: { panel = .summary }, onOpenWeather: openWeather)
+            case .performance:
+                PerformanceDetailsView(controller: performance, onBack: { panel = .summary })
+            case .claude:
+                ClaudeUsageView(controller: claudeUsage, onBack: { panel = .summary })
             case .codex:
                 CodexUsageView(controller: codexUsage, onBack: { panel = .summary })
             case .bluetooth:
@@ -323,6 +331,7 @@ struct StatusPopoverView: View {
         .padding(.horizontal, panel == .summary ? 0 : CompactPopupLayout.contentInset)
         .padding(CompactPopupLayout.gap)
         .frame(width: 284)
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     private var summary: some View {
@@ -350,8 +359,16 @@ struct StatusPopoverView: View {
                     }
                     PopupDivider().padding(.horizontal, 8)
                     TimelineView(.everyMinute) { context in
-                        cell(symbol: "terminal", title: codexTitle, subtitle: codexSubtitle(at: context.date)) { panel = .codex }
-                            .accessibilityLabel(codexHelp(at: context.date))
+                        switch settings.popupUtility {
+                        case .performance:
+                            cell(symbol: "cpu", title: performanceCPUText, subtitle: performanceMemoryText) { panel = .performance }
+                                .accessibilityLabel(localization.string(.performanceTitle) + ", " + performanceSubtitle)
+                        case .codex:
+                            cell(symbol: "terminal", title: codexTitle, subtitle: codexSubtitle(at: context.date)) { panel = .codex }
+                                .accessibilityLabel(codexHelp(at: context.date))
+                        case .claude:
+                            cell(symbol: "terminal", title: claudeTitle, subtitle: claudeSubtitle(at: context.date)) { panel = .claude }
+                        }
                     }
                 }
                 .systemModuleSurface()
@@ -392,6 +409,7 @@ struct StatusPopoverView: View {
             }
 
         }
+        .onChange(of: settings.popupUtility) { _, _ in panel = .summary }
         .onAppear { store.bluetoothDevices.activateIfAuthorized() }
     }
 
@@ -428,6 +446,35 @@ struct StatusPopoverView: View {
         case .failed: return localization.string(.bluetoothReadFailed)
         case .unavailable: return localization.string(.bluetoothUnavailable)
         }
+    }
+
+    private var performanceCPUText: String {
+        let value = performance.snapshot?.cpuPercent.map { "\(Int($0.rounded()))%" } ?? "—"
+        return localization.format(.performanceCPUShort, value)
+    }
+
+    private var performanceMemoryText: String {
+        let value = performance.snapshot.map { "\(Int($0.memoryPercent.rounded()))%" } ?? "—"
+        return localization.format(.performanceMemoryShort, value)
+    }
+
+    private var performanceSubtitle: String {
+        guard let snapshot = performance.snapshot else { return localization.string(.performanceUnavailable) }
+        let cpu = snapshot.cpuPercent.map { "\(Int($0.rounded()))%" } ?? "—"
+        return localization.format(.performanceSummary, cpu, "\(Int(snapshot.memoryPercent.rounded()))%")
+    }
+
+    private var claudeTitle: String {
+        guard let percent = claudeUsage.snapshot?.windows.first?.remainingPercent else { return "Claude" }
+        return "Claude · \(percent)%"
+    }
+
+    private func claudeSubtitle(at date: Date) -> String {
+        if claudeUsage.isUnavailable, claudeUsage.snapshot != nil { return localization.string(.codexCached) }
+        if let countdown = claudeUsage.snapshot?.windows.first?.resetCountdown(now: date) {
+            return localization.format(.codexReset, countdown)
+        }
+        return localization.string(.claudeUnavailable)
     }
 
     private var codexTitle: String {
