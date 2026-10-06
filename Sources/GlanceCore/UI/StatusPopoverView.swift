@@ -372,8 +372,6 @@ struct StatusPopoverView: View {
                         HStack(spacing: 3) {
                             Image(systemName: weather.snapshot?.symbol ?? "cloud")
                             Text(weather.snapshot?.temperatureText ?? "—").monospacedDigit()
-                            Text(weather.snapshot.map { $0.conditionKey == .weatherUnknown ? ($0.appleCondition ?? "—") : localization.string($0.conditionKey) } ?? "")
-                                .lineLimit(1)
                         }
                         .font(.system(size: 11))
                         .frame(maxWidth: .infinity).frame(height: 24)
@@ -389,7 +387,7 @@ struct StatusPopoverView: View {
                     Text(FooterClockFormatting.time(context.date, uses24HourClock: settings.uses24HourClock))
                         .font(.system(size: 11)).monospacedDigit().lineLimit(1)
                         .frame(width: 44, height: 24).systemModuleSurface()
-                    footerButton(.compactQuit, symbol: "power", action: quit)
+                    footerButton(.compactQuit, symbol: "xmark.circle", action: quit)
                 }
             }
 
@@ -398,9 +396,13 @@ struct StatusPopoverView: View {
     }
 
     private var weatherHelp: String {
-        let state = weather.isUnavailable ? localization.string(.weatherUnavailable) : (weather.snapshot?.temperatureText ?? "—")
-        let condition = weather.snapshot?.appleCondition ?? localization.string(.weatherUnknown)
-        return "\(condition) · \(state) · \(localization.string(.weatherUVIndex)) \(weather.snapshot?.uvIndex.map { $0.formatted() } ?? "—")"
+        let condition = weather.isUnavailable
+            ? localization.string(.weatherUnavailable)
+            : weather.snapshot.map { $0.appleCondition ?? localization.string($0.conditionKey) }
+                ?? localization.string(.weatherUnknown)
+        let uv = weather.snapshot?.uvIndex.map { $0.formatted() } ?? "—"
+        let rainChance = weather.snapshot?.precipitationChance.map { "\(Int($0.rounded()))%" } ?? "—"
+        return "\(condition) · UV \(uv) · \(rainChance) Rain"
     }
 
     private func footerButton(_ key: LocalizationKey, symbol: String, action: @escaping () -> Void) -> some View {

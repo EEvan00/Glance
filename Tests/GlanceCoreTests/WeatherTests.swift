@@ -171,6 +171,21 @@ final class WeatherTests: XCTestCase {
         XCTAssertNil(invalid.hourly?.last?.precipitationChance)
     }
 
+    func testCurrentRainChanceParsesWithoutHourlyForecast() throws {
+        for (text, expected) in [("80%", 80.0), ("0.25", 25.0), ("0,25", 25.0), ("0%", 0.0), ("1%", 1.0), ("100％", 100.0)] {
+            let value = try XCTUnwrap(WeatherSnapshot.fromShortcut("18°C\nCloudy\nUV\n3\nRAIN_CHANCE\n" + text))
+            XCTAssertEqual(value.precipitationChance, expected, text)
+            XCTAssertEqual(value.uvIndex, 3)
+            XCTAssertNil(value.hourly)
+        }
+        for text in ["-5%", "101%", "nan", "inf", "invalid", "80%\n20%", ""] {
+            let value = try XCTUnwrap(WeatherSnapshot.fromShortcut("18°C\nCloudy\nRAIN_CHANCE\n" + text))
+            XCTAssertNil(value.precipitationChance, text)
+            XCTAssertEqual(value.appleCondition, "Cloudy")
+        }
+        XCTAssertNil(WeatherSnapshot.fromShortcut("18°C\nCloudy\nUV\n3")?.precipitationChance)
+    }
+
     func testUnknownWeatherDoesNotPretendToBeSunny() throws {
         let value = try JSONDecoder().decode(WeatherSnapshot.self, from: Data(#"{"temperature_2m":20,"weather_code":999,"is_day":1}"#.utf8))
         XCTAssertEqual(value.symbol, "questionmark")

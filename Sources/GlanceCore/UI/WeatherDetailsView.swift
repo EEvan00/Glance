@@ -29,8 +29,8 @@ struct WeatherDetailsView: View {
                     Text(snapshot.temperatureText).font(.system(size: 28, weight: .medium))
                         .monospacedDigit()
                     VStack(alignment: .leading, spacing: 2) {
-                        if let low = snapshot.low { Text("L: \(temperature(low))") }
                         if let high = snapshot.high { Text("H: \(temperature(high))") }
+                        if let low = snapshot.low { Text("L: \(temperature(low))") }
                     }.font(.caption).monospacedDigit()
                 }
                 detail(.weatherCondition, value: snapshot.appleCondition ?? localization.string(snapshot.conditionKey))
@@ -96,7 +96,7 @@ struct WeatherDetailsView: View {
             symbol = hour.symbol
             caption = hour.temperatureText
             rainChance = hour.precipitationChance.map { "\(Int($0.rounded()))%" } ?? "—"
-            help = "\(hour.condition), \(localization.string(.weatherRainChance)) \(rainChance)"
+            help = hour.condition
         case .sunrise:
             symbol = "sunrise.fill"
             caption = localization.string(.weatherSunrise)
@@ -117,7 +117,7 @@ struct WeatherDetailsView: View {
         }.font(.caption).monospacedDigit()
             .frame(minWidth: 36)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(time), \(help), \(caption)")
+            .accessibilityLabel("\(time), \(help), \(caption)" + (rainChance.isEmpty ? "" : ", \(localization.string(.weatherRainChance)) \(rainChance)"))
             .help(help)
     }
 

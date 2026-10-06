@@ -10,6 +10,7 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
     var location: String? = nil
     var hourly: [WeatherHour]? = nil
     var uvIndex: Double? = nil
+    var precipitationChance: Double? = nil
     var sunrise: Date? = nil
     var sunset: Date? = nil
     var sunrises: [Date]? = nil
@@ -19,7 +20,7 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
         case temperature = "temperature_2m"
         case code = "weather_code"
         case isDay = "is_day"
-        case appleCondition, low, high, hourly, location, uvIndex, sunrise, sunset, sunrises, sunsets
+        case appleCondition, low, high, hourly, location, uvIndex, precipitationChance, sunrise, sunset, sunrises, sunsets
     }
 
     static func fromShortcut(_ output: String) -> WeatherSnapshot? {
@@ -144,9 +145,18 @@ enum WeatherForecastEntry: Equatable, Sendable, Identifiable {
 }
 
 private extension WeatherSnapshot {
+    static func parsePrecipitationChance(_ text: String) -> Double? {
+        let normalized = text.replacingOccurrences(of: ",", with: ".")
+            .replacingOccurrences(of: "％", with: "%")
+        guard let value = Double(normalized.replacingOccurrences(of: "%", with: "")
+            .trimmingCharacters(in: .whitespaces)), value.isFinite else { return nil }
+        let percent = !normalized.contains("%") && (0...1).contains(value) ? value * 100 : value
+        return (0...100).contains(percent) ? percent : nil
+    }
+
     mutating func readForecast(lines: [String]) {
         guard !lines.isEmpty, lines.count <= 200 else { return }
-        let markers: Set<String> = ["LOW", "HIGH", "DATES", "HOURS", "LOCATION", "UV", "SUNRISE", "SUNSET", "RAIN_CHANCES"]
+        let markers: Set<String> = ["LOW", "HIGH", "DATES", "HOURS", "LOCATION", "UV", "SUNRISE", "SUNSET", "RAIN_CHANCES", "RAIN_CHANCE"]
         var sections: [String: [String]] = [:]
         var current: String?
         for line in lines {
@@ -156,6 +166,9 @@ private extension WeatherSnapshot {
         if let values = sections["UV"], values.count == 1,
            let value = Double(values[0].replacingOccurrences(of: ",", with: ".")),
            value.isFinite, (0...30).contains(value) { uvIndex = value }
+        if let values = sections["RAIN_CHANCE"], values.count == 1 {
+            precipitationChance = Self.parsePrecipitationChance(values[0])
+        }
         let solarFormatter = ISO8601DateFormatter()
         sunrises = sections["SUNRISE"].map { $0.compactMap { solarFormatter.date(from: $0) } }
         sunsets = sections["SUNSET"].map { $0.compactMap { solarFormatter.date(from: $0) } }
@@ -197,12 +210,7 @@ private extension WeatherSnapshot {
             }
             let probability: Double?
             if let values = sections["RAIN_CHANCES"], values.count == dates.count {
-                let text = values[index].replacingOccurrences(of: ",", with: ".")
-                if let value = Double(text.replacingOccurrences(of: "%", with: "").trimmingCharacters(in: .whitespaces)),
-                   value.isFinite {
-                    let percent = !text.contains("%") && (0...1).contains(value) ? value * 100 : value
-                    probability = (0...100).contains(percent) ? percent : nil
-                } else { probability = nil }
+                probability = Self.parsePrecipitationChance(values[index])
             } else { probability = nil }
             entries.append(WeatherHour(date: date, temperature: weather.temperature, code: weather.code,
                                       condition: weather.appleCondition ?? conditionText, isDay: daylight,
