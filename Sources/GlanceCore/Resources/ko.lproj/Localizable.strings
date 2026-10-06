@@ -201,7 +201,7 @@
 "magsafe.unsupported" = "This Mac does not expose MagSafe indicator control.";
 "magsafe.installHelper" = "Enable MagSafe Control…";
 "magsafe.installExplanation" = "A narrowly scoped system helper is required to change the indicator. macOS will ask you to approve it.";
-"magsafe.uninstallHelper" = "Remove MagSafe Helper…";
+"magsafe.uninstallHelper" = "Remove MagSafe Helper";
 "magsafe.error.install" = "The MagSafe helper could not be installed.";
 "magsafe.error.uninstall" = "The MagSafe helper could not be removed.";
 "magsafe.error.write" = "The MagSafe indicator setting could not be applied.";
@@ -295,3 +295,10 @@
 "weather.sunset" = "Sunset";
 "weather.refresh" = "Refresh now";
 "weather.rainChance" = "Chance of rain";
+
+"battery.state.paused" = "일시 정지됨";
+"battery.chargeToFull" = "지금 완전히 충전";
+"battery.chargeToFull.explanation" = "충전을 일시적으로 재개합니다. 최적화된 배터리 충전은 계속 활성화됩니다.";
+"battery.chargeToFull.unavailable" = "현재 macOS에서 충전 재개를 허용하지 않습니다.";
+"battery.chargeToFull.accepted" = "macOS에 요청을 보냈습니다. 충전 재개를 기다리는 중입니다.";
+"battery.chargeToFull.failed" = "충전을 재개할 수 없습니다. 다시 시도하거나 macOS 배터리 메뉴를 사용하세요.";

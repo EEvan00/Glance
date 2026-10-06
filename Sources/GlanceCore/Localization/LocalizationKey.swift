@@ -108,6 +108,12 @@ enum LocalizationKey: String, CaseIterable, Hashable, Sendable {
 
     case batteryTitle = "battery.title"
     case batteryStateNotPresent = "battery.state.notPresent"
+    case batteryStatePaused = "battery.state.paused"
+    case batteryChargeToFull = "battery.chargeToFull"
+    case batteryChargeToFullExplanation = "battery.chargeToFull.explanation"
+    case batteryChargeToFullUnavailable = "battery.chargeToFull.unavailable"
+    case batteryChargeRequestAccepted = "battery.chargeToFull.accepted"
+    case batteryChargeRequestFailed = "battery.chargeToFull.failed"
     case batteryStateCharged = "battery.state.charged"
     case batteryStateCalculatingTimeToFull = "battery.state.calculatingTimeToFull"
     case batteryTimeToFullMinutes = "battery.timeToFull.minutes"

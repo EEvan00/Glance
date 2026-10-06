@@ -16,6 +16,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "GlanceMediaBridge", linkerSettings: [.linkedFramework("Foundation")]),
+        .target(name: "BatteryChargingBridge", linkerSettings: [.linkedFramework("Foundation")]),
         .target(name: "DisplayFeaturesBridge", linkerSettings: [.linkedFramework("Foundation")]),
         .target(name: "HotspotBridge", linkerSettings: [.linkedFramework("CoreWLAN")]),
         .target(
@@ -33,6 +34,7 @@ let package = Package(
             dependencies: [
                 "HotspotBridge",
                 "DisplayFeaturesBridge",
+                "BatteryChargingBridge",
                 "MagSafeSMC",
                 .product(name: "Sparkle", package: "Sparkle")
             ],

@@ -98,6 +98,9 @@ enum StatusPresentation {
         if !battery.isPresent {
             return localization.string(.batteryStateNotPresent)
         }
+        if battery.isChargingPaused {
+            return localization.string(.batteryStatePaused)
+        }
         if battery.isCharged {
             return localization.string(.batteryStateCharged)
         }
@@ -283,9 +286,12 @@ struct StatusPopoverView: View {
             case .summary:
                 summary
             case .battery:
-                MagSafeLEDView(
-                    controller: magSafeLED,
-                    onBack: { panel = .summary }
+                BatteryDetailsView(
+                    battery: store.popupSnapshot.battery,
+                    magSafeLED: magSafeLED,
+                    onBack: { panel = .summary },
+                    onOpenSettings: openBatterySettings,
+                    onRefresh: { store.refreshAll() }
                 )
             case .wifi(let showDetails):
                 WiFiNetworkListView(
@@ -323,9 +329,9 @@ struct StatusPopoverView: View {
         VStack(spacing: CompactPopupLayout.gap) {
             HStack(alignment: .top, spacing: CompactPopupLayout.gap) {
                 VStack(spacing: 0) {
-                    cell(symbol: "battery.100",
+                    cell(symbol: store.popupSnapshot.battery.isChargingPaused ? "powerplug.portrait.fill" : "battery.100",
                          title: StatusPresentation.batteryTitle(store.popupSnapshot.battery, localization: localization),
-                         subtitle: store.popupSnapshot.battery.isConnectedToPower ? "Source: Power" : "Source: Battery") {
+                         subtitle: StatusPresentation.batterySubtitle(store.popupSnapshot.battery, localization: localization)) {
                         magSafeLED.refreshAvailability()
                         panel = .battery
                     }

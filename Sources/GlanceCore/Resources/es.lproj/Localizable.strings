@@ -201,7 +201,7 @@
 "magsafe.unsupported" = "This Mac does not expose MagSafe indicator control.";
 "magsafe.installHelper" = "Enable MagSafe Control…";
 "magsafe.installExplanation" = "A narrowly scoped system helper is required to change the indicator. macOS will ask you to approve it.";
-"magsafe.uninstallHelper" = "Remove MagSafe Helper…";
+"magsafe.uninstallHelper" = "Remove MagSafe Helper";
 "magsafe.error.install" = "The MagSafe helper could not be installed.";
 "magsafe.error.uninstall" = "The MagSafe helper could not be removed.";
 "magsafe.error.write" = "The MagSafe indicator setting could not be applied.";
@@ -295,3 +295,10 @@
 "weather.sunset" = "Sunset";
 "weather.refresh" = "Refresh now";
 "weather.rainChance" = "Chance of rain";
+
+"battery.state.paused" = "En pausa";
+"battery.chargeToFull" = "Cargar completamente ahora";
+"battery.chargeToFull.explanation" = "Reanudar temporalmente la carga. La carga optimizada sigue activada.";
+"battery.chargeToFull.unavailable" = "macOS no permite reanudar la carga en este momento.";
+"battery.chargeToFull.accepted" = "Solicitud enviada a macOS. Esperando a que se reanude la carga.";
+"battery.chargeToFull.failed" = "No se pudo reanudar la carga. Inténtalo de nuevo o usa el menú Batería de macOS.";

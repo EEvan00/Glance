@@ -8,6 +8,7 @@ struct BatteryStatus: Equatable, Sendable {
     let timeToFullChargeMinutes: Int?
     let isLowPowerMode: Bool
     let isConnectedToPower: Bool
+    var chargingHold: BatteryChargingHold
 
     init(
         rawPercentage: Int?,
@@ -16,7 +17,8 @@ struct BatteryStatus: Equatable, Sendable {
         isCharged: Bool = false,
         timeToFullChargeMinutes: Int? = nil,
         isLowPowerMode: Bool,
-        isConnectedToPower: Bool
+        isConnectedToPower: Bool,
+        chargingHold: BatteryChargingHold = .unknown
     ) {
         self.rawPercentage = rawPercentage
         self.isPresent = isPresent
@@ -25,6 +27,26 @@ struct BatteryStatus: Equatable, Sendable {
         self.timeToFullChargeMinutes = timeToFullChargeMinutes
         self.isLowPowerMode = isLowPowerMode
         self.isConnectedToPower = isConnectedToPower
+        self.chargingHold = chargingHold
+    }
+
+    var canHaveChargingHold: Bool {
+        isPresent && isConnectedToPower && !isCharging && !isCharged
+            && rawPercentage != nil && percentage < 100
+    }
+
+    var isChargingPaused: Bool {
+        canHaveChargingHold && (chargingHold == .paused || chargingHold == .resumable)
+    }
+
+    var canChargeToFull: Bool {
+        isChargingPaused && chargingHold == .resumable
+    }
+
+    var indicatorSymbol: String? {
+        guard isPresent else { return nil }
+        if isChargingPaused { return "powerplug.portrait.fill" }
+        return isCharging || isConnectedToPower ? "bolt.fill" : nil
     }
 
     var percentage: Int {

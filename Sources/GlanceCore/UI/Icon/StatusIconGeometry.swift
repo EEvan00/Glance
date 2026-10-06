@@ -13,7 +13,6 @@ enum StatusIconGeometry {
     static let batteryChargingBoltTopGapWidth: CGFloat = 50
 
     static let batteryValueBaseFontSize: CGFloat = 20
-    static let batteryChargingBoltCalibration: CGFloat = 220.0 / 180.0
 
     static func batteryValueBaseline(fontSize: CGFloat) -> CGPoint {
         let referenceFontSize: CGFloat = 20

@@ -11,7 +11,7 @@ struct BatteryStatusView: View {
         HStack(spacing: 10) {
             Button(action: onOpenDetails) {
                 HStack(spacing: 10) {
-                    Image(systemName: "battery.100")
+                    Image(systemName: battery.isChargingPaused ? "powerplug.portrait.fill" : "battery.100")
                         .frame(width: 24)
                         .foregroundStyle(.secondary)
                         .accessibilityHidden(true)

@@ -4,6 +4,37 @@ import XCTest
 @testable import GlanceCore
 
 final class StatusIconRendererTests: XCTestCase {
+    func testPausedPlugRendersAndHonorsIndicatorSetting() throws {
+        let battery = BatteryStatus(rawPercentage: 80, isPresent: true, isCharging: false,
+                                    isLowPowerMode: false, isConnectedToPower: true,
+                                    chargingHold: .resumable)
+        let snapshot = StatusSnapshot(battery: battery, wifi: .placeholder, volume: .placeholder)
+        func render(_ enabled: Bool) throws -> PixelBuffer {
+            try PixelBuffer(image: XCTUnwrap(StatusIconRenderer.render(
+                snapshot: snapshot, size: 20, scale: 8, foreground: CGColor(gray: 1, alpha: 1),
+                options: BatteryIconOptions(showsPercentage: false, showsChargingIndicator: enabled,
+                                            usesStatusColors: false, criticalThreshold: 20, textScale: 1.6)
+            )))
+        }
+        // Below the ring crest, so closing the gap when disabled cannot add pixels.
+        let region = CGRect(x: 50, y: 17, width: 18, height: 11)
+        let plug = try render(true)
+        let hidden = try render(false)
+        XCTAssertGreaterThan(plug.alphaSum(inSVGRect: region, size: 20, scale: 8),
+                             hidden.alphaSum(inSVGRect: region, size: 20, scale: 8))
+    }
+
+    func testBatteryIndicatorsStayCenteredAboveRingAndClearWiFi() {
+        for aspect in [0.6, 0.8] as [CGFloat] {
+            for scale in [1.0, 1.8, 3.0] {
+                let rect = StatusIconRenderer.batteryIndicatorRect(aspectRatio: aspect, textScale: scale)
+                XCTAssertEqual(rect.midX, 59.5, accuracy: 0.01)
+                XCTAssertEqual(rect.minY, 0, accuracy: 0.01)
+                XCTAssertLessThanOrEqual(rect.maxY, 42)
+            }
+        }
+    }
+
     func testRendererProducesExpectedPixelSize() throws {
         let image = try XCTUnwrap(StatusIconRenderer.render(
             snapshot: .placeholder,

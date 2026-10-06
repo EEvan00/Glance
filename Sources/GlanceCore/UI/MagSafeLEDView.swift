@@ -5,11 +5,12 @@ struct MagSafeLEDView: View {
     @ObservedObject var controller: MagSafeLEDController
     @EnvironmentObject private var localization: Localization
     let onBack: () -> Void
+    var showsHeader = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 12) {
-                header
+                if showsHeader { header }
                 content
                 if let errorKey {
                     Text(localization.string(errorKey))
@@ -17,11 +18,8 @@ struct MagSafeLEDView: View {
                         .foregroundStyle(.red)
                 }
             }
-            Text(localization.string(.magSafePrivateAPIWarning))
-                .font(.caption2)
-                .foregroundStyle(.primary.opacity(0.78))
-                .popupFooterInsets()
         }
+        .padding(.bottom, CompactPopupLayout.contentInset)
     }
 
     private var header: some View {
@@ -47,6 +45,7 @@ struct MagSafeLEDView: View {
         case .needsInstallation:
             Toggle(localization.string(.magSafeLight), isOn: .constant(true))
                 .disabled(true)
+                .help(localization.string(.magSafePrivateAPIWarning))
             Text(localization.string(.magSafeInstallExplanation))
                 .font(.caption)
                 .foregroundStyle(.primary.opacity(0.78))
@@ -72,12 +71,7 @@ struct MagSafeLEDView: View {
                 )
             )
             .disabled(controller.isBusy)
-            Text(localization.string(
-                controller.isLightEnabled ? .magSafeFollowsSystem : .magSafeOff
-            ))
-            .font(.caption)
-            .foregroundStyle(.primary.opacity(0.78))
-            Divider()
+            .help(localization.string(.magSafePrivateAPIWarning))
             Button(localization.string(.magSafeUninstallHelper)) {
                 if controller.needsHelperRecovery {
                     controller.removeUnresponsiveHelper()
@@ -85,8 +79,7 @@ struct MagSafeLEDView: View {
                     controller.uninstallHelper()
                 }
             }
-            .buttonStyle(.plain)
-            .foregroundStyle(.red)
+            .buttonStyle(.bordered)
             .disabled(controller.isBusy)
         }
 

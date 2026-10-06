@@ -192,11 +192,10 @@ enum StatusIconRenderer {
         foreground: CGColor,
         criticalColor: CGColor
     ) {
-        let showsChargingBolt = battery.isPresent
-            && (battery.isCharging || battery.isConnectedToPower)
-            && options.showsChargingIndicator
-        let hasTopGap = showsChargingBolt || options.showsPercentage
-        let topGapWidth = showsChargingBolt
+        let indicator = options.showsChargingIndicator ? battery.indicatorSymbol : nil
+        let showsChargingIndicator = indicator != nil
+        let hasTopGap = showsChargingIndicator || options.showsPercentage
+        let topGapWidth = showsChargingIndicator
             ? StatusIconGeometry.batteryChargingBoltTopGapWidth
             : StatusIconGeometry.batteryValueTopGapWidth
 
@@ -236,11 +235,19 @@ enum StatusIconRenderer {
         )
         defer { context.restoreGState() }
 
-        if showsChargingBolt {
+        if indicator == "powerplug.portrait.fill" {
+            drawPowerPlug(textScale: options.textScale, color: foreground, in: context)
+        } else if showsChargingIndicator {
             context.setFillColor(foreground)
-            context.addPath(StatusIconGeometry.batteryChargingBolt(
-                scale: batteryChargingBoltScale(textScale: options.textScale)
-            ))
+            let bolt = StatusIconGeometry.batteryChargingBolt()
+            let source = bolt.boundingBoxOfPath
+            let target = batteryIndicatorRect(aspectRatio: source.width / source.height,
+                                              textScale: options.textScale)
+            let scale = target.height / source.height
+            var transform = CGAffineTransform(a: scale, b: 0, c: 0, d: scale,
+                                              tx: target.minX - source.minX * scale,
+                                              ty: target.minY - source.minY * scale)
+            context.addPath(bolt.copy(using: &transform) ?? bolt)
             context.fillPath()
         } else if options.showsPercentage {
             drawBatteryPercentage(
@@ -311,30 +318,48 @@ enum StatusIconRenderer {
         CTLineDraw(line, context)
     }
 
-    private static func batteryValueFontSize(scale: Double) -> CGFloat {
-        StatusIconGeometry.batteryValueBaseFontSize * CGFloat(scale)
+    // Normalize to visible pixels: SF Symbols includes side bearings and vertical
+    // padding that otherwise make the plug look smaller and lower than the bolt.
+    private static let powerPlugMask: CGImage? = {
+        guard let symbol = NSImage(systemSymbolName: "powerplug.portrait.fill", accessibilityDescription: nil)?
+            .withSymbolConfiguration(.init(pointSize: 180, weight: .regular)),
+              let image = symbol.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return nil }
+        let bitmap = NSBitmapImageRep(cgImage: image)
+        var minX = bitmap.pixelsWide, minY = bitmap.pixelsHigh, maxX = -1, maxY = -1
+        for y in 0..<bitmap.pixelsHigh {
+            for x in 0..<bitmap.pixelsWide where (bitmap.colorAt(x: x, y: y)?.alphaComponent ?? 0) > 0.01 {
+                minX = min(minX, x); minY = min(minY, y)
+                maxX = max(maxX, x); maxY = max(maxY, y)
+            }
+        }
+        guard maxX >= minX, maxY >= minY else { return nil }
+        return image.cropping(to: CGRect(x: minX, y: minY, width: maxX - minX + 1, height: maxY - minY + 1))
+    }()
+
+    static func batteryIndicatorRect(aspectRatio: CGFloat, textScale: Double) -> CGRect {
+        // Start above the ring crest, like the percentage, but leave the Wi-Fi
+        // arcs clear even at the largest symbol setting. Both symbols share this anchor.
+        let height = min(36, 21 * CGFloat(textScale))
+        let width = height * aspectRatio
+        return CGRect(x: 59.5 - width / 2, y: 0, width: width, height: height)
     }
 
-    private static func batteryChargingBoltScale(textScale: Double) -> CGFloat {
-        let fontSize = batteryValueFontSize(scale: textScale)
-        let line = CTLineCreateWithAttributedString(
-            NSAttributedString(
-                string: "100",
-                attributes: [.font: batteryValueFont(size: fontSize)]
-            )
-        )
-        let glyphHeight = CTLineGetBoundsWithOptions(line, [.useGlyphPathBounds]).height
-        let boltHeight = StatusIconGeometry.batteryChargingBolt().boundingBoxOfPath.height
-        guard glyphHeight.isFinite,
-              glyphHeight > 0,
-              boltHeight.isFinite,
-              boltHeight > 0
-        else {
-            return CGFloat(textScale / BatteryIconOptions.defaultTextScale)
-                * StatusIconGeometry.batteryChargingBoltCalibration
-        }
-        return CGFloat(glyphHeight) / boltHeight
-            * StatusIconGeometry.batteryChargingBoltCalibration
+    private static func drawPowerPlug(textScale: Double, color: CGColor, in context: CGContext) {
+        guard let image = powerPlugMask else { return }
+        let target = batteryIndicatorRect(aspectRatio: CGFloat(image.width) / CGFloat(image.height),
+                                          textScale: textScale)
+        context.saveGState()
+        defer { context.restoreGState() }
+        context.translateBy(x: target.minX, y: target.maxY)
+        context.scaleBy(x: 1, y: -1)
+        let bounds = CGRect(origin: .zero, size: target.size)
+        context.clip(to: bounds, mask: image)
+        context.setFillColor(color)
+        context.fill(bounds)
+    }
+
+    private static func batteryValueFontSize(scale: Double) -> CGFloat {
+        StatusIconGeometry.batteryValueBaseFontSize * CGFloat(scale)
     }
 
     private static var defaultCriticalColor: CGColor {

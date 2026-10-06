@@ -107,9 +107,17 @@ final class BatteryMonitor: BatteryMonitoring {
     nonisolated(unsafe) private var lowPowerObserver: NSObjectProtocol?
     nonisolated(unsafe) private var callbackContext: Unmanaged<BatteryCallbackContext>?
     private var lifecycle = Lifecycle.idle
+    private let chargingHoldProvider: @Sendable () async -> BatteryChargingHold
+    private var holdTask: Task<Void, Never>?
+    private var cachedHold: BatteryChargingHold = .unknown
+    private var refreshRevision = 0
+    private var latestStatus: BatteryStatus?
 
     init(
         reader: any BatteryReadingProviding = IOPSBatteryReader(),
+        chargingHoldProvider: @escaping @Sendable () async -> BatteryChargingHold = {
+            await BatteryChargingHold.readSystem()
+        },
         lowPowerModeProvider: @escaping () -> Bool = {
             ProcessInfo.processInfo.isLowPowerModeEnabled
         },
@@ -118,6 +126,7 @@ final class BatteryMonitor: BatteryMonitoring {
         }
     ) {
         self.reader = reader
+        self.chargingHoldProvider = chargingHoldProvider
         self.lowPowerModeProvider = lowPowerModeProvider
         self.iopsRunLoopSourceFactory = iopsRunLoopSourceFactory
         (updates, continuation) = MonitorStream.make(of: BatteryStatus.self)
@@ -190,6 +199,8 @@ final class BatteryMonitor: BatteryMonitoring {
     func stop() {
         guard lifecycle != .stopped else { return }
         lifecycle = .stopped
+        holdTask?.cancel()
+        holdTask = nil
         teardownNotifications()
         continuation.finish()
     }
@@ -198,7 +209,7 @@ final class BatteryMonitor: BatteryMonitoring {
         guard lifecycle != .stopped else { return }
 
         let reading = reader.read()
-        let status: BatteryStatus
+        var status: BatteryStatus
 
         if let reading, reading.isPresent {
             let percentage = reading.maxCapacity > 0
@@ -227,7 +238,32 @@ final class BatteryMonitor: BatteryMonitoring {
             )
         }
 
+        if !status.canHaveChargingHold { cachedHold = .unknown }
+        status.chargingHold = cachedHold
+        if latestStatus != status { refreshRevision += 1 }
+        latestStatus = status
         continuation.yield(status)
+        refreshChargingHold(for: status)
+    }
+
+    private func refreshChargingHold(for status: BatteryStatus) {
+        guard status.canHaveChargingHold, holdTask == nil else { return }
+        let revision = refreshRevision
+        let provider = chargingHoldProvider
+        holdTask = Task { @MainActor [weak self] in
+            let hold = await provider()
+            guard !Task.isCancelled, let self, self.lifecycle != .stopped else { return }
+            self.holdTask = nil
+            guard var current = self.latestStatus, current.canHaveChargingHold else { return }
+            guard self.refreshRevision == revision else {
+                self.refreshChargingHold(for: current)
+                return
+            }
+            self.cachedHold = hold
+            current.chargingHold = hold
+            self.latestStatus = current
+            self.continuation.yield(current)
+        }
     }
 
     private func teardownNotifications() {

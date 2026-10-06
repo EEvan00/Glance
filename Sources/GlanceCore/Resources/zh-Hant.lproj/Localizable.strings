@@ -201,7 +201,7 @@
 "magsafe.unsupported" = "這台 Mac 不支援控制 MagSafe 指示燈。";
 "magsafe.installHelper" = "啟用 MagSafe 控制…";
 "magsafe.installExplanation" = "更改指示燈需要註冊一個權限受限的系統輔助程式，macOS 會要求你批准。";
-"magsafe.uninstallHelper" = "移除 MagSafe 輔助程式…";
+"magsafe.uninstallHelper" = "移除 MagSafe 輔助程式";
 "magsafe.error.install" = "無法安裝 MagSafe 輔助程式。";
 "magsafe.error.uninstall" = "無法移除 MagSafe 輔助程式。";
 "magsafe.error.write" = "無法套用 MagSafe 指示燈設定。";
@@ -295,3 +295,10 @@
 "weather.sunset" = "日落";
 "weather.refresh" = "立即更新";
 "weather.rainChance" = "降雨概率";
+
+"battery.state.paused" = "Paused";
+"battery.chargeToFull" = "立即充滿";
+"battery.chargeToFull.explanation" = "暫時恢復充電，保留最佳化電池充電設定。";
+"battery.chargeToFull.unavailable" = "macOS 目前不允許暫時恢復充電。";
+"battery.chargeToFull.accepted" = "已向 macOS 傳送要求，正在等待恢復充電。";
+"battery.chargeToFull.failed" = "無法恢復充電，請重試或使用 macOS 電池選單。";

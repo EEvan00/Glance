@@ -60,11 +60,6 @@ final class StatusIconGeometryTests: XCTestCase {
         XCTAssertFalse(bolt.isEmpty)
         XCTAssertEqual(StatusIconGeometry.batteryValueBaseline(fontSize: 20), CGPoint(x: 59.5, y: 17))
         XCTAssertEqual(StatusIconGeometry.batteryValueBaseFontSize, 20, accuracy: 0.01)
-        XCTAssertEqual(
-            StatusIconGeometry.batteryChargingBoltCalibration,
-            220.0 / 180.0,
-            accuracy: 0.0001
-        )
         XCTAssertEqual(StatusIconGeometry.batteryValueBaseline(fontSize: 32), CGPoint(x: 59.5, y: 24))
         assertPathBounds(
             bolt,

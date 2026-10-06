@@ -4,6 +4,78 @@ import XCTest
 
 @MainActor
 final class BatteryMonitorTests: XCTestCase {
+    func testConfirmedSystemHoldFlowsIntoStatusAndClearsOnUnplug() async {
+        let reader = FakeBatteryReader(result: BatteryReading(
+            currentCapacity: 80, maxCapacity: 100, isCharging: false,
+            isConnectedToPower: true, isPresent: true
+        ))
+        let monitor = BatteryMonitor(reader: reader, chargingHoldProvider: { .resumable },
+                                     lowPowerModeProvider: { false })
+        monitor.refresh()
+        var iterator = monitor.updates.makeAsyncIterator()
+        let initial = await iterator.next()
+        XCTAssertFalse(initial?.isChargingPaused == true)
+        let confirmed = await iterator.next()
+        XCTAssertTrue(confirmed?.isChargingPaused == true)
+        XCTAssertTrue(confirmed?.canChargeToFull == true)
+        reader.result?.isConnectedToPower = false
+        monitor.refresh()
+        let unplugged = await iterator.next()
+        XCTAssertFalse(unplugged?.isChargingPaused == true)
+        XCTAssertFalse(unplugged?.canChargeToFull == true)
+        monitor.stop()
+    }
+
+    func testLateHoldResponseCannotRestorePausedStateAfterUnplug() async {
+        let gate = ChargingHoldGate()
+        let reader = FakeBatteryReader(result: BatteryReading(
+            currentCapacity: 80, maxCapacity: 100, isCharging: false,
+            isConnectedToPower: true, isPresent: true
+        ))
+        let monitor = BatteryMonitor(reader: reader, chargingHoldProvider: { await gate.read() },
+                                     lowPowerModeProvider: { false })
+        monitor.refresh()
+        var iterator = monitor.updates.makeAsyncIterator()
+        _ = await iterator.next()
+        reader.result?.isConnectedToPower = false
+        monitor.refresh()
+        _ = await iterator.next()
+        await gate.release()
+        // End the stream after the suspended query has had a chance to finish.
+        for _ in 0..<10 { await Task.yield() }
+        monitor.stop()
+        let stale = await iterator.next()
+        XCTAssertNil(stale)
+    }
+
+    func testOverlappingEligibleRefreshesStillDeliverLatestHold() async {
+        let gate = ChargingHoldGate()
+        let reader = FakeBatteryReader(result: BatteryReading(
+            currentCapacity: 80, maxCapacity: 100, isCharging: false,
+            isConnectedToPower: true, isPresent: true
+        ))
+        let monitor = BatteryMonitor(reader: reader, chargingHoldProvider: { await gate.read() },
+                                     lowPowerModeProvider: { false })
+        monitor.refresh()
+        var iterator = monitor.updates.makeAsyncIterator()
+        _ = await iterator.next()
+        reader.result?.currentCapacity = 81
+        monitor.refresh()
+        _ = await iterator.next()
+        await gate.release()
+        let confirmed = expectation(description: "Latest eligible status receives a fresh hold query")
+        let consumer = Task { @MainActor in
+            if let value = await iterator.next() {
+                XCTAssertEqual(value.percentage, 81)
+                XCTAssertTrue(value.canChargeToFull)
+                confirmed.fulfill()
+            }
+        }
+        await fulfillment(of: [confirmed], timeout: 2)
+        monitor.stop()
+        consumer.cancel()
+    }
+
     func testParserConvertsValidInternalBatteryDescription() {
         let description: [String: Any] = [
             kIOPSTypeKey: kIOPSInternalBatteryType,
@@ -541,5 +613,19 @@ private final class IOPSNotificationSourceHarness {
     func releaseRetainedContexts() {
         retainedContexts.forEach { $0.release() }
         retainedContexts.removeAll()
+    }
+}
+
+private actor ChargingHoldGate {
+    private var released = false
+    private var continuation: CheckedContinuation<BatteryChargingHold, Never>?
+    func read() async -> BatteryChargingHold {
+        if released { return .resumable }
+        return await withCheckedContinuation { continuation = $0 }
+    }
+    func release() {
+        released = true
+        continuation?.resume(returning: .resumable)
+        continuation = nil
     }
 }
