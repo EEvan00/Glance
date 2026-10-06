@@ -128,13 +128,14 @@ cp -R "$CORE_RESOURCE_BUNDLE" "$CONTENTS/Resources/"
 cp "$BIN_PATH/GlanceMagSafeHelper" "$CONTENTS/Resources/GlanceMagSafeHelper"
 cp "$ROOT/LICENSE" "$ROOT/NOTICE" "$CONTENTS/Resources/"
 cp "$ROOT/Support/io.github.EEvan00.Glance.magsafe-helper.plist" "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.magsafe-helper.plist"
-MAGSAFE_HELPER_LABEL="$BUNDLE_ID.MagSafeHelper"
+MAGSAFE_HELPER_LABEL="$BUNDLE_ID.MagSafeLEDHelper"
+MAGSAFE_MACH_SERVICE="$BUNDLE_ID.MagSafeHelper"
 /usr/libexec/PlistBuddy \
     -c "Set :Label $MAGSAFE_HELPER_LABEL" \
     -c "Delete :MachServices" \
     -c "Add :MachServices dict" \
-    -c "Add :MachServices:$MAGSAFE_HELPER_LABEL bool true" \
-    -c "Set :EnvironmentVariables:GLANCE_MACH_SERVICE $MAGSAFE_HELPER_LABEL" \
+    -c "Add :MachServices:$MAGSAFE_MACH_SERVICE bool true" \
+    -c "Set :EnvironmentVariables:GLANCE_MACH_SERVICE $MAGSAFE_MACH_SERVICE" \
     "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.magsafe-helper.plist"
 
 SPARKLE_FRAMEWORK_SOURCE="$(find "$ROOT/.build/artifacts" -path '*/Sparkle.xcframework/macos-*/Sparkle.framework' -type d -print -quit)"
@@ -215,7 +216,20 @@ if [[ "${SDK_VERSION%%.*}" -ge 26 ]]; then
     restore_deployment_target "$CONTENTS/Resources/GlanceMagSafeHelper"
 fi
 
-SIGNING_IDENTITY="${CODE_SIGN_IDENTITY:--}"
+SIGNING_IDENTITY="${CODE_SIGN_IDENTITY:-}"
+# Local updates must preserve a certificate-backed identity for SMAppService.
+# CI and explicit release signing continue to use their configured identity.
+if [[ -z "$SIGNING_IDENTITY" && "${CI:-false}" != "true" ]]; then
+    LOCAL_DEVELOPMENT_IDENTITIES=()
+    while IFS= read -r identity; do
+        [[ -n "$identity" ]] && LOCAL_DEVELOPMENT_IDENTITIES+=("$identity")
+    done < <(security find-identity -v -p codesigning 2>/dev/null \
+        | sed -nE 's/^[[:space:]]*[0-9]+\) ([A-Fa-f0-9]{40}) "Apple Development:.*$/\1/p')
+    if [[ "${#LOCAL_DEVELOPMENT_IDENTITIES[@]}" -eq 1 ]]; then
+        SIGNING_IDENTITY="${LOCAL_DEVELOPMENT_IDENTITIES[0]}"
+    fi
+fi
+SIGNING_IDENTITY="${SIGNING_IDENTITY:--}"
 SIGNING_ARGS=(--force --deep --sign "$SIGNING_IDENTITY")
 if [[ "$SIGNING_IDENTITY" != "-" ]]; then
     SIGNING_ARGS+=(--options runtime --timestamp)
@@ -226,7 +240,10 @@ fi
 
 codesign "${SIGNING_ARGS[@]}" "$CONTENTS/Frameworks/libGlanceMediaBridge.dylib"
 codesign "${SIGNING_ARGS[@]}" "$CONTENTS/Frameworks/Sparkle.framework"
-codesign "${SIGNING_ARGS[@]}" "$CONTENTS/Resources/GlanceMagSafeHelper"
+# SMAppService may retain the container's signing identifier in its launch
+# requirement. A standalone SwiftPM executable otherwise gets a UUID-derived
+# identifier that changes across builds and does not match the container.
+codesign "${SIGNING_ARGS[@]}" --identifier "$BUNDLE_ID" "$CONTENTS/Resources/GlanceMagSafeHelper"
 codesign "${SIGNING_ARGS[@]}" "$APP_DIR"
 codesign --verify --deep --strict --verbose=2 "$APP_DIR"
 
@@ -244,12 +261,12 @@ plutil -lint "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.magsafe-h
     echo "Error: packaged MagSafe helper label does not match the app bundle identifier." >&2
     exit 1
 }
-[[ "$(/usr/libexec/PlistBuddy -c 'Print :EnvironmentVariables:GLANCE_MACH_SERVICE' "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.magsafe-helper.plist")" == "$MAGSAFE_HELPER_LABEL" ]] || {
-    echo "Error: packaged MagSafe XPC service environment does not match the helper label." >&2
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :EnvironmentVariables:GLANCE_MACH_SERVICE' "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.magsafe-helper.plist")" == "$MAGSAFE_MACH_SERVICE" ]] || {
+    echo "Error: packaged MagSafe XPC service environment does not match the expected Mach service." >&2
     exit 1
 }
-[[ "$(/usr/libexec/PlistBuddy -c "Print :MachServices:$MAGSAFE_HELPER_LABEL" "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.magsafe-helper.plist")" == "true" ]] || {
-    echo "Error: packaged MagSafe Mach service does not match the helper label." >&2
+[[ "$(/usr/libexec/PlistBuddy -c "Print :MachServices:$MAGSAFE_MACH_SERVICE" "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.magsafe-helper.plist")" == "true" ]] || {
+    echo "Error: packaged MagSafe Mach service does not match the expected XPC endpoint." >&2
     exit 1
 }
 codesign --verify --strict --verbose=2 "$CONTENTS/Resources/GlanceMagSafeHelper"

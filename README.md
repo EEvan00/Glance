@@ -38,7 +38,9 @@ First launch opens Settings. Add both bundled shortcuts and confirm the system p
 
 The project repository is [EEvan00/Glance](https://github.com/EEvan00/Glance), currently private. No public release has been published. Automatic updates remain disabled until Glance has its own Sparkle signing keys and update feed. Future releases use `.github/workflows/release.yml`, explicit version/build numbers and bilingual English / Chinese notes.
 
-Local packages are ad-hoc signed. Developer ID signing and notarization are not configured. macOS launch constraints currently reject the ad-hoc Glance MagSafe helper on the tested Mac, so LED control is unavailable there. Command timeouts and explicit removal handle an unresponsive helper; the ordinary status and weather controls do not require it.
+Packages built without an available or configured signing identity are ad-hoc signed. Developer ID signing and notarization are not configured. macOS launch constraints reject the ad-hoc Glance MagSafe helper on the tested Mac, so those packages cannot control its LED. Command timeouts and explicit removal handle an unresponsive helper; the ordinary status and weather controls do not require it.
+
+For local development, `scripts/build-app.sh` automatically uses the sole valid Apple Development signing identity when one is available. Set `CODE_SIGN_IDENTITY` explicitly when several identities exist. CI keeps its configured signing behavior. The helper uses the container's stable signing identifier and the `MagSafeLEDHelper` service label to avoid the renamed Status Trio registration's stale executable-path cache. Remove a failed old registration before enabling the new helper, confirm any system authorization prompt, and verify LED control on the Mac. The certificate-signed package was verified to start its helper and apply both system/off commands on the development Mac. Development signing is not Developer ID distribution signing or notarization.
 
 ## License and acknowledgements
 
