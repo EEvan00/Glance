@@ -10,6 +10,18 @@ struct CodexUsageWindow: Identifiable, Equatable, Sendable {
         guard let usedPercent, usedPercent.isFinite else { return nil }
         return Int(min(100, max(0, 100 - usedPercent)).rounded())
     }
+
+    func resetCountdown(now: Date = Date()) -> String? {
+        guard let resetsAt, resetsAt.isFinite else { return nil }
+        let minutes = max(0, (resetsAt - now.timeIntervalSince1970) / 60)
+        if minutes >= 1440 {
+            return "\(Int(minutes / 1440))d \(Int(minutes.truncatingRemainder(dividingBy: 1440) / 60))h"
+        }
+        if minutes >= 60 {
+            return "\(Int(minutes / 60))h \(Int(minutes.truncatingRemainder(dividingBy: 60)))m"
+        }
+        return "\(Int(ceil(minutes)))m"
+    }
 }
 
 struct CodexUsageSnapshot: Equatable, Sendable {

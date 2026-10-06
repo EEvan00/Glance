@@ -210,7 +210,7 @@
 /* Compact controls and usage */
 "brightness.title" = "Luminosité";
 "codex.remaining" = "%d%% restants";
-"codex.reset" = "Réinitialisation %@";
+"codex.reset" = "Réinitialisation dans %@";
 "codex.resetFull" = "Réinitialisation %@";
 "codex.updated" = "Mise à jour %@";
 "codex.loading" = "Chargement…";

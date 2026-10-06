@@ -210,7 +210,7 @@
 /* Compact controls and usage */
 "brightness.title" = "Brilho";
 "codex.remaining" = "%d%% restante";
-"codex.reset" = "Redefine %@";
+"codex.reset" = "Redefine em %@";
 "codex.resetFull" = "Redefine %@";
 "codex.updated" = "Atualizado %@";
 "codex.loading" = "Carregando…";

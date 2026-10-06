@@ -24,17 +24,23 @@ struct CodexUsageView: View {
                                 Text(remainingLabel(window, localization: localization)).monospacedDigit()
                             }
                             if let remaining = window.remainingPercent {
-                                ProgressView(value: Double(remaining), total: 100).tint(.secondary)
+                                GeometryReader { geometry in
+                                    ZStack(alignment: .leading) {
+                                        Capsule().fill(Color.white.opacity(0.18))
+                                        Capsule().fill(Color.white.opacity(0.88))
+                                            .frame(width: geometry.size.width * CGFloat(min(max(remaining, 0), 100)) / 100)
+                                    }
+                                }
+                                .frame(height: 6)
+                                .accessibilityElement(children: .ignore)
+                                .accessibilityLabel(windowLabel(window, localization: localization))
+                                .accessibilityValue(remainingLabel(window, localization: localization))
                             }
                             if let reset = window.resetsAt {
                                 Text(localization.format(.codexResetFull, Date(timeIntervalSince1970: reset).formatted(date: .abbreviated, time: .shortened)))
                                     .font(.caption).foregroundStyle(.primary.opacity(0.78))
                             }
                         }
-                    }
-                    if let updated = controller.updatedAt {
-                        Text(localization.format(.codexUpdated, updated.formatted(date: .omitted, time: .shortened)))
-                            .font(.caption).foregroundStyle(.primary.opacity(0.78))
                     }
                 } else {
                     Text(localization.string(controller.isLoading ? .codexLoading : .codexUnavailable)).foregroundStyle(.primary.opacity(0.78))
@@ -43,14 +49,21 @@ struct CodexUsageView: View {
                     Text(localization.string(.codexCached)).font(.caption).foregroundStyle(.primary.opacity(0.78))
                 }
             }
-            Button { controller.refreshNow() } label: {
-                Text(localization.string(.codexRefreshNow))
-                    .padding(.horizontal, CompactPopupLayout.contentInset)
-                    .padding(.vertical, CompactPopupLayout.gap)
-                    .systemModuleSurface()
+            HStack {
+                if let updated = controller.updatedAt {
+                    Text(localization.format(.codexUpdated, updated.formatted(date: .omitted, time: .shortened)))
+                        .font(.caption).foregroundStyle(.primary.opacity(0.78))
+                }
+                Spacer()
+                Button { controller.refreshNow() } label: {
+                    Image(systemName: "arrow.clockwise")
+                        .frame(width: 24, height: 24)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(localization.string(.codexRefreshNow))
+                .disabled(controller.isLoading)
             }
-            .buttonStyle(.plain)
-            .disabled(controller.isLoading)
             .popupFooterInsets()
         }
     }

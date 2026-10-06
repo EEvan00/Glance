@@ -2,6 +2,21 @@ import XCTest
 @testable import GlanceCore
 
 final class CompactPopupModelsTests: XCTestCase {
+    func testQuotaCountdownUsesCompactUnitsAndClampsExpiredResets() {
+        let now = Date(timeIntervalSince1970: 1_000)
+        func countdown(_ seconds: TimeInterval?) -> String? {
+            CodexUsageWindow(id: "weekly", usedPercent: 23, windowDurationMins: 10080,
+                             resetsAt: seconds.map { now.timeIntervalSince1970 + $0 })
+                .resetCountdown(now: now)
+        }
+        XCTAssertEqual(countdown(4 * 86400 + 7 * 3600), "4d 7h")
+        XCTAssertEqual(countdown(7 * 3600 + 20 * 60), "7h 20m")
+        XCTAssertEqual(countdown(59), "1m")
+        XCTAssertEqual(countdown(-60), "0m")
+        XCTAssertNil(countdown(nil))
+        XCTAssertNil(countdown(.infinity))
+    }
+
     func testQuotaUsesActualWindowAndDoesNotInventSecondary() throws {
         let data = Data(#"{"rateLimits":{"primary":{"usedPercent":9,"windowDurationMins":10080,"resetsAt":1791589513},"secondary":null}}"#.utf8)
         let usage = try CodexUsageSnapshot.decode(data)

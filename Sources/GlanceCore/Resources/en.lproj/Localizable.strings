@@ -209,8 +209,8 @@
 
 /* Compact controls and usage */
 "brightness.title" = "Brightness";
-"codex.remaining" = "%d%% remaining";
-"codex.reset" = "Re: %@";
+"codex.remaining" = "%d%% left";
+"codex.reset" = "Resets in %@";
 "codex.resetFull" = "Resets %@";
 "codex.updated" = "Updated %@";
 "codex.loading" = "Loading…";

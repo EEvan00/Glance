@@ -210,7 +210,7 @@
 /* Compact controls and usage */
 "brightness.title" = "亮度";
 "codex.remaining" = "剩餘 %d%%";
-"codex.reset" = "%@ 重置";
+"codex.reset" = "%@ 後重置";
 "codex.resetFull" = "%@ 重置";
 "codex.updated" = "%@ 更新";
 "codex.loading" = "載入中…";

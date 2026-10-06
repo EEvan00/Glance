@@ -343,8 +343,10 @@ struct StatusPopoverView: View {
                         panel = .bluetooth
                     }
                     PopupDivider().padding(.horizontal, 8)
-                    cell(symbol: "terminal", title: codexTitle, subtitle: codexSubtitle) { panel = .codex }
-                        .accessibilityLabel(codexHelp)
+                    TimelineView(.everyMinute) { context in
+                        cell(symbol: "terminal", title: codexTitle, subtitle: codexSubtitle(at: context.date)) { panel = .codex }
+                            .accessibilityLabel(codexHelp(at: context.date))
+                    }
                 }
                 .systemModuleSurface()
             }
@@ -425,17 +427,15 @@ struct StatusPopoverView: View {
         return "Codex · \(percent)%"
     }
 
-    private var codexHelp: String {
-        guard let percent = codexUsage.snapshot?.windows.first?.remainingPercent else { return "Codex · \(codexSubtitle)" }
-        return "Codex · \(localization.format(.codexRemaining, percent)) · \(codexSubtitle)"
+    private func codexHelp(at date: Date) -> String {
+        guard let percent = codexUsage.snapshot?.windows.first?.remainingPercent else { return "Codex · \(codexSubtitle(at: date))" }
+        return "Codex · \(localization.format(.codexRemaining, percent)) · \(codexSubtitle(at: date))"
     }
 
-    private var codexSubtitle: String {
+    private func codexSubtitle(at date: Date) -> String {
         if codexUsage.isUnavailable, codexUsage.snapshot != nil { return localization.string(.codexCached) }
-        if let reset = codexUsage.snapshot?.windows.first?.resetsAt {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "M/d HH:mm"
-            return localization.format(.codexReset, formatter.string(from: Date(timeIntervalSince1970: reset)))
+        if let countdown = codexUsage.snapshot?.windows.first?.resetCountdown(now: date) {
+            return localization.format(.codexReset, countdown)
         }
         return localization.string(codexUsage.isLoading ? .codexLoading : .codexUnavailable)
     }

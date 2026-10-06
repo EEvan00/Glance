@@ -210,7 +210,7 @@
 /* Compact controls and usage */
 "brightness.title" = "Яркость";
 "codex.remaining" = "Осталось %d%%";
-"codex.reset" = "Сброс %@";
+"codex.reset" = "Сброс через %@";
 "codex.resetFull" = "Сброс %@";
 "codex.updated" = "Обновлено %@";
 "codex.loading" = "Загрузка…";

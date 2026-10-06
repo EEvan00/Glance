@@ -210,7 +210,7 @@
 /* Compact controls and usage */
 "brightness.title" = "明るさ";
 "codex.remaining" = "残り %d%%";
-"codex.reset" = "%@ にリセット";
+"codex.reset" = "%@ 後にリセット";
 "codex.resetFull" = "%@ にリセット";
 "codex.updated" = "%@ に更新";
 "codex.loading" = "読み込み中…";

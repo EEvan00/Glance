@@ -210,7 +210,7 @@
 /* Compact controls and usage */
 "brightness.title" = "Helligkeit";
 "codex.remaining" = "%d%% verbleibend";
-"codex.reset" = "Zurücksetzung %@";
+"codex.reset" = "Zurücksetzung in %@";
 "codex.resetFull" = "Zurücksetzung %@";
 "codex.updated" = "Aktualisiert %@";
 "codex.loading" = "Laden…";

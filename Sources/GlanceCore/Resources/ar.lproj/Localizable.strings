@@ -210,7 +210,7 @@
 /* Compact controls and usage */
 "brightness.title" = "السطوع";
 "codex.remaining" = "متبقي %d%%";
-"codex.reset" = "إعادة التعيين %@";
+"codex.reset" = "إعادة التعيين خلال %@";
 "codex.resetFull" = "إعادة التعيين %@";
 "codex.updated" = "تم التحديث %@";
 "codex.loading" = "جارٍ التحميل…";
