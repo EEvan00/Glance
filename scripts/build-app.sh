@@ -244,7 +244,10 @@ codesign "${SIGNING_ARGS[@]}" "$CONTENTS/Frameworks/Sparkle.framework"
 # requirement. A standalone SwiftPM executable otherwise gets a UUID-derived
 # identifier that changes across builds and does not match the container.
 codesign "${SIGNING_ARGS[@]}" --identifier "$BUNDLE_ID" "$CONTENTS/Resources/GlanceMagSafeHelper"
-codesign "${SIGNING_ARGS[@]}" "$APP_DIR"
+# Hardened Runtime requires this entitlement before macOS can show the
+# location permission prompt used by the existing Wi-Fi authorization flow.
+plutil -lint "$ROOT/Support/Glance.entitlements"
+codesign "${SIGNING_ARGS[@]}" --entitlements "$ROOT/Support/Glance.entitlements" "$APP_DIR"
 codesign --verify --deep --strict --verbose=2 "$APP_DIR"
 
 plutil -lint "$CONTENTS/Info.plist"
