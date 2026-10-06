@@ -259,12 +259,14 @@ private enum PopoverPanel: Equatable {
     case claude
     case performance
     case weather
+    case timer
 }
 
 struct StatusPopoverView: View {
     @ObservedObject var store: SystemStatusStore
     @ObservedObject var settings: SettingsStore
     @ObservedObject var magSafeLED: MagSafeLEDController
+    @ObservedObject var countdown: CountdownController
     @ObservedObject var performance: PerformanceController
     @ObservedObject var claudeUsage: ClaudeUsageController
     @ObservedObject var codexUsage: CodexUsageController
@@ -279,6 +281,8 @@ struct StatusPopoverView: View {
     let openLocationSettings: () -> Void
     let openBluetoothSettings: () -> Void
     let openSettings: () -> Void
+    let openCalendar: () -> Void
+    let openClock: () -> Void
     let openWeather: () -> Void
     let openSoundSettings: () -> Void
     let quit: () -> Void
@@ -314,6 +318,8 @@ struct StatusPopoverView: View {
                 SoundControlsView(store: store, settings: settings, onBack: { panel = .summary }, onOpenSettings: openSoundSettings)
             case .weather:
                 WeatherDetailsView(controller: weather, forecast: weatherForecast, settings: settings, onBack: { panel = .summary }, onOpenWeather: openWeather)
+            case .timer:
+                CountdownView(controller: countdown, onBack: { panel = .summary })
             case .performance:
                 PerformanceDetailsView(controller: performance, onBack: { panel = .summary })
             case .claude:
@@ -332,6 +338,17 @@ struct StatusPopoverView: View {
         .padding(CompactPopupLayout.gap)
         .frame(width: 284)
         .fixedSize(horizontal: false, vertical: true)
+        .onAppear {
+            if countdown.isRunning || countdown.isFinished || countdown.shouldOpenDetails { panel = .timer }
+            countdown.shouldOpenDetails = false
+        }
+        .onChange(of: countdown.shouldOpenDetails) { _, requested in
+            if requested { panel = .timer; countdown.shouldOpenDetails = false }
+        }
+        .onChange(of: countdown.isFinished) { _, finished in
+            if finished { panel = .timer }
+            else if panel == .timer && countdown.indicator == nil { panel = .summary }
+        }
     }
 
     private var summary: some View {
@@ -385,6 +402,11 @@ struct StatusPopoverView: View {
             TimelineView(.everyMinute) { context in
                 HStack(spacing: CompactPopupLayout.gap) {
                     footerButton(.compactSettings, symbol: "gearshape", action: openSettings)
+                    Button { panel = .timer } label: {
+                        Image(systemName: countdown.isFinished ? "timer.circle.fill" : "timer")
+                            .font(.system(size: 13, weight: .medium))
+                            .frame(width: 28, height: 24).systemModuleSurface()
+                    }.buttonStyle(.plain).accessibilityLabel(localization.string(.timerTitle))
                     Button { panel = .weather } label: {
                         HStack(spacing: 3) {
                             Image(systemName: weather.snapshot?.symbol ?? "cloud")
@@ -397,13 +419,18 @@ struct StatusPopoverView: View {
                     .buttonStyle(.plain)
                     .accessibilityLabel(weatherHelp)
                     .help(Text(weatherHelp))
-                    Text(FooterClockFormatting.date(context.date, locale: localization.resolvedLanguage.locale, chinese: localization.resolvedLanguage.isChinese))
-                        .font(.system(size: 11)).monospacedDigit().lineLimit(1)
-                        .frame(width: 78, height: 24).systemModuleSurface()
-                        .help(context.date.formatted(date: .complete, time: .omitted))
-                    Text(FooterClockFormatting.time(context.date, uses24HourClock: settings.uses24HourClock))
-                        .font(.system(size: 11)).monospacedDigit().lineLimit(1)
-                        .frame(width: 44, height: 24).systemModuleSurface()
+                    Button(action: openCalendar) {
+                        Text(FooterClockFormatting.date(context.date, locale: localization.resolvedLanguage.locale, chinese: localization.resolvedLanguage.isChinese))
+                            .font(.system(size: 11)).monospacedDigit().lineLimit(1)
+                            .frame(width: 78, height: 24).systemModuleSurface()
+                    }.buttonStyle(.plain)
+                        .accessibilityLabel(localization.string(.footerOpenCalendar))
+                    Button(action: openClock) {
+                        Text(FooterClockFormatting.time(context.date, uses24HourClock: settings.uses24HourClock))
+                            .font(.system(size: 11)).monospacedDigit().lineLimit(1)
+                            .frame(width: 44, height: 24).systemModuleSurface()
+                    }.buttonStyle(.plain)
+                        .accessibilityLabel(localization.string(.footerOpenClock))
                     footerButton(.compactQuit, symbol: "xmark.circle", action: quit)
                 }
             }

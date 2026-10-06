@@ -3,6 +3,7 @@ struct StatusBarRenderKey: Equatable {
     let iconSize: Double
     let options: BatteryIconOptions
     let connectionOptions: ConnectionIconOptions
+    var countdown: CountdownIndicator? = nil
     let appearanceName: String
 }
 

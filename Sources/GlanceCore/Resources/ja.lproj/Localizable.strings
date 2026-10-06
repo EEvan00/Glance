@@ -328,3 +328,20 @@
 "performance.openActivityMonitor" = "Open Activity Monitor";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "RAM %@";
+
+"timer.title" = "タイマー";
+"timer.finished" = "時間です";
+"timer.paused" = "一時停止中";
+"timer.pause" = "一時停止";
+"timer.resume" = "再開";
+"timer.done" = "完了";
+"timer.cancel" = "キャンセル";
+"timer.minutes" = "%d 分";
+"timer.custom" = "カスタム時間";
+"timer.minuteUnit" = "分";
+"timer.start" = "開始";
+"footer.openCalendar" = "カレンダーを開く";
+"footer.openClock" = "時計を開く";
+"timer.notificationBody" = "カウントダウンが終了しました。";
+"timer.notificationHelp" = "通知を利用できません。終了時にはメニューバーが点滅します。";
+"timer.openNotifications" = "通知設定を開く";

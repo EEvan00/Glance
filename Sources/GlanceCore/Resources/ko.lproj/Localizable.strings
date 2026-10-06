@@ -328,3 +328,20 @@
 "performance.openActivityMonitor" = "Open Activity Monitor";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "RAM %@";
+
+"timer.title" = "타이머";
+"timer.finished" = "시간 종료";
+"timer.paused" = "일시 정지됨";
+"timer.pause" = "일시 정지";
+"timer.resume" = "계속";
+"timer.done" = "완료";
+"timer.cancel" = "취소";
+"timer.minutes" = "%d분";
+"timer.custom" = "사용자 지정 시간";
+"timer.minuteUnit" = "분";
+"timer.start" = "시작";
+"footer.openCalendar" = "캘린더 열기";
+"footer.openClock" = "시계 열기";
+"timer.notificationBody" = "카운트다운이 완료되었습니다.";
+"timer.notificationHelp" = "알림을 사용할 수 없습니다. 종료 시 메뉴 막대가 깜박입니다.";
+"timer.openNotifications" = "알림 설정 열기";

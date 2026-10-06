@@ -328,3 +328,20 @@
 "performance.openActivityMonitor" = "Open Activity Monitor";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "RAM %@";
+
+"timer.title" = "المؤقت";
+"timer.finished" = "انتهى الوقت";
+"timer.paused" = "متوقف مؤقتًا";
+"timer.pause" = "إيقاف مؤقت";
+"timer.resume" = "استئناف";
+"timer.done" = "تم";
+"timer.cancel" = "إلغاء";
+"timer.minutes" = "%d دقيقة";
+"timer.custom" = "مدة مخصصة";
+"timer.minuteUnit" = "دقيقة";
+"timer.start" = "بدء";
+"footer.openCalendar" = "فتح التقويم";
+"footer.openClock" = "فتح الساعة";
+"timer.notificationBody" = "انتهى العد التنازلي.";
+"timer.notificationHelp" = "الإشعارات غير متاحة. سيومض شريط القوائم عند انتهاء الوقت.";
+"timer.openNotifications" = "فتح إعدادات الإشعارات";

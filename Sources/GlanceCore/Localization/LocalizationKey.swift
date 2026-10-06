@@ -1,5 +1,22 @@
 // Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 enum LocalizationKey: String, CaseIterable, Hashable, Sendable {
+    case footerOpenCalendar = "footer.openCalendar"
+    case footerOpenClock = "footer.openClock"
+    case timerNotificationBody = "timer.notificationBody"
+    case timerNotificationHelp = "timer.notificationHelp"
+    case timerOpenNotifications = "timer.openNotifications"
+    case timerTitle = "timer.title"
+    case timerFinished = "timer.finished"
+    case timerPaused = "timer.paused"
+    case timerPause = "timer.pause"
+    case timerResume = "timer.resume"
+    case timerDone = "timer.done"
+    case timerCancel = "timer.cancel"
+    case timerMinutes = "timer.minutes"
+    case timerCustom = "timer.custom"
+    case timerMinuteUnit = "timer.minuteUnit"
+    case timerStart = "timer.start"
+
     case settingsPopupUtility = "settings.popupUtility"
     case settingsPopupUtilityDescription = "settings.popupUtility.description"
     case utilityCodex = "utility.codex"

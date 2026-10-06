@@ -28,6 +28,7 @@ enum StatusIconRenderer {
     static func image(
         menuBarStatus: MenuBarStatus,
         size: CGFloat,
+        countdown: CountdownIndicator? = nil,
         options: BatteryIconOptions = .standard,
         connectionOptions: ConnectionIconOptions = .standard
     ) -> NSImage {
@@ -42,6 +43,7 @@ enum StatusIconRenderer {
             guard let context = NSGraphicsContext.current?.cgContext else { return false }
             draw(
                 menuBarStatus: menuBarStatus,
+                countdown: countdown,
                 options: options,
                 connectionOptions: connectionOptions,
                 in: context,
@@ -101,6 +103,7 @@ enum StatusIconRenderer {
     static func render(
         menuBarStatus: MenuBarStatus,
         size: CGFloat,
+        countdown: CountdownIndicator? = nil,
         scale: CGFloat,
         foreground: CGColor,
         options: BatteryIconOptions = .standard,
@@ -132,6 +135,7 @@ enum StatusIconRenderer {
         context.scaleBy(x: scale, y: scale)
         draw(
             menuBarStatus: menuBarStatus,
+            countdown: countdown,
             options: options,
             connectionOptions: connectionOptions,
             in: context,
@@ -144,6 +148,7 @@ enum StatusIconRenderer {
 
     private static func draw(
         menuBarStatus: MenuBarStatus,
+        countdown: CountdownIndicator?,
         options: BatteryIconOptions,
         connectionOptions: ConnectionIconOptions,
         in context: CGContext,
@@ -160,14 +165,19 @@ enum StatusIconRenderer {
 
         context.setLineCap(.round)
         context.setLineJoin(.round)
+        context.setAlpha(countdown?.isDimmed == true ? 0.05 : 1)
 
-        drawBattery(
-            menuBarStatus.battery,
-            options: options,
-            in: context,
-            foreground: foreground,
-            criticalColor: criticalColor
-        )
+        if let countdown {
+            drawCountdown(countdown, options: options, in: context, foreground: foreground)
+        } else {
+            drawBattery(
+                menuBarStatus.battery,
+                options: options,
+                in: context,
+                foreground: foreground,
+                criticalColor: criticalColor
+            )
+        }
         if menuBarStatus.connection == .ethernet {
             if connectionOptions.showsWiFiIconForEthernet {
                 drawStandardWiFi(menuBarStatus.wifi, in: context, foreground: foreground)
@@ -183,6 +193,24 @@ enum StatusIconRenderer {
             )
         }
         drawVolume(menuBarStatus.volume, in: context, foreground: foreground)
+    }
+
+    private static func drawCountdown(_ countdown: CountdownIndicator, options: BatteryIconOptions,
+                                      in context: CGContext, foreground: CGColor) {
+        context.saveGState()
+        defer { context.restoreGState() }
+        context.setLineWidth(8)
+        context.setStrokeColor(foreground.copy(alpha: 0.22) ?? foreground)
+        context.addPath(StatusIconGeometry.batteryTrack(hasTopGap: true, topGapWidth: StatusIconGeometry.batteryValueTopGapWidth))
+        context.strokePath()
+        context.setStrokeColor(foreground)
+        context.addPath(StatusIconGeometry.batteryFill(progress: countdown.progress, hasTopGap: true,
+                                                      topGapWidth: StatusIconGeometry.batteryValueTopGapWidth))
+        context.strokePath()
+        // Keep long custom durations inside the existing number slot.
+        let digits = String(countdown.number).count
+        let fontSize = batteryValueFontSize(scale: options.textScale) * min(1, 3.0 / Double(digits))
+        drawBatteryPercentage(countdown.number, color: foreground, fontSize: fontSize, in: context)
     }
 
     private static func drawBattery(

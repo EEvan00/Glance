@@ -10,6 +10,7 @@ private struct UncheckedSendableNSEvent: @unchecked Sendable {
 private struct StatusBarAccessibilityKey: Equatable {
     let status: MenuBarStatus
     let language: AppLanguage
+    let countdown: CountdownIndicator?
 }
 
 @MainActor
@@ -23,6 +24,9 @@ final class StatusBarController: NSObject {
 
     private let statusItem: NSStatusItem
     private let popover = StatusPopupPanel()
+    private let timerNotifications = CountdownNotificationService()
+    private var countdownCancellable: AnyCancellable?
+    private let countdown = CountdownController()
     private let performance = PerformanceController()
     private let claudeUsage = ClaudeUsageController()
     private var utilityCancellable: AnyCancellable?
@@ -71,6 +75,29 @@ final class StatusBarController: NSObject {
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         super.init()
 
+        timerNotifications.onUnavailable = { [weak self] unavailable in
+            self?.countdown.notificationsUnavailable = unavailable
+        }
+        timerNotifications.onResponse = { [weak self] isDone in
+            guard let self else { return }
+            if isDone {
+                self.countdown.cancel()
+            } else {
+                self.countdown.shouldOpenDetails = true
+                if !self.popover.isShown { self.togglePopover() }
+            }
+        }
+        countdown.onSchedule = { [weak self] deadline in
+            guard let self else { return }
+            self.timerNotifications.schedule(deadline: deadline,
+                title: self.localization.string(.timerFinished),
+                body: self.localization.string(.timerNotificationBody),
+                done: self.localization.string(.timerDone))
+        }
+        if let deadline = countdown.deadline { countdown.onSchedule?(deadline) }
+        countdownCancellable = countdown.objectWillChange.receive(on: RunLoop.main).sink { [weak self] _ in
+            self?.renderLatestSnapshot()
+        }
         configureButton()
         configurePopover()
         observeAppearanceChanges()
@@ -259,6 +286,7 @@ final class StatusBarController: NSObject {
                 store: store,
                 settings: settings,
                 magSafeLED: magSafeLED,
+                countdown: countdown,
                 performance: performance,
                 claudeUsage: claudeUsage,
                 codexUsage: codexUsage,
@@ -272,6 +300,14 @@ final class StatusBarController: NSObject {
                 openLocationSettings: handleOpenLocationSettings,
                 openBluetoothSettings: handleOpenBluetoothSettings,
                 openSettings: handleOpenSettings,
+                openCalendar: { [weak self] in
+                    self?.popover.performClose(nil)
+                    NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Calendar.app"))
+                },
+                openClock: { [weak self] in
+                    self?.popover.performClose(nil)
+                    NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Clock.app"))
+                },
                 openWeather: { [weak self] in
                     self?.popover.performClose(nil)
                     NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Weather.app"))
@@ -468,6 +504,7 @@ final class StatusBarController: NSObject {
             iconSize: iconSize,
             options: options,
             connectionOptions: connectionOptions,
+            countdown: countdown.indicator,
             appearanceName: button.effectiveAppearance.name.rawValue
         )
         guard renderCache.shouldRender(key) else { return }
@@ -475,23 +512,24 @@ final class StatusBarController: NSObject {
         button.image = StatusIconRenderer.image(
             menuBarStatus: status,
             size: iconSize,
+            countdown: countdown.indicator,
             options: options,
             connectionOptions: connectionOptions
         )
 
         let nextAccessibilityKey = StatusBarAccessibilityKey(
             status: status,
-            language: localization.resolvedLanguage
+            language: localization.resolvedLanguage,
+            countdown: countdown.indicator
         )
         guard nextAccessibilityKey != accessibilityKey else { return }
         accessibilityKey = nextAccessibilityKey
         button.setAccessibilityLabel(StatusPresentation.statusItemAccessibilityLabel)
-        button.setAccessibilityValue(
-            StatusPresentation.statusItemAccessibilityValue(
-                status,
-                localization: localization
-            )
-        )
+        let value = countdown.indicator.map { _ in
+            localization.string(.timerTitle) + ", " + CountdownController.display(countdown.remaining)
+                + (countdown.isFinished ? ", " + localization.string(.timerFinished) : "")
+        } ?? StatusPresentation.statusItemAccessibilityValue(status, localization: localization)
+        button.setAccessibilityValue(value)
     }
 
     private func renderLatestSnapshot() {

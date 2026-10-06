@@ -328,3 +328,20 @@
 "performance.openActivityMonitor" = "Open Activity Monitor";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "RAM %@";
+
+"timer.title" = "Timer";
+"timer.finished" = "Time’s up";
+"timer.paused" = "Paused";
+"timer.pause" = "Pause";
+"timer.resume" = "Resume";
+"timer.done" = "Done";
+"timer.cancel" = "Cancel";
+"timer.minutes" = "%d min";
+"timer.custom" = "Custom duration";
+"timer.minuteUnit" = "min";
+"timer.start" = "Start";
+"footer.openCalendar" = "Open Calendar";
+"footer.openClock" = "Open Clock";
+"timer.notificationBody" = "Your countdown is complete.";
+"timer.notificationHelp" = "Notifications are unavailable. The menu bar will still blink when time is up.";
+"timer.openNotifications" = "Open Notification Settings";

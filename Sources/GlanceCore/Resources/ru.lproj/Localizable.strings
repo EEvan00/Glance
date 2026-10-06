@@ -328,3 +328,20 @@
 "performance.openActivityMonitor" = "Open Activity Monitor";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "RAM %@";
+
+"timer.title" = "Таймер";
+"timer.finished" = "Время истекло";
+"timer.paused" = "Приостановлен";
+"timer.pause" = "Пауза";
+"timer.resume" = "Продолжить";
+"timer.done" = "Готово";
+"timer.cancel" = "Отменить";
+"timer.minutes" = "%d мин";
+"timer.custom" = "Своя длительность";
+"timer.minuteUnit" = "мин";
+"timer.start" = "Начать";
+"footer.openCalendar" = "Открыть Календарь";
+"footer.openClock" = "Открыть Часы";
+"timer.notificationBody" = "Обратный отсчёт завершён.";
+"timer.notificationHelp" = "Уведомления недоступны. По завершении значок в строке меню будет мигать.";
+"timer.openNotifications" = "Открыть настройки уведомлений";

@@ -328,3 +328,20 @@
 "performance.openActivityMonitor" = "打开活动监视器";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "内存 %@";
+
+"timer.title" = "计时器";
+"timer.finished" = "时间到";
+"timer.paused" = "已暂停";
+"timer.pause" = "暂停";
+"timer.resume" = "继续";
+"timer.done" = "完成";
+"timer.cancel" = "取消";
+"timer.minutes" = "%d 分钟";
+"timer.custom" = "自定义时长";
+"timer.minuteUnit" = "分钟";
+"timer.start" = "开始";
+"footer.openCalendar" = "打开日历";
+"footer.openClock" = "打开时钟";
+"timer.notificationBody" = "倒计时已结束。";
+"timer.notificationHelp" = "通知不可用，到时仍会在菜单栏闪动提醒。";
+"timer.openNotifications" = "打开通知设置";

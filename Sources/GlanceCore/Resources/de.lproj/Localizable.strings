@@ -328,3 +328,20 @@
 "performance.openActivityMonitor" = "Open Activity Monitor";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "RAM %@";
+
+"timer.title" = "Timer";
+"timer.finished" = "Zeit abgelaufen";
+"timer.paused" = "Pausiert";
+"timer.pause" = "Pause";
+"timer.resume" = "Fortsetzen";
+"timer.done" = "Fertig";
+"timer.cancel" = "Abbrechen";
+"timer.minutes" = "%d Min.";
+"timer.custom" = "Eigene Dauer";
+"timer.minuteUnit" = "Min.";
+"timer.start" = "Start";
+"footer.openCalendar" = "Kalender öffnen";
+"footer.openClock" = "Uhr öffnen";
+"timer.notificationBody" = "Der Timer ist abgelaufen.";
+"timer.notificationHelp" = "Benachrichtigungen sind nicht verfügbar. Die Menüleiste blinkt weiterhin nach Ablauf.";
+"timer.openNotifications" = "Mitteilungseinstellungen öffnen";

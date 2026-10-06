@@ -38,6 +38,7 @@ final class SettingsRowHitAreaTests: XCTestCase {
             store: store,
             settings: settings,
             magSafeLED: .unavailable(),
+            countdown: CountdownController(automaticTicks: false),
             performance: PerformanceController(),
             claudeUsage: ClaudeUsageController(),
             codexUsage: CodexUsageController(),
@@ -51,6 +52,8 @@ final class SettingsRowHitAreaTests: XCTestCase {
             openLocationSettings: {},
             openBluetoothSettings: {},
             openSettings: {},
+            openCalendar: {},
+            openClock: {},
             openWeather: {},
             openSoundSettings: {},
             quit: {}

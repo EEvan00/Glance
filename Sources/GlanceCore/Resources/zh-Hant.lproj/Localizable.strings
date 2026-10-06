@@ -328,3 +328,20 @@
 "performance.openActivityMonitor" = "打开活动监视器";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "記憶體 %@";
+
+"timer.title" = "計時器";
+"timer.finished" = "時間到";
+"timer.paused" = "已暫停";
+"timer.pause" = "暫停";
+"timer.resume" = "繼續";
+"timer.done" = "完成";
+"timer.cancel" = "取消";
+"timer.minutes" = "%d 分鐘";
+"timer.custom" = "自訂時間";
+"timer.minuteUnit" = "分鐘";
+"timer.start" = "開始";
+"footer.openCalendar" = "打開行事曆";
+"footer.openClock" = "打開時鐘";
+"timer.notificationBody" = "倒數計時已結束。";
+"timer.notificationHelp" = "通知無法使用，時間到時仍會在選單列閃動提醒。";
+"timer.openNotifications" = "打開通知設定";

@@ -328,3 +328,20 @@
 "performance.openActivityMonitor" = "Open Activity Monitor";
 "performance.cpuShort" = "CPU %@";
 "performance.memoryShort" = "RAM %@";
+
+"timer.title" = "Temporizador";
+"timer.finished" = "Tiempo agotado";
+"timer.paused" = "En pausa";
+"timer.pause" = "Pausar";
+"timer.resume" = "Reanudar";
+"timer.done" = "Listo";
+"timer.cancel" = "Cancelar";
+"timer.minutes" = "%d min";
+"timer.custom" = "Duración personalizada";
+"timer.minuteUnit" = "min";
+"timer.start" = "Iniciar";
+"footer.openCalendar" = "Abrir Calendario";
+"footer.openClock" = "Abrir Reloj";
+"timer.notificationBody" = "La cuenta atrás ha terminado.";
+"timer.notificationHelp" = "Las notificaciones no están disponibles. La barra de menús parpadeará al terminar.";
+"timer.openNotifications" = "Abrir ajustes de notificaciones";

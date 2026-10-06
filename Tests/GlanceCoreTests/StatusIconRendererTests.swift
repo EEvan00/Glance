@@ -4,6 +4,29 @@ import XCTest
 @testable import GlanceCore
 
 final class StatusIconRendererTests: XCTestCase {
+    func testCountdownChangesBatteryAndBlinkDimsEntireIcon() throws {
+        func rendered(_ countdown: CountdownIndicator?) throws -> CGImage {
+            try XCTUnwrap(StatusIconRenderer.render(menuBarStatus: .placeholder, size: 20,
+                countdown: countdown, scale: 8, foreground: CGColor(gray: 1, alpha: 1)))
+        }
+        let normal = try rendered(nil)
+        let timer = try rendered(CountdownIndicator(remaining: 30, duration: 60))
+        let dimmed = try rendered(CountdownIndicator(remaining: 30, duration: 60, isDimmed: true))
+        let outsideBattery = CGRect(x: 35, y: 40, width: 50, height: 42)
+        let baseline = try PixelBuffer(image: normal)
+        let active = try PixelBuffer(image: timer)
+        let faded = try PixelBuffer(image: dimmed)
+        XCTAssertEqual(baseline.alphaSum(inSVGRect: outsideBattery, size: 20, scale: 8),
+                       active.alphaSum(inSVGRect: outsideBattery, size: 20, scale: 8))
+        let activeConnections = active.alphaSum(inSVGRect: outsideBattery, size: 20, scale: 8)
+        let dimmedConnections = faded.alphaSum(inSVGRect: outsideBattery, size: 20, scale: 8)
+        XCTAssertGreaterThan(activeConnections, 0)
+        XCTAssertLessThan(dimmedConnections, activeConnections / 5)
+        let battery = CGRect(x: 0, y: 0, width: 100, height: 100)
+        XCTAssertGreaterThan(active.alphaSum(inSVGRect: battery, size: 20, scale: 8),
+                             faded.alphaSum(inSVGRect: battery, size: 20, scale: 8))
+    }
+
     func testPausedPlugRendersAndHonorsIndicatorSetting() throws {
         let battery = BatteryStatus(rawPercentage: 80, isPresent: true, isCharging: false,
                                     isLowPowerMode: false, isConnectedToPower: true,
