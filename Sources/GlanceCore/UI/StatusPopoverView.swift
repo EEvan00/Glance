@@ -364,10 +364,10 @@ struct StatusPopoverView: View {
                             cell(symbol: "cpu", title: performanceCPUText, subtitle: performanceMemoryText) { panel = .performance }
                                 .accessibilityLabel(localization.string(.performanceTitle) + ", " + performanceSubtitle)
                         case .codex:
-                            cell(symbol: "terminal", title: codexTitle, subtitle: codexSubtitle(at: context.date)) { panel = .codex }
+                            cell(symbol: "terminal", title: codexTitle, subtitle: codexSubtitle(at: context.date), provider: .codex) { panel = .codex }
                                 .accessibilityLabel(codexHelp(at: context.date))
                         case .claude:
-                            cell(symbol: "terminal", title: claudeTitle, subtitle: claudeSubtitle(at: context.date)) { panel = .claude }
+                            cell(symbol: "terminal", title: claudeTitle, subtitle: claudeSubtitle(at: context.date), provider: .claude) { panel = .claude }
                         }
                     }
                 }
@@ -495,11 +495,13 @@ struct StatusPopoverView: View {
         return localization.string(codexUsage.isLoading ? .codexLoading : .codexUnavailable)
     }
 
-    private func cell(symbol: String, title: String, subtitle: String, action: @escaping () -> Void) -> some View {
+    private func cell(symbol: String, title: String, subtitle: String, provider: UsageProviderIcon.Provider? = nil, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 4) {
                 Group {
-                    if symbol == "bluetooth", let image = NSImage(named: NSImage.bluetoothTemplateName) {
+                    if let provider {
+                        UsageProviderIcon(provider: provider)
+                    } else if symbol == "bluetooth", let image = NSImage(named: NSImage.bluetoothTemplateName) {
                         Image(nsImage: image).resizable().scaledToFit().frame(width: 16, height: 22)
                     } else {
                         Image(systemName: symbol).font(.system(size: 14))

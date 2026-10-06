@@ -36,3 +36,9 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Provider icons
+--------------
+The Codex icon uses unchanged geometry from webview/assets/codex_new-f14177b03534.svg in the installed official OpenAI Codex app, rendered in white. Its original source is retained in Support/ProviderIcons/Codex.svg.
+The Claude Code pixel mascot is a Glance-drawn compact representation, not an official downloaded image asset.
+The original product marks belong to OpenAI and Anthropic. They identify the corresponding integrations and do not indicate endorsement of Glance.

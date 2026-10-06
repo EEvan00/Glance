@@ -11,6 +11,7 @@ struct CodexUsageView: View {
                 HStack(spacing: CompactPopupLayout.gap) {
                     Button(action: onBack) { PopupChevron(symbol: "chevron.backward") }
                         .buttonStyle(.plain).accessibilityLabel(localization.string(.commonBack))
+                    UsageProviderIcon(provider: .codex)
                     Text("Codex").font(.headline)
                     Spacer()
                     if controller.isLoading { ProgressView().controlSize(.small) }
