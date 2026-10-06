@@ -381,3 +381,5 @@
 "bluetooth.deviceSettings" = "فتح إعدادات AirPods…";
 
 "settings.cardTextAutoShrink" = "تصغير نص البطاقات تلقائيًا عند ضيق المساحة";
+
+"settings.screenshotSystemHelp" = "يفتح تطبيق لقطة الشاشة في macOS. اختر منطقة أو نافذة أو الشاشة، واستخدم الخيارات للحفظ في الحافظة أو ملف.";

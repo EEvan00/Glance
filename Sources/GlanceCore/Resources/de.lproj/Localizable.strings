@@ -381,3 +381,5 @@
 "bluetooth.deviceSettings" = "AirPods-Einstellungen öffnen…";
 
 "settings.cardTextAutoShrink" = "Kartentext bei wenig Platz automatisch verkleinern";
+
+"settings.screenshotSystemHelp" = "Öffnet die macOS-App Bildschirmfoto. Bereich, Fenster oder Bildschirm dort wählen und unter Optionen in der Zwischenablage oder als Datei sichern.";

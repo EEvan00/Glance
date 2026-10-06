@@ -18,6 +18,7 @@ struct NowPlayingItem: Codable, Equatable, Identifiable, Sendable {
     var playbackState: Int? = nil
     var sourceBundleIdentifier: String? = nil
     var sourceProcessIdentifier: Int32? = nil
+    var artworkData: Data? = nil
 
     static func visible(_ items: [Self]) -> [Self] {
         var seen = Set<String>()

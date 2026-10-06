@@ -20,13 +20,13 @@ extension View {
     }
 
     func systemModuleSurface(cornerRadius: CGFloat = 8) -> some View {
-        background(.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: cornerRadius, style: .circular))
+        background(.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: cornerRadius, style: .circular))
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .circular)
-                    .strokeBorder(LinearGradient(colors: [.white.opacity(0.25), .white.opacity(0.04)], startPoint: .top, endPoint: .bottom), lineWidth: CompactPopupLayout.borderWidth)
+                    .strokeBorder(LinearGradient(colors: [.white.opacity(0.22), .white.opacity(0.04)], startPoint: .top, endPoint: .bottom), lineWidth: CompactPopupLayout.borderWidth)
                     .allowsHitTesting(false)
             }
-            .shadow(color: .black.opacity(0.20), radius: 3, y: 2)
+            .shadow(color: .black.opacity(0.14), radius: 3, y: 2)
     }
 }
 

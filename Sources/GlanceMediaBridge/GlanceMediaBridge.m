@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <dlfcn.h>
+#import <ImageIO/ImageIO.h>
 #import "GlanceMediaBridge.h"
 
 // Runtime declarations keep private symbols out of the application's link table.
@@ -20,6 +21,9 @@
 - (NSString *)identifier;
 - (int)processIdentifier;
 - (void)requestNowPlayingInfoOnQueue:(dispatch_queue_t)queue completion:(void (^)(NSDictionary *, NSError *))completion;
+- (void)requestNowPlayingItemArtworkOnQueue:(dispatch_queue_t)queue completion:(void (^)(id, NSError *))completion;
+- (NSData *)copyImageData;
+- (NSData *)imageData;
 - (void)requestPlaybackStateOnQueue:(dispatch_queue_t)queue completion:(void (^)(unsigned int, NSError *))completion;
 - (void)requestSupportedCommandsOnQueue:(dispatch_queue_t)queue completion:(void (^)(NSArray *, NSError *))completion;
 - (void)sendCommand:(unsigned int)command options:(NSDictionary *)options queue:(dispatch_queue_t)queue completion:(void (^)(id))completion;
@@ -93,6 +97,63 @@ static BOOL sameTarget(id requested, id resolved) {
         [[ap identifier] length] > 0 && [[ap identifier] isEqual:[bp identifier]];
 }
 
+// Keep only small, local thumbnails; no remote URLs or disk cache.
+static NSMutableDictionary *artworkCache;
+static NSData *thumbnail(NSData *data) {
+    if (![data isKindOfClass:NSData.class] || data.length == 0 || data.length > 8*1024*1024) return nil;
+    CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
+    if (!source) return nil;
+    NSDictionary *options = @{(id)kCGImageSourceCreateThumbnailFromImageAlways:@YES,
+        (id)kCGImageSourceCreateThumbnailWithTransform:@YES, (id)kCGImageSourceThumbnailMaxPixelSize:@96,
+        (id)kCGImageSourceShouldCache:@NO};
+    CGImageRef image = CGImageSourceCreateThumbnailAtIndex(source, 0, (__bridge CFDictionaryRef)options);
+    CFRelease(source);
+    if (!image) return nil;
+    NSMutableData *result = [NSMutableData new];
+    CGImageDestinationRef destination = CGImageDestinationCreateWithData((__bridge CFMutableDataRef)result, CFSTR("public.png"), 1, NULL);
+    BOOL success = NO;
+    if (destination) {
+        CGImageDestinationAddImage(destination, image, NULL);
+        success = CGImageDestinationFinalize(destination);
+        CFRelease(destination);
+    }
+    CGImageRelease(image);
+    return success && result.length <= 65536 ? result : nil;
+}
+
+static void artworkForRequest(id request, NSDictionary *info, NSString *pathID, void (^completion)(NSData *)) {
+    if (!artworkCache) artworkCache = [NSMutableDictionary new];
+    NSString *key = [@[pathID, text(info,@"Title"), text(info,@"Artist"), text(info,@"Album"), text(info,@"ArtworkIdentifier")] componentsJoinedByString:@"\n"];
+    NSDictionary *cached = artworkCache[key];
+    if (cached && ([cached[@"data"] isKindOfClass:NSData.class] || [cached[@"date"] timeIntervalSinceNow] > -15)) {
+        completion([cached[@"data"] isKindOfClass:NSData.class] ? cached[@"data"] : nil);
+        return;
+    }
+    NSData *embedded = thumbnail(info[@"kMRMediaRemoteNowPlayingInfoArtworkData"]);
+    if (embedded) { artworkCache[key] = @{@"data":embedded, @"date":NSDate.date}; completion(embedded); return; }
+    if (![request respondsToSelector:@selector(requestNowPlayingItemArtworkOnQueue:completion:)]) { completion(nil); return; }
+    __block BOOL finished = NO;
+    void (^finish)(NSData *) = ^(NSData *raw) {
+        if (finished) return;
+        finished = YES;
+        NSData *small = thumbnail(raw);
+        if (artworkCache.count >= 32) [artworkCache removeAllObjects];
+        artworkCache[key] = @{@"data":small ?: (id)NSNull.null, @"date":NSDate.date};
+        completion(small);
+    };
+    [request requestNowPlayingItemArtworkOnQueue:worker completion:^(id artwork, NSError *error) {
+        NSData *data = nil;
+        if (!error) {
+            if ([artwork isKindOfClass:NSData.class]) data = artwork;
+            else if ([artwork respondsToSelector:@selector(copyImageData)]) data = [artwork copyImageData];
+            else if ([artwork respondsToSelector:@selector(imageData)]) data = [artwork imageData];
+        }
+        dispatch_async(worker, ^{ finish(data); });
+    }];
+    // Missing artwork must never stall the playback controls.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 350*NSEC_PER_MSEC), worker, ^{ finish(nil); });
+}
+
 static void query(void);
 static void query(void) {
     if (querying) { dirty = YES; return; }
@@ -110,7 +171,7 @@ static void query(void) {
         NSMutableArray *rows = [NSMutableArray new];
         NSDictionary *counts = clientCounts(clients);
         NSString *currentBundle = [[[NSClassFromString(@"MRNowPlayingRequest") localNowPlayingPlayerPath] client] bundleIdentifier];
-        // Bound each event to a small number of recent system clients. No artwork requests.
+        // Bound each event to a small number of recent system clients; thumbnails are cached.
         for (id client in [clients subarrayWithRange:NSMakeRange(0, MIN(clients.count, 8))]) {
             if (![client respondsToSelector:@selector(bundleIdentifier)]) continue;
             dispatch_group_enter(group);
@@ -142,12 +203,19 @@ static void query(void) {
                             NSString *bundle = [client bundleIdentifier] ?: @"";
                             // macOS resolves duplicate instances by app identity; never control an ambiguous source.
                             if ([counts[bundle] unsignedIntegerValue] != 1) play = pause = next = previous = seek = NO;
-                            [rows addObject:@{@"id":[pathData base64EncodedStringWithOptions:0], @"title":text(info,@"Title"), @"artist":text(info,@"Artist"),
+                            NSString *pathID = [pathData base64EncodedStringWithOptions:0];
+                            NSMutableDictionary *row = [@{@"id":pathID, @"title":text(info,@"Title"), @"artist":text(info,@"Artist"),
                                 @"source":[client displayName] ?: bundle, @"isPlaying":@((BOOL)(state == 1)), @"playbackState":@(state), @"sourceBundleIdentifier":bundle, @"sourceProcessIdentifier":@([client processIdentifier]), @"canPlay":@(play), @"elapsed":@(elapsed), @"duration":@(number(info,@"Duration",0)),
                                 @"timestamp":@(epoch), @"playbackRate":@(number(info,@"PlaybackRate",1)),
-                                @"canSeek":@(seek), @"canPause":@(pause), @"canNext":@(next), @"canPrevious":@(previous), @"priority":@([bundle isEqual:currentBundle]?0:1)}];
+                                @"canSeek":@(seek), @"canPause":@(pause), @"canNext":@(next), @"canPrevious":@(previous), @"priority":@([bundle isEqual:currentBundle]?0:1)} mutableCopy];
+                            artworkForRequest(request, info, pathID, ^(NSData *imageData) {
+                                if (imageData) row[@"artworkData"] = [imageData base64EncodedStringWithOptions:0];
+                                [rows addObject:row];
+                                dispatch_group_leave(group);
+                            });
+                        } else {
+                            dispatch_group_leave(group);
                         }
-                        dispatch_group_leave(group);
                     }];
                 }];
             }];

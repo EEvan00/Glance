@@ -367,7 +367,7 @@ struct StatusPopoverView: View {
                         magSafeLED.refreshAvailability()
                         panel = .battery
                     }
-                    PopupDivider().padding(.horizontal, CompactPopupLayout.gap)
+                    PopupDivider().padding(.horizontal, CompactPopupLayout.moduleTextInset)
                     cell(symbol: "wifi", title: localization.string(.wifiTitle),
                          subtitle: compactWiFiSubtitle) {
                         store.activateWiFiPanel()
@@ -380,7 +380,7 @@ struct StatusPopoverView: View {
                         store.activateBluetoothPanel()
                         panel = .bluetooth
                     }
-                    PopupDivider().padding(.horizontal, CompactPopupLayout.gap)
+                    PopupDivider().padding(.horizontal, CompactPopupLayout.moduleTextInset)
                     TimelineView(.everyMinute) { context in
                         switch settings.popupUtility {
                         case .performance:

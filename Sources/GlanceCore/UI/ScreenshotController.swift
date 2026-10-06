@@ -2,34 +2,25 @@ import AppKit
 
 @MainActor
 final class ScreenshotController {
-    private var process: Process?
+    private var isOpening = false
 
-    func capture(mode: ScreenshotMode, destination: ScreenshotDestination, localization: Localization) {
-        guard process == nil else { return }
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
-        let desktop = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first
-            ?? FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Desktop")
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH.mm.ss"
-        let name = "Glance \(formatter.string(from: Date())) \(UUID().uuidString.prefix(6)).png"
-        process.arguments = ScreenshotRequest(mode: mode, destination: destination)
-            .arguments(fileURL: desktop.appendingPathComponent(name))
-        process.terminationHandler = { [weak self] _ in
-            Task { @MainActor [weak self] in self?.process = nil }
-        }
-        self.process = process
-        // Wait for the popup to disappear before presenting the system capture UI.
+    func capture(localization: Localization) {
+        guard !isOpening else { return }
+        isOpening = true
+        // Let the popup disappear before the system presents its capture toolbar.
         Task { @MainActor [weak self] in
             try? await Task.sleep(for: .milliseconds(200))
-            do {
-                try process.run()
-            } catch {
-                self?.process = nil
-                let alert = NSAlert()
-                alert.messageText = localization.string(.compactScreenshot)
-                alert.informativeText = localization.string(.screenshotFailed)
-                alert.runModal()
+            guard let self else { return }
+            let url = URL(fileURLWithPath: "/System/Applications/Utilities/Screenshot.app")
+            NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration()) { [weak self] _, error in
+                Task { @MainActor [weak self] in
+                    self?.isOpening = false
+                    guard error != nil else { return }
+                    let alert = NSAlert()
+                    alert.messageText = localization.string(.compactScreenshot)
+                    alert.informativeText = localization.string(.screenshotFailed)
+                    alert.runModal()
+                }
             }
         }
     }

@@ -381,3 +381,5 @@
 "bluetooth.deviceSettings" = "Открыть настройки AirPods…";
 
 "settings.cardTextAutoShrink" = "Автоматически уменьшать текст карточек при нехватке места";
+
+"settings.screenshotSystemHelp" = "Открывает «Снимок экрана» macOS. Выберите область, окно или экран, а в параметрах — сохранение в буфер обмена или файл.";

@@ -313,7 +313,7 @@ final class StatusBarController: NSObject {
                 openScreenshot: { [weak self] in
                     self?.popover.performClose(nil)
                     guard let self else { return }
-                    screenshot.capture(mode: settings.screenshotMode, destination: settings.screenshotDestination, localization: localization)
+                    screenshot.capture(localization: localization)
                 },
                 openWeather: { [weak self] in
                     self?.popover.performClose(nil)
@@ -325,7 +325,7 @@ final class StatusBarController: NSObject {
         }
         let hostingController = NSHostingController(
             rootView: rootView
-                .background(.regularMaterial)
+                .background(.thinMaterial)
                 .overlay {
                     RoundedRectangle(cornerRadius: StatusPopupPanel.cornerRadius, style: .circular)
                         .strokeBorder(.primary.opacity(0.25), lineWidth: CompactPopupLayout.borderWidth)

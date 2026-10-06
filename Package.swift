@@ -15,7 +15,7 @@ let package = Package(
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.0.0")
     ],
     targets: [
-        .target(name: "GlanceMediaBridge", linkerSettings: [.linkedFramework("Foundation")]),
+        .target(name: "GlanceMediaBridge", linkerSettings: [.linkedFramework("Foundation"), .linkedFramework("ImageIO"), .linkedFramework("CoreGraphics")]),
         .target(name: "BatteryChargingBridge", linkerSettings: [.linkedFramework("Foundation")]),
         .target(name: "DisplayFeaturesBridge", linkerSettings: [.linkedFramework("Foundation")]),
         .target(name: "HotspotBridge", linkerSettings: [.linkedFramework("CoreWLAN")]),

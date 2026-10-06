@@ -38,9 +38,11 @@ struct NowPlayingView: View {
                 MediaSeekSlider(item: first, controller: controller, date: date)
                     .padding(.horizontal, CompactPopupLayout.moduleTextInset)
                 HStack {
-                    Text(timeText(first.duration.map { $0 * (first.progress(at: date) ?? 0) } ?? first.elapsed)).font(.system(size: 10)).monospacedDigit().foregroundStyle(.primary.opacity(0.78))
+                    Text(timeText(first.duration.flatMap { $0 > 0 && $0.isFinite ? ($0 * (first.progress(at: date) ?? 0)) : nil })).font(.system(size: 10)).monospacedDigit().foregroundStyle(.primary.opacity(0.78))
+                        .offset(y: -4)
                     Spacer()
                     Text(timeText(first.duration.flatMap { $0 > 0 ? $0 : nil })).font(.system(size: 10)).monospacedDigit().foregroundStyle(.primary.opacity(0.78))
+                        .offset(y: -4)
                 }.padding(.horizontal, CompactPopupLayout.moduleTextInset)
                     .frame(height: 26)
                     .overlay { controls(first) }
@@ -50,7 +52,7 @@ struct NowPlayingView: View {
                     HStack(spacing: 8) { metadata(item, spacing: 2).padding(.leading, CompactPopupLayout.gap); controls(item) }
                         .frame(height: CompactPopupLayout.cardRowHeight)
                     if item.id != controller.items.last?.id {
-                        PopupDivider().padding(.horizontal, CompactPopupLayout.gap)
+                        PopupDivider().padding(.horizontal, CompactPopupLayout.moduleTextInset)
                     }
                 }
             }
@@ -59,10 +61,17 @@ struct NowPlayingView: View {
 
     private func metadata(_ item: NowPlayingItem, spacing: CGFloat = 1) -> some View {
         Button { controller.openSource(item) } label: {
-            VStack(alignment: .leading, spacing: spacing) {
-                Text(item.title).font(.system(size: 12, weight: .semibold)).lineLimit(1)
-                Text(item.artist.isEmpty ? item.source : "\(item.artist) · \(item.source)")
-                    .font(.system(size: 10)).foregroundStyle(.primary.opacity(0.78)).lineLimit(1)
+            HStack(spacing: CompactPopupLayout.gap) {
+                if controller.items.count == 1 {
+                    NowPlayingArtworkView(data: item.artworkData, size: 32)
+                } else {
+                    NowPlayingSourceIconView(bundleIdentifier: item.sourceBundleIdentifier)
+                }
+                VStack(alignment: .leading, spacing: spacing) {
+                    Text(item.title).font(.system(size: 12, weight: .semibold)).lineLimit(1)
+                    Text(item.artist.isEmpty ? item.source : "\(item.artist) · \(item.source)")
+                        .font(.system(size: 10)).foregroundStyle(.primary.opacity(0.78)).lineLimit(1)
+                }.frame(maxWidth: .infinity, alignment: .leading)
             }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
         }.buttonStyle(.plain)
             .help(item.source)
@@ -86,7 +95,7 @@ struct NowPlayingView: View {
     }
 
     private func timeText(_ seconds: Double?) -> String {
-        guard let seconds, seconds.isFinite, seconds >= 0 else { return "—" }
+        guard let seconds, seconds.isFinite, seconds >= 0 else { return "--:--" }
         let value = Int(min(seconds, 359_999))
         return String(format: "%d:%02d", value / 60, value % 60)
     }

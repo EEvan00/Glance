@@ -80,6 +80,7 @@ enum LocalizationKey: String, CaseIterable, Hashable, Sendable {
     case weatherSnow = "weather.snow"
     case weatherThunderstorm = "weather.thunderstorm"
     case weatherUnknown = "weather.unknown"
+    case settingsScreenshotSystemHelp = "settings.screenshotSystemHelp"
     case settingsScreenshotMode = "settings.screenshotMode"
     case settingsScreenshotDestination = "settings.screenshotDestination"
     case settingsScreenshotToolbar = "settings.screenshotToolbar"

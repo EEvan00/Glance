@@ -381,3 +381,5 @@
 "bluetooth.deviceSettings" = "打开 AirPods 设置…";
 
 "settings.cardTextAutoShrink" = "空间不足时自动缩小卡片文字";
+
+"settings.screenshotSystemHelp" = "打开 macOS「截屏」工具。在系统工具中选择区域、窗口或屏幕，并在「选项」中选择保存到剪贴板或文件。";

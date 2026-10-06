@@ -49,6 +49,22 @@ final class CompactPopupModelsTests: XCTestCase {
         XCTAssertTrue(NowPlayingItem.visible([]).isEmpty)
     }
 
+    func testMediaArtworkDecodesPerSourceAndRemainsOptional() throws {
+        var first = media("music", playing: true)
+        first.artworkData = Data([1, 2, 3])
+        var second = media("browser", playing: true)
+        second.artworkData = Data([4, 5, 6])
+        let encoded = try JSONEncoder().encode([first, second])
+        let decoded = try JSONDecoder().decode([NowPlayingItem].self, from: encoded)
+        XCTAssertEqual(decoded[0].artworkData, first.artworkData)
+        XCTAssertEqual(decoded[1].artworkData, second.artworkData)
+        var legacy = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(first)) as? [String: Any])
+        legacy.removeValue(forKey: "artworkData")
+        let missing = try JSONDecoder().decode(NowPlayingItem.self, from: JSONSerialization.data(withJSONObject: legacy))
+        XCTAssertNil(missing.artworkData)
+        XCTAssertEqual(missing.title, first.title)
+    }
+
     func testProgressClampsAndIgnoresUnknownDuration() {
         let a = media("a", playing: true)
         XCTAssertEqual(a.progress(at: Date(timeIntervalSince1970: 150)), 1)
