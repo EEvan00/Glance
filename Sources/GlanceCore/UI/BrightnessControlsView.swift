@@ -9,13 +9,17 @@ struct BrightnessControlsView: View {
 
     var body: some View {
         if controller.value != nil {
-            HStack(spacing: 4) {
-                Image(systemName: "sun.max.fill").font(.system(size: 14)).frame(width: 22, height: 24)
+            HStack(spacing: onOpenDisplay == nil ? 4 : CompactPopupLayout.gap / 2) {
+                Image(systemName: "sun.max.fill").font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium)).frame(width: onOpenDisplay == nil ? 22 : CompactPopupLayout.unit, height: 24)
+                    .padding(.trailing, onOpenDisplay == nil ? 0 : CompactPopupLayout.gap / 2)
                 CapsuleSlider(value: $value, label: localization.string(.brightnessTitle), onChange: { scalar, final in
                     controller.setValue(scalar, final: final)
                 }, onEditingChanged: { isAdjusting = $0 }) { EmptyView() }
                 if let onOpenDisplay {
-                    Button(action: onOpenDisplay) { PopupChevron() }
+                    Button(action: onOpenDisplay) {
+                        PopupChevron(alignsToModuleEdge: true)
+                            .frame(width: CompactPopupLayout.unit + CompactPopupLayout.gap / 2, alignment: .trailing)
+                    }
                         .buttonStyle(.plain).accessibilityLabel(localization.string(.displayTitle))
                 }
             }

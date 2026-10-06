@@ -259,6 +259,16 @@ final class SettingsStore: ObservableObject {
         didSet { defaults.set(scrollToAdjustVolume, forKey: "scrollToAdjustVolume") }
     }
 
+    @Published var screenshotMode: ScreenshotMode {
+        didSet { defaults.set(screenshotMode.rawValue, forKey: "screenshotMode") }
+    }
+    @Published var screenshotDestination: ScreenshotDestination {
+        didSet { defaults.set(screenshotDestination.rawValue, forKey: "screenshotDestination") }
+    }
+
+    @Published var showsClockSeconds: Bool {
+        didSet { defaults.set(showsClockSeconds, forKey: "showsClockSeconds") }
+    }
     @Published var uses24HourClock: Bool {
         didSet { defaults.set(uses24HourClock, forKey: "uses24HourClock") }
     }
@@ -281,6 +291,9 @@ final class SettingsStore: ObservableObject {
         }
         self.popupUtility = defaults.string(forKey: "popupUtility").flatMap(PopupUtility.init(rawValue:)) ?? .performance
         self.scrollToAdjustVolume = defaults.object(forKey: "scrollToAdjustVolume") as? Bool ?? false
+        self.screenshotMode = defaults.string(forKey: "screenshotMode").flatMap(ScreenshotMode.init(rawValue:)) ?? .toolbar
+        self.screenshotDestination = defaults.string(forKey: "screenshotDestination").flatMap(ScreenshotDestination.init(rawValue:)) ?? .desktop
+        self.showsClockSeconds = defaults.bool(forKey: "showsClockSeconds")
         self.uses24HourClock = defaults.object(forKey: "uses24HourClock") as? Bool ?? true
         let storedIconSize = (defaults.object(forKey: Self.iconSizeDefaultsKey) as? NSNumber)?.doubleValue
         let storedCriticalThreshold = (defaults.object(forKey: Self.batteryCriticalThresholdDefaultsKey) as? NSNumber)?.doubleValue

@@ -5,7 +5,7 @@ enum FooterClockFormatting {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = timeZone
-        formatter.dateFormat = "d/MMM"
+        formatter.dateFormat = "d"
         let text = formatter.string(from: date)
         guard chinese else {
             formatter.locale = locale
@@ -18,11 +18,16 @@ enum FooterClockFormatting {
         return text + " 周" + ["日", "一", "二", "三", "四", "五", "六"][day - 1]
     }
 
-    static func time(_ date: Date, uses24HourClock: Bool, timeZone: TimeZone = .current) -> String {
+    static func timelineStart(showsSeconds: Bool, now: Date = Date()) -> Date {
+        let interval: TimeInterval = showsSeconds ? 1 : 60
+        return Date(timeIntervalSince1970: floor(now.timeIntervalSince1970 / interval) * interval)
+    }
+
+    static func time(_ date: Date, uses24HourClock: Bool, showsSeconds: Bool = false, timeZone: TimeZone = .current) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = timeZone
-        formatter.dateFormat = uses24HourClock ? "HH:mm" : "h:mm"
+        formatter.dateFormat = (uses24HourClock ? "HH:mm" : "h:mm") + (showsSeconds ? ":ss" : "")
         return formatter.string(from: date).lowercased()
     }
 }

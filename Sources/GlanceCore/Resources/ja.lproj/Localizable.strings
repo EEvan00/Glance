@@ -345,3 +345,32 @@
 "timer.notificationBody" = "カウントダウンが終了しました。";
 "timer.notificationHelp" = "通知を利用できません。終了時にはメニューバーが点滅します。";
 "timer.openNotifications" = "通知設定を開く";
+
+"compact.battery" = "電池";
+"compact.unavailable" = "利用不可";
+"compact.charged" = "充電完了";
+"compact.charging" = "充電中";
+"compact.lowPower" = "省電力";
+"compact.power" = "電源接続";
+"compact.onBattery" = "電池使用";
+"compact.connected" = "接続済み";
+"compact.disconnected" = "未接続";
+"compact.off" = "オフ";
+"compact.noInternet" = "ネットなし";
+"compact.hotspot" = "ホットスポット";
+"compact.temporary" = "一時接続";
+"compact.shared" = "共有中";
+"compact.loading" = "読込中";
+"compact.noAccess" = "権限なし";
+"compact.cached" = "キャッシュ";
+"compact.noData" = "データなし";
+"compact.screenshot" = "スクリーンショット";
+"settings.clockSeconds" = "秒を表示";
+
+"settings.screenshotMode" = "スクリーンショット方式";
+"settings.screenshotDestination" = "保存先";
+"settings.screenshotToolbar" = "システムのツールバー";
+"settings.screenshotRegion" = "範囲を選択";
+"settings.screenshotDesktop" = "デスクトップ（PNG）";
+"settings.screenshotClipboard" = "クリップボード";
+"screenshot.failed" = "スクリーンショットツールを起動できませんでした。再試行してください。";

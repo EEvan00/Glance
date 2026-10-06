@@ -1,8 +1,13 @@
 import SwiftUI
 
 enum CompactPopupLayout {
+    static let unit: CGFloat = 24
+    static let moduleIconSize: CGFloat = 14
     static let gap: CGFloat = 4
+    static func span(_ count: Int) -> CGFloat { unit * CGFloat(count) + gap * CGFloat(max(0, count - 1)) }
+    static var cardRowHeight: CGFloat { (span(3) - borderWidth) / 2 }
     static let contentInset: CGFloat = 8
+    static let moduleTextInset: CGFloat = 6
     static let borderWidth: CGFloat = 0.7
 }
 

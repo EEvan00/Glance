@@ -283,6 +283,7 @@ struct StatusPopoverView: View {
     let openSettings: () -> Void
     let openCalendar: () -> Void
     let openClock: () -> Void
+    let openScreenshot: () -> Void
     let openWeather: () -> Void
     let openSoundSettings: () -> Void
     let quit: () -> Void
@@ -336,7 +337,7 @@ struct StatusPopoverView: View {
         }
         .padding(.horizontal, panel == .summary ? 0 : CompactPopupLayout.contentInset)
         .padding(CompactPopupLayout.gap)
-        .frame(width: 284)
+        .frame(width: CompactPopupLayout.span(10) + CompactPopupLayout.gap * 2)
         .fixedSize(horizontal: false, vertical: true)
         .onAppear {
             if countdown.isRunning || countdown.isFinished || countdown.shouldOpenDetails { panel = .timer }
@@ -356,14 +357,14 @@ struct StatusPopoverView: View {
             HStack(alignment: .top, spacing: CompactPopupLayout.gap) {
                 VStack(spacing: 0) {
                     cell(symbol: store.popupSnapshot.battery.isChargingPaused ? "powerplug.portrait.fill" : "battery.100",
-                         title: StatusPresentation.batteryTitle(store.popupSnapshot.battery, localization: localization),
-                         subtitle: StatusPresentation.batterySubtitle(store.popupSnapshot.battery, localization: localization)) {
+                         title: localization.string(.compactBattery) + " · \(store.popupSnapshot.battery.percentage)%",
+                         subtitle: compactBatterySubtitle) {
                         magSafeLED.refreshAvailability()
                         panel = .battery
                     }
-                    PopupDivider().padding(.horizontal, 8)
+                    PopupDivider().padding(.horizontal, CompactPopupLayout.gap)
                     cell(symbol: "wifi", title: localization.string(.wifiTitle),
-                         subtitle: StatusPresentation.wifiSubtitle(store.popupSnapshot.wifi, localization: localization)) {
+                         subtitle: compactWiFiSubtitle) {
                         store.activateWiFiPanel()
                         panel = .wifi(showDetails: false)
                     }
@@ -374,7 +375,7 @@ struct StatusPopoverView: View {
                         store.activateBluetoothPanel()
                         panel = .bluetooth
                     }
-                    PopupDivider().padding(.horizontal, 8)
+                    PopupDivider().padding(.horizontal, CompactPopupLayout.gap)
                     TimelineView(.everyMinute) { context in
                         switch settings.popupUtility {
                         case .performance:
@@ -390,30 +391,32 @@ struct StatusPopoverView: View {
                 }
                 .systemModuleSurface()
             }
-            VStack(spacing: CompactPopupLayout.gap) {
+            VStack(spacing: 0) {
                 BrightnessControlsView(controller: brightness, onOpenDisplay: { panel = .display })
                 CompactVolumeControlsView(store: store, onOpenOutput: { panel = .output })
             }
-            .padding(CompactPopupLayout.gap)
+            .padding(.vertical, 2)
+            .frame(height: CompactPopupLayout.span(2))
             .systemModuleSurface()
             if !nowPlaying.items.isEmpty {
                 NowPlayingView(controller: nowPlaying)
             }
-            TimelineView(.everyMinute) { context in
+            TimelineView(.periodic(from: FooterClockFormatting.timelineStart(showsSeconds: settings.showsClockSeconds), by: settings.showsClockSeconds ? 1 : 60)) { context in
                 HStack(spacing: CompactPopupLayout.gap) {
                     footerButton(.compactSettings, symbol: "gearshape", action: openSettings)
                     Button { panel = .timer } label: {
                         Image(systemName: countdown.isFinished ? "timer.circle.fill" : "timer")
-                            .font(.system(size: 13, weight: .medium))
-                            .frame(width: 28, height: 24).systemModuleSurface()
+                            .font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium))
+                            .frame(width: CompactPopupLayout.span(1), height: CompactPopupLayout.unit).systemModuleSurface()
                     }.buttonStyle(.plain).accessibilityLabel(localization.string(.timerTitle))
+                        .help(localization.string(.timerTitle))
                     Button { panel = .weather } label: {
                         HStack(spacing: 3) {
-                            Image(systemName: weather.snapshot?.symbol ?? "cloud")
+                            Image(systemName: weather.snapshot?.symbol ?? "cloud").font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium))
                             Text(weather.snapshot?.temperatureText ?? "—").monospacedDigit()
                         }
                         .font(.system(size: 11))
-                        .frame(maxWidth: .infinity).frame(height: 24)
+                        .frame(width: CompactPopupLayout.span(2), height: CompactPopupLayout.unit)
                         .systemModuleSurface()
                     }
                     .buttonStyle(.plain)
@@ -422,15 +425,16 @@ struct StatusPopoverView: View {
                     Button(action: openCalendar) {
                         Text(FooterClockFormatting.date(context.date, locale: localization.resolvedLanguage.locale, chinese: localization.resolvedLanguage.isChinese))
                             .font(.system(size: 11)).monospacedDigit().lineLimit(1)
-                            .frame(width: 78, height: 24).systemModuleSurface()
+                            .frame(width: CompactPopupLayout.span(2), height: CompactPopupLayout.unit).systemModuleSurface()
                     }.buttonStyle(.plain)
                         .accessibilityLabel(localization.string(.footerOpenCalendar))
                     Button(action: openClock) {
-                        Text(FooterClockFormatting.time(context.date, uses24HourClock: settings.uses24HourClock))
+                        Text(FooterClockFormatting.time(context.date, uses24HourClock: settings.uses24HourClock, showsSeconds: settings.showsClockSeconds))
                             .font(.system(size: 11)).monospacedDigit().lineLimit(1)
-                            .frame(width: 44, height: 24).systemModuleSurface()
+                            .frame(width: CompactPopupLayout.span(2), height: CompactPopupLayout.unit).systemModuleSurface()
                     }.buttonStyle(.plain)
                         .accessibilityLabel(localization.string(.footerOpenClock))
+                    footerButton(.compactScreenshot, symbol: "square.dashed", action: openScreenshot)
                     footerButton(.compactQuit, symbol: "xmark.circle", action: quit)
                 }
             }
@@ -453,26 +457,58 @@ struct StatusPopoverView: View {
     private func footerButton(_ key: LocalizationKey, symbol: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
-                .font(.system(size: 13, weight: .medium))
-                .frame(width: 28, height: 24)
+                .font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium))
+                .frame(width: CompactPopupLayout.span(1), height: CompactPopupLayout.unit)
                 .systemModuleSurface()
         }.buttonStyle(.plain)
             .help(localization.string(key))
             .accessibilityLabel(localization.string(key))
     }
 
+    private var compactBatterySubtitle: String {
+        let battery = store.popupSnapshot.battery
+        let key: LocalizationKey
+        if !battery.isPresent { key = .compactUnavailable }
+        else if battery.isChargingPaused { key = .timerPaused }
+        else if battery.isCharged { key = .compactCharged }
+        else if battery.isCharging { key = .compactCharging }
+        else if battery.isLowPowerMode { key = .compactLowPower }
+        else if battery.isConnectedToPower { key = .compactPower }
+        else { key = .compactOnBattery }
+        return localization.string(key)
+    }
+
+    private var compactWiFiSubtitle: String {
+        let wifi = store.popupSnapshot.wifi
+        if let ssid = wifi.ssid, !ssid.isEmpty { return ssid }
+        let key: LocalizationKey
+        switch wifi.state {
+        case .connected: key = .compactConnected
+        case .notAssociated: key = .compactDisconnected
+        case .off: key = .compactOff
+        case .noInternet: key = .compactNoInternet
+        case .hotspot: key = .compactHotspot
+        case .temporary: key = .compactTemporary
+        case .shared: key = .compactShared
+        case .unavailable: key = .compactUnavailable
+        }
+        return localization.string(key)
+    }
+
     private var bluetoothSummary: String {
         if let device = store.bluetoothDevices.connectedDevices.first { return device.name }
+        let key: LocalizationKey
         switch store.bluetoothDevices.availability {
-        case .available: return localization.string(.bluetoothNoConnectedDevices)
-        case .poweredOff: return localization.string(.bluetoothOff)
-        case .idle, .initializing: return localization.string(.bluetoothInitializing)
-        case .authorizationNotDetermined: return localization.string(.bluetoothAuthorizationNotDetermined)
-        case .authorizationDenied: return localization.string(.bluetoothAuthorizationDenied)
-        case .authorizationRestricted: return localization.string(.bluetoothAuthorizationRestricted)
-        case .failed: return localization.string(.bluetoothReadFailed)
-        case .unavailable: return localization.string(.bluetoothUnavailable)
+        case .available: key = .compactDisconnected
+        case .poweredOff: key = .compactOff
+        case .idle, .initializing: key = .compactLoading
+        case .authorizationNotDetermined: key = .compactNoAccess
+        case .authorizationDenied: key = .compactNoAccess
+        case .authorizationRestricted: key = .compactNoAccess
+        case .failed: key = .compactUnavailable
+        case .unavailable: key = .compactUnavailable
         }
+        return localization.string(key)
     }
 
     private var performanceCPUText: String {
@@ -497,11 +533,11 @@ struct StatusPopoverView: View {
     }
 
     private func claudeSubtitle(at date: Date) -> String {
-        if claudeUsage.isUnavailable, claudeUsage.snapshot != nil { return localization.string(.codexCached) }
+        if claudeUsage.isUnavailable, claudeUsage.snapshot != nil { return localization.string(.compactCached) }
         if let countdown = claudeUsage.snapshot?.windows.first?.resetCountdown(now: date) {
-            return localization.format(.codexReset, countdown)
+            return "↻ " + countdown
         }
-        return localization.string(.claudeUnavailable)
+        return localization.string(.compactNoData)
     }
 
     private var codexTitle: String {
@@ -515,35 +551,37 @@ struct StatusPopoverView: View {
     }
 
     private func codexSubtitle(at date: Date) -> String {
-        if codexUsage.isUnavailable, codexUsage.snapshot != nil { return localization.string(.codexCached) }
+        if codexUsage.isUnavailable, codexUsage.snapshot != nil { return localization.string(.compactCached) }
         if let countdown = codexUsage.snapshot?.windows.first?.resetCountdown(now: date) {
-            return localization.format(.codexReset, countdown)
+            return "↻ " + countdown
         }
-        return localization.string(codexUsage.isLoading ? .codexLoading : .codexUnavailable)
+        return localization.string(codexUsage.isLoading ? .compactLoading : .compactUnavailable)
     }
 
     private func cell(symbol: String, title: String, subtitle: String, provider: UsageProviderIcon.Provider? = nil, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: 4) {
+            HStack(spacing: 0) {
                 Group {
                     if let provider {
-                        UsageProviderIcon(provider: provider)
+                        UsageProviderIcon(provider: provider).scaleEffect(provider == .codex ? 1 : CompactPopupLayout.moduleIconSize / 18).frame(width: provider == .codex ? 18 : CompactPopupLayout.moduleIconSize, height: provider == .codex ? 18 : CompactPopupLayout.moduleIconSize)
                     } else if symbol == "bluetooth", let image = NSImage(named: NSImage.bluetoothTemplateName) {
                         Image(nsImage: image).resizable().scaledToFit().frame(width: 16, height: 22)
                     } else {
-                        Image(systemName: symbol).font(.system(size: 14))
+                        Image(systemName: symbol).font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium))
                     }
-                }.frame(width: 22)
+                }.frame(width: CompactPopupLayout.unit)
+                    .offset(x: 1)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title).font(.system(size: 12, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.85)
-                    Text(subtitle).font(.system(size: 10)).foregroundStyle(.primary.opacity(0.78)).lineLimit(1)
+                    Text(subtitle).font(.system(size: 10)).foregroundStyle(.primary.opacity(0.78)).lineLimit(1).minimumScaleFactor(0.85)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                PopupChevron()
+                .padding(.leading, CompactPopupLayout.gap)
+                PopupChevron(alignsToModuleEdge: true)
+                    .padding(.leading, CompactPopupLayout.gap)
             }
-            .padding(.horizontal, CompactPopupLayout.gap)
             .frame(maxWidth: .infinity)
-            .frame(height: 40)
+            .frame(height: CompactPopupLayout.cardRowHeight)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

@@ -345,3 +345,32 @@
 "timer.notificationBody" = "انتهى العد التنازلي.";
 "timer.notificationHelp" = "الإشعارات غير متاحة. سيومض شريط القوائم عند انتهاء الوقت.";
 "timer.openNotifications" = "فتح إعدادات الإشعارات";
+
+"compact.battery" = "البطارية";
+"compact.unavailable" = "غير متاح";
+"compact.charged" = "مكتملة";
+"compact.charging" = "قيد الشحن";
+"compact.lowPower" = "توفير الطاقة";
+"compact.power" = "موصولة";
+"compact.onBattery" = "على البطارية";
+"compact.connected" = "متصل";
+"compact.disconnected" = "غير متصل";
+"compact.off" = "متوقف";
+"compact.noInternet" = "بلا إنترنت";
+"compact.hotspot" = "نقطة اتصال";
+"compact.temporary" = "مؤقت";
+"compact.shared" = "مشاركة";
+"compact.loading" = "تحميل";
+"compact.noAccess" = "بلا إذن";
+"compact.cached" = "مخزّن";
+"compact.noData" = "لا بيانات";
+"compact.screenshot" = "لقطة شاشة";
+"settings.clockSeconds" = "إظهار الثواني";
+
+"settings.screenshotMode" = "وضع لقطة الشاشة";
+"settings.screenshotDestination" = "حفظ لقطات الشاشة في";
+"settings.screenshotToolbar" = "شريط لقطات الشاشة للنظام";
+"settings.screenshotRegion" = "تحديد منطقة";
+"settings.screenshotDesktop" = "سطح المكتب (ملف PNG)";
+"settings.screenshotClipboard" = "الحافظة";
+"screenshot.failed" = "تعذر تشغيل أداة لقطة الشاشة. حاول مرة أخرى.";

@@ -35,6 +35,7 @@ final class StatusBarController: NSObject {
     private let weatherForecast = WeatherController()
     private let nowPlaying = NowPlayingController()
     private let brightness = BrightnessController()
+    private let screenshot = ScreenshotController()
     private let store: SystemStatusStore
     private let settings: SettingsStore
     private let magSafeLED: MagSafeLEDController
@@ -307,6 +308,11 @@ final class StatusBarController: NSObject {
                 openClock: { [weak self] in
                     self?.popover.performClose(nil)
                     NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Clock.app"))
+                },
+                openScreenshot: { [weak self] in
+                    self?.popover.performClose(nil)
+                    guard let self else { return }
+                    screenshot.capture(mode: settings.screenshotMode, destination: settings.screenshotDestination, localization: localization)
                 },
                 openWeather: { [weak self] in
                     self?.popover.performClose(nil)

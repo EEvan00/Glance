@@ -345,3 +345,32 @@
 "timer.notificationBody" = "Обратный отсчёт завершён.";
 "timer.notificationHelp" = "Уведомления недоступны. По завершении значок в строке меню будет мигать.";
 "timer.openNotifications" = "Открыть настройки уведомлений";
+
+"compact.battery" = "Батарея";
+"compact.unavailable" = "Недоступно";
+"compact.charged" = "Заряжена";
+"compact.charging" = "Зарядка";
+"compact.lowPower" = "Экономия";
+"compact.power" = "От сети";
+"compact.onBattery" = "От батареи";
+"compact.connected" = "Подключено";
+"compact.disconnected" = "Отключено";
+"compact.off" = "Выкл.";
+"compact.noInternet" = "Нет сети";
+"compact.hotspot" = "Хотспот";
+"compact.temporary" = "Временная";
+"compact.shared" = "Общий доступ";
+"compact.loading" = "Загрузка";
+"compact.noAccess" = "Нет доступа";
+"compact.cached" = "Кэш";
+"compact.noData" = "Нет данных";
+"compact.screenshot" = "Снимок экрана";
+"settings.clockSeconds" = "Показывать секунды";
+
+"settings.screenshotMode" = "Режим снимка экрана";
+"settings.screenshotDestination" = "Сохранять снимки в";
+"settings.screenshotToolbar" = "Системная панель снимков";
+"settings.screenshotRegion" = "Выбрать область";
+"settings.screenshotDesktop" = "Рабочий стол (PNG)";
+"settings.screenshotClipboard" = "Буфер обмена";
+"screenshot.failed" = "Не удалось запустить инструмент снимков экрана. Повторите попытку.";

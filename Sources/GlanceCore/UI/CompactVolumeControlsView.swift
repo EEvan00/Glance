@@ -9,10 +9,12 @@ struct CompactVolumeControlsView: View {
     @State private var lastWrite = Date.distantPast
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: onOpenOutput == nil ? 4 : CompactPopupLayout.gap / 2) {
             Button { store.toggleMute() } label: {
                 Image(systemName: store.liveVolume.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                    .font(.system(size: 14)).frame(width: 22, height: 24)
+                    .font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium)).frame(width: onOpenOutput == nil ? 22 : CompactPopupLayout.unit, height: 24)
+                    .padding(.trailing, onOpenOutput == nil ? 0 : CompactPopupLayout.gap / 2)
+                    .offset(x: onOpenOutput == nil ? 0 : 1)
             }
             .buttonStyle(.plain).disabled(!store.isVolumeControlAvailable)
             .accessibilityLabel(localization.string(store.liveVolume.isMuted ? .volumeUnmuted : .volumeMuted))
@@ -32,7 +34,10 @@ struct CompactVolumeControlsView: View {
             }
             .accessibilityAction(named: Text(localization.string(store.liveVolume.isMuted ? .volumeUnmuted : .volumeMuted))) { store.toggleMute() }
             if let onOpenOutput {
-                Button(action: onOpenOutput) { PopupChevron() }
+                Button(action: onOpenOutput) {
+                        PopupChevron(alignsToModuleEdge: true)
+                            .frame(width: CompactPopupLayout.unit + CompactPopupLayout.gap / 2, alignment: .trailing)
+                    }
                     .buttonStyle(.plain).accessibilityLabel(localization.string(.volumeOutputTitle))
             }
         }

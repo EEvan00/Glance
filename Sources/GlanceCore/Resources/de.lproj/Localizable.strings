@@ -345,3 +345,32 @@
 "timer.notificationBody" = "Der Timer ist abgelaufen.";
 "timer.notificationHelp" = "Benachrichtigungen sind nicht verfügbar. Die Menüleiste blinkt weiterhin nach Ablauf.";
 "timer.openNotifications" = "Mitteilungseinstellungen öffnen";
+
+"compact.battery" = "Akku";
+"compact.unavailable" = "Nicht verfügbar";
+"compact.charged" = "Voll";
+"compact.charging" = "Lädt";
+"compact.lowPower" = "Stromsparen";
+"compact.power" = "Am Netz";
+"compact.onBattery" = "Akkubetrieb";
+"compact.connected" = "Verbunden";
+"compact.disconnected" = "Getrennt";
+"compact.off" = "Aus";
+"compact.noInternet" = "Kein Internet";
+"compact.hotspot" = "Hotspot";
+"compact.temporary" = "Temporär";
+"compact.shared" = "Freigabe";
+"compact.loading" = "Lädt";
+"compact.noAccess" = "Keine Freigabe";
+"compact.cached" = "Cache";
+"compact.noData" = "Keine Daten";
+"compact.screenshot" = "Bildschirmfoto";
+"settings.clockSeconds" = "Sekunden anzeigen";
+
+"settings.screenshotMode" = "Screenshot-Modus";
+"settings.screenshotDestination" = "Screenshots speichern in";
+"settings.screenshotToolbar" = "System-Screenshotleiste";
+"settings.screenshotRegion" = "Bereich auswählen";
+"settings.screenshotDesktop" = "Schreibtisch (PNG-Datei)";
+"settings.screenshotClipboard" = "Zwischenablage";
+"screenshot.failed" = "Das Screenshot-Werkzeug konnte nicht gestartet werden. Bitte erneut versuchen.";

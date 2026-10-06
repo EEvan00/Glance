@@ -15,8 +15,8 @@ struct NowPlayingView: View {
                     rows(at: .now)
                 }
             }
-            .padding(.horizontal, CompactPopupLayout.contentInset)
-            .padding(.vertical, CompactPopupLayout.gap)
+            .padding(.vertical, controller.items.count == 1 ? CompactPopupLayout.gap : 0)
+            .frame(height: CompactPopupLayout.span(3))
             .systemModuleSurface()
             .overlay(alignment: .bottom) {
                 if controller.commandFailed {
@@ -29,32 +29,38 @@ struct NowPlayingView: View {
     private func rows(at date: Date) -> some View {
         VStack(spacing: 0) {
             if let first = controller.items.first, controller.items.count == 1 {
-                metadata(first).frame(height: 40)
+                metadata(first, spacing: 2)
+                    .padding(.leading, CompactPopupLayout.gap)
+                    .padding(.trailing, CompactPopupLayout.gap)
+                    .frame(height: 30)
+                    .offset(y: (CompactPopupLayout.cardRowHeight - 30) / 2 - CompactPopupLayout.gap)
                 Color.clear.frame(height: CompactPopupLayout.gap)
-                VStack(spacing: 2) {
-                    MediaSeekSlider(item: first, controller: controller, date: date)
-                    HStack {
-                        Text(timeText(first.duration.map { $0 * (first.progress(at: date) ?? 0) } ?? first.elapsed)).font(.system(size: 9)).monospacedDigit().foregroundStyle(.primary.opacity(0.78))
-                        Spacer()
-                        controls(first)
-                        Spacer()
-                        Text(timeText(first.duration.flatMap { $0 > 0 ? $0 : nil })).font(.system(size: 9)).monospacedDigit().foregroundStyle(.primary.opacity(0.78))
-                    }
-                }.frame(height: 40)
+                MediaSeekSlider(item: first, controller: controller, date: date)
+                    .padding(.horizontal, CompactPopupLayout.moduleTextInset)
+                HStack {
+                    Text(timeText(first.duration.map { $0 * (first.progress(at: date) ?? 0) } ?? first.elapsed)).font(.system(size: 10)).monospacedDigit().foregroundStyle(.primary.opacity(0.78))
+                    Spacer()
+                    controls(first)
+                    Spacer()
+                    Text(timeText(first.duration.flatMap { $0 > 0 ? $0 : nil })).font(.system(size: 10)).monospacedDigit().foregroundStyle(.primary.opacity(0.78))
+                }.padding(.horizontal, CompactPopupLayout.moduleTextInset)
+                    .frame(height: 26)
+                    .offset(y: (26 - CompactPopupLayout.cardRowHeight) / 2 + CompactPopupLayout.gap + 2.3)
             } else {
                 ForEach(controller.items) { item in
-                    HStack(spacing: 8) { metadata(item); controls(item) }.frame(height: 40)
+                    HStack(spacing: 8) { metadata(item, spacing: 2).padding(.leading, CompactPopupLayout.gap); controls(item) }
+                        .frame(height: CompactPopupLayout.cardRowHeight)
                     if item.id != controller.items.last?.id {
-                        PopupDivider().frame(height: CompactPopupLayout.gap)
+                        PopupDivider().padding(.horizontal, CompactPopupLayout.gap)
                     }
                 }
             }
         }
     }
 
-    private func metadata(_ item: NowPlayingItem) -> some View {
+    private func metadata(_ item: NowPlayingItem, spacing: CGFloat = 1) -> some View {
         Button { controller.openSource(item) } label: {
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: spacing) {
                 Text(item.title).font(.system(size: 12, weight: .semibold)).lineLimit(1)
                 Text(item.artist.isEmpty ? item.source : "\(item.artist) · \(item.source)")
                     .font(.system(size: 10)).foregroundStyle(.primary.opacity(0.78)).lineLimit(1)
@@ -64,15 +70,17 @@ struct NowPlayingView: View {
     }
 
     private func controls(_ item: NowPlayingItem) -> some View {
-        HStack(spacing: 6) {
-            button(.previous, symbol: "backward.fill", label: .mediaPrevious, item: item, enabled: item.canPrevious)
+        let alignsToFooter = controller.items.count > 1
+        return HStack(spacing: alignsToFooter ? CompactPopupLayout.gap : 6) {
+            button(.previous, symbol: "backward.fill", label: .mediaPrevious, item: item, enabled: item.canPrevious, alignment: alignsToFooter ? .trailing : .center)
             button(item.isPlaying ? .pause : .play, symbol: item.isPlaying ? "pause.fill" : "play.fill", label: item.isPlaying ? .mediaPause : .mediaPlay, item: item, enabled: item.isPlaying ? item.canPause : item.canPlay == true)
             button(.next, symbol: "forward.fill", label: .mediaNext, item: item, enabled: item.canNext)
         }
+        .frame(width: alignsToFooter ? CompactPopupLayout.span(3) : nil)
     }
 
-    private func button(_ action: NowPlayingCommand, symbol: String, label: LocalizationKey, item: NowPlayingItem, enabled: Bool) -> some View {
-        Button { controller.send(action, to: item) } label: { Image(systemName: symbol).font(.system(size: 15)).frame(width: 26, height: 26) }
+    private func button(_ action: NowPlayingCommand, symbol: String, label: LocalizationKey, item: NowPlayingItem, enabled: Bool, alignment: Alignment = .center) -> some View {
+        Button { controller.send(action, to: item) } label: { Image(systemName: symbol).font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium)).frame(width: CompactPopupLayout.unit, height: 26, alignment: alignment).offset(x: alignment == .trailing ? 3 : (action == .next && controller.items.count > 1 ? -CompactPopupLayout.gap / 2 - 2.1 : 0)) }
             .buttonStyle(.plain).disabled(!enabled)
             .accessibilityLabel("\(localization.string(label)) · \(item.source)")
             .help(localization.string(label))

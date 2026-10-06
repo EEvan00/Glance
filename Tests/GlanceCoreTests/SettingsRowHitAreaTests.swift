@@ -54,6 +54,7 @@ final class SettingsRowHitAreaTests: XCTestCase {
             openSettings: {},
             openCalendar: {},
             openClock: {},
+            openScreenshot: {},
             openWeather: {},
             openSoundSettings: {},
             quit: {}

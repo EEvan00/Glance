@@ -345,3 +345,32 @@
 "timer.notificationBody" = "倒计时已结束。";
 "timer.notificationHelp" = "通知不可用，到时仍会在菜单栏闪动提醒。";
 "timer.openNotifications" = "打开通知设置";
+
+"compact.battery" = "电池";
+"compact.unavailable" = "不可用";
+"compact.charged" = "已充满";
+"compact.charging" = "充电中";
+"compact.lowPower" = "低电量模式";
+"compact.power" = "已接电源";
+"compact.onBattery" = "电池供电";
+"compact.connected" = "已连接";
+"compact.disconnected" = "未连接";
+"compact.off" = "已关闭";
+"compact.noInternet" = "无网络";
+"compact.hotspot" = "热点";
+"compact.temporary" = "临时连接";
+"compact.shared" = "共享中";
+"compact.loading" = "加载中";
+"compact.noAccess" = "未授权";
+"compact.cached" = "缓存数据";
+"compact.noData" = "无数据";
+"compact.screenshot" = "截图";
+"settings.clockSeconds" = "显示秒";
+
+"settings.screenshotMode" = "截图方式";
+"settings.screenshotDestination" = "截图保存到";
+"settings.screenshotToolbar" = "系统截图工具栏";
+"settings.screenshotRegion" = "框选任意区域";
+"settings.screenshotDesktop" = "桌面（PNG 文件）";
+"settings.screenshotClipboard" = "剪贴板";
+"screenshot.failed" = "无法启动截图工具，请重试。";

@@ -3,6 +3,7 @@ import SwiftUI
 /// Compact horizontal arrows retain a larger hit area extending into the gaps.
 struct PopupChevron: View {
     var symbol = "chevron.right"
+    var alignsToModuleEdge = false
 
     private var isHorizontal: Bool {
         symbol == "chevron.right" || symbol == "chevron.backward"
@@ -10,9 +11,11 @@ struct PopupChevron: View {
 
     var body: some View {
         Image(systemName: symbol)
-            .font(.system(size: 11, weight: .semibold))
+            .font(.system(size: alignsToModuleEdge ? 12 : 11, weight: alignsToModuleEdge ? .medium : .semibold))
             .foregroundStyle(.secondary)
-            .frame(width: isHorizontal ? 12 : 28, height: 24)
+            .frame(width: isHorizontal ? (alignsToModuleEdge ? CompactPopupLayout.unit : 12) : 28,
+                   height: 24, alignment: alignsToModuleEdge ? .trailing : .center)
+            .padding(.trailing, alignsToModuleEdge ? CompactPopupLayout.moduleTextInset : 0)
             .contentShape(ChevronHitArea(expands: isHorizontal))
     }
 }

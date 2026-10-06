@@ -74,6 +74,24 @@ struct BasicsSettingsPane: View {
                 .frame(width: 180)
             }
 
+            PreferenceCheckboxRow(label: .settingsClockSeconds, isOn: $store.showsClockSeconds)
+
+            Divider()
+            PreferenceRow(label: .settingsScreenshotMode, placesControlInline: true) {
+                Picker(localization.string(.settingsScreenshotMode), selection: $store.screenshotMode) {
+                    ForEach(ScreenshotMode.allCases) { mode in
+                        Text(localization.string(mode.labelKey)).tag(mode)
+                    }
+                }.labelsHidden().frame(width: 220)
+            }
+            PreferenceRow(label: .settingsScreenshotDestination, placesControlInline: true) {
+                Picker(localization.string(.settingsScreenshotDestination), selection: $store.screenshotDestination) {
+                    ForEach(ScreenshotDestination.allCases) { destination in
+                        Text(localization.string(destination.labelKey)).tag(destination)
+                    }
+                }.labelsHidden().frame(width: 220)
+            }
+
             Divider()
             PreferenceRow(label: .settingsWeatherShortcut) {
                 WeatherShortcutInstallButtons(localization: localization, purpose: .installedOnly)

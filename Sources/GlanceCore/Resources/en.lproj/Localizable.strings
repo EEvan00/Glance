@@ -345,3 +345,32 @@
 "timer.notificationBody" = "Your countdown is complete.";
 "timer.notificationHelp" = "Notifications are unavailable. The menu bar will still blink when time is up.";
 "timer.openNotifications" = "Open Notification Settings";
+
+"compact.battery" = "Battery";
+"compact.unavailable" = "Unavailable";
+"compact.charged" = "Full";
+"compact.charging" = "Charging";
+"compact.lowPower" = "Low Power";
+"compact.power" = "Plugged in";
+"compact.onBattery" = "On Battery";
+"compact.connected" = "Connected";
+"compact.disconnected" = "Disconnected";
+"compact.off" = "Off";
+"compact.noInternet" = "No Internet";
+"compact.hotspot" = "Hotspot";
+"compact.temporary" = "Temporary";
+"compact.shared" = "Sharing";
+"compact.loading" = "Loading";
+"compact.noAccess" = "No Permission";
+"compact.cached" = "Cached";
+"compact.noData" = "No Data";
+"compact.screenshot" = "Screenshot";
+"settings.clockSeconds" = "Show seconds";
+
+"settings.screenshotMode" = "Screenshot mode";
+"settings.screenshotDestination" = "Save screenshots to";
+"settings.screenshotToolbar" = "System screenshot toolbar";
+"settings.screenshotRegion" = "Select a region";
+"settings.screenshotDesktop" = "Desktop (PNG file)";
+"settings.screenshotClipboard" = "Clipboard";
+"screenshot.failed" = "Could not start the screenshot tool. Please try again.";

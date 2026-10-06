@@ -345,3 +345,32 @@
 "timer.notificationBody" = "Il conto alla rovescia è terminato.";
 "timer.notificationHelp" = "Le notifiche non sono disponibili. La barra dei menu lampeggerà alla fine.";
 "timer.openNotifications" = "Apri impostazioni notifiche";
+
+"compact.battery" = "Batteria";
+"compact.unavailable" = "Non disponibile";
+"compact.charged" = "Carica";
+"compact.charging" = "In carica";
+"compact.lowPower" = "Risparmio";
+"compact.power" = "Collegata";
+"compact.onBattery" = "A batteria";
+"compact.connected" = "Connesso";
+"compact.disconnected" = "Disconnesso";
+"compact.off" = "Spento";
+"compact.noInternet" = "Senza Internet";
+"compact.hotspot" = "Hotspot";
+"compact.temporary" = "Temporaneo";
+"compact.shared" = "Condivisione";
+"compact.loading" = "Caricamento";
+"compact.noAccess" = "Non autorizzato";
+"compact.cached" = "Cache";
+"compact.noData" = "Nessun dato";
+"compact.screenshot" = "Screenshot";
+"settings.clockSeconds" = "Mostra secondi";
+
+"settings.screenshotMode" = "Modalità screenshot";
+"settings.screenshotDestination" = "Salva screenshot in";
+"settings.screenshotToolbar" = "Barra screenshot di sistema";
+"settings.screenshotRegion" = "Seleziona una regione";
+"settings.screenshotDesktop" = "Scrivania (file PNG)";
+"settings.screenshotClipboard" = "Appunti";
+"screenshot.failed" = "Impossibile avviare lo strumento screenshot. Riprova.";

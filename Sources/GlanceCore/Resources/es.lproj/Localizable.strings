@@ -345,3 +345,32 @@
 "timer.notificationBody" = "La cuenta atrás ha terminado.";
 "timer.notificationHelp" = "Las notificaciones no están disponibles. La barra de menús parpadeará al terminar.";
 "timer.openNotifications" = "Abrir ajustes de notificaciones";
+
+"compact.battery" = "Batería";
+"compact.unavailable" = "No disponible";
+"compact.charged" = "Completa";
+"compact.charging" = "Cargando";
+"compact.lowPower" = "Bajo consumo";
+"compact.power" = "Enchufada";
+"compact.onBattery" = "Con batería";
+"compact.connected" = "Conectado";
+"compact.disconnected" = "Desconectado";
+"compact.off" = "Apagado";
+"compact.noInternet" = "Sin Internet";
+"compact.hotspot" = "Hotspot";
+"compact.temporary" = "Temporal";
+"compact.shared" = "Compartiendo";
+"compact.loading" = "Cargando";
+"compact.noAccess" = "Sin permiso";
+"compact.cached" = "En caché";
+"compact.noData" = "Sin datos";
+"compact.screenshot" = "Captura de pantalla";
+"settings.clockSeconds" = "Mostrar segundos";
+
+"settings.screenshotMode" = "Modo de captura";
+"settings.screenshotDestination" = "Guardar capturas en";
+"settings.screenshotToolbar" = "Barra de captura del sistema";
+"settings.screenshotRegion" = "Seleccionar una región";
+"settings.screenshotDesktop" = "Escritorio (archivo PNG)";
+"settings.screenshotClipboard" = "Portapapeles";
+"screenshot.failed" = "No se pudo iniciar la herramienta de captura. Inténtalo de nuevo.";

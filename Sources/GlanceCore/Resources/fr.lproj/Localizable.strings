@@ -345,3 +345,32 @@
 "timer.notificationBody" = "Le compte à rebours est terminé.";
 "timer.notificationHelp" = "Les notifications sont indisponibles. La barre des menus clignotera à la fin.";
 "timer.openNotifications" = "Ouvrir les réglages des notifications";
+
+"compact.battery" = "Batterie";
+"compact.unavailable" = "Indisponible";
+"compact.charged" = "Chargée";
+"compact.charging" = "En charge";
+"compact.lowPower" = "Éco énergie";
+"compact.power" = "Branchée";
+"compact.onBattery" = "Sur batterie";
+"compact.connected" = "Connecté";
+"compact.disconnected" = "Déconnecté";
+"compact.off" = "Désactivé";
+"compact.noInternet" = "Sans Internet";
+"compact.hotspot" = "Hotspot";
+"compact.temporary" = "Temporaire";
+"compact.shared" = "Partage actif";
+"compact.loading" = "Chargement";
+"compact.noAccess" = "Non autorisé";
+"compact.cached" = "En cache";
+"compact.noData" = "Sans données";
+"compact.screenshot" = "Capture d’écran";
+"settings.clockSeconds" = "Afficher les secondes";
+
+"settings.screenshotMode" = "Mode de capture";
+"settings.screenshotDestination" = "Enregistrer les captures dans";
+"settings.screenshotToolbar" = "Barre de capture du système";
+"settings.screenshotRegion" = "Sélectionner une zone";
+"settings.screenshotDesktop" = "Bureau (fichier PNG)";
+"settings.screenshotClipboard" = "Presse-papiers";
+"screenshot.failed" = "Impossible de lancer l’outil de capture. Veuillez réessayer.";
