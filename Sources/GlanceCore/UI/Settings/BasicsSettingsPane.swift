@@ -51,13 +51,21 @@ struct BasicsSettingsPane: View {
 
             Divider()
 
-            PreferenceRow(label: .settingsPopupUtility, description: .settingsPopupUtilityDescription, placesControlInline: true) {
+            PreferenceRow(label: .settingsPopupUtility, description: .settingsUtilityCardDescription, placesControlInline: true) {
                 Picker(localization.string(.settingsPopupUtility), selection: $store.popupUtility) {
                     ForEach(PopupUtility.allCases) { utility in
                         Text(localization.string(utility.labelKey)).tag(utility)
                     }
                 }.labelsHidden().frame(width: 220)
             }
+
+            Divider()
+
+            utilityRowPicker(.settingsUtilityFirstRow, selection: $store.firstUtilityRow, other: store.secondUtilityRow)
+            utilityRowPicker(.settingsUtilitySecondRow, selection: $store.secondUtilityRow, other: store.firstUtilityRow)
+            Text(localization.string(.settingsUtilityStripPosition))
+                .font(.caption).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
 
             Divider()
 
@@ -81,16 +89,33 @@ struct BasicsSettingsPane: View {
             PreferenceCheckboxRow(label: .settingsClockSeconds, isOn: $store.showsClockSeconds)
 
             Divider()
-            PreferenceRow(label: .compactScreenshot, description: .settingsScreenshotSystemHelp) {
-                EmptyView()
-            }
+            QuickActionSettingsView(store: store)
 
             Divider()
             PreferenceRow(label: .settingsWeatherShortcut) {
-                WeatherShortcutInstallButtons(localization: localization, purpose: .installedOnly)
+                VStack(alignment: .leading, spacing: 12) {
+                    PreferenceRow(label: .settingsTemperatureUnit, placesControlInline: true) {
+                        Picker(localization.string(.settingsTemperatureUnit), selection: $store.temperatureUnit) {
+                            ForEach(TemperatureUnit.allCases) { unit in
+                                Text(unit.symbol).tag(unit)
+                            }
+                        }.labelsHidden().frame(width: 220)
+                    }
+                    WeatherShortcutInstallButtons(localization: localization, purpose: .settings)
+                }
             }
 
 
+        }
+    }
+
+    private func utilityRowPicker(_ key: LocalizationKey, selection: Binding<PopupUtilityRow>, other: PopupUtilityRow) -> some View {
+        PreferenceRow(label: key, placesControlInline: true) {
+            Picker(localization.string(key), selection: selection) {
+                ForEach(PopupUtilityRow.allCases.filter { $0 == .none || $0 != other }) { row in
+                    Text(localization.string(row.labelKey)).tag(row)
+                }
+            }.labelsHidden().frame(width: 220)
         }
     }
 

@@ -231,7 +231,7 @@ struct WiFiNetworkListView: View {
                         .foregroundStyle(.primary.opacity(0.78))
                         .accessibilityHidden(true)
                 }
-                Image(systemName: signalSymbol(for: network.rssi))
+                Image(systemName: network.isConnected && wifi.state == .hotspot ? "personalhotspot" : signalSymbol(for: network.rssi))
                     .foregroundStyle(.primary.opacity(0.78))
                     .accessibilityHidden(true)
             }

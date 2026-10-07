@@ -251,6 +251,32 @@ final class SettingsStore: ObservableObject {
         )
     }
 
+    @Published var firstQuickAction: PopupQuickAction {
+        didSet { defaults.set(firstQuickAction.rawValue, forKey: "firstQuickAction") }
+    }
+    @Published var secondQuickAction: PopupQuickAction {
+        didSet { defaults.set(secondQuickAction.rawValue, forKey: "secondQuickAction") }
+    }
+    @Published var quickActionShortcutName: String {
+        didSet { defaults.set(quickActionShortcutName, forKey: "quickActionShortcutName") }
+    }
+    @Published var quickActionApplicationPath: String {
+        didSet { defaults.set(quickActionApplicationPath, forKey: "quickActionApplicationPath") }
+    }
+
+    @Published var firstUtilityRow: PopupUtilityRow {
+        didSet { defaults.set(firstUtilityRow.rawValue, forKey: "firstUtilityRow") }
+    }
+    @Published var secondUtilityRow: PopupUtilityRow {
+        didSet { defaults.set(secondUtilityRow.rawValue, forKey: "secondUtilityRow") }
+    }
+    var visiblePopupUtilities: Set<PopupUtility> {
+        Self.popupUtilities(card: popupUtility, first: firstUtilityRow, second: secondUtilityRow)
+    }
+    static func popupUtilities(card: PopupUtility, first: PopupUtilityRow, second: PopupUtilityRow) -> Set<PopupUtility> {
+        Set([card, first.utility, second.utility].compactMap { $0 })
+    }
+
     @Published var popupUtility: PopupUtility {
         didSet { defaults.set(popupUtility.rawValue, forKey: "popupUtility") }
     }
@@ -273,6 +299,10 @@ final class SettingsStore: ObservableObject {
     @Published var showsClockSeconds: Bool {
         didSet { defaults.set(showsClockSeconds, forKey: "showsClockSeconds") }
     }
+    @Published var temperatureUnit: TemperatureUnit {
+        didSet { defaults.set(temperatureUnit.rawValue, forKey: "temperatureUnit") }
+    }
+
     @Published var uses24HourClock: Bool {
         didSet { defaults.set(uses24HourClock, forKey: "uses24HourClock") }
     }
@@ -293,11 +323,22 @@ final class SettingsStore: ObservableObject {
             }
             defaults.set(true, forKey: "glanceImportedLegacyPreferences")
         }
+        let first = defaults.string(forKey: "firstQuickAction").flatMap(PopupQuickAction.init(rawValue:)) ?? .timer
+        let second = defaults.string(forKey: "secondQuickAction").flatMap(PopupQuickAction.init(rawValue:)) ?? .screenshot
+        self.firstQuickAction = first
+        self.secondQuickAction = second == first ? (first == .screenshot ? .timer : .screenshot) : second
+        self.quickActionShortcutName = defaults.string(forKey: "quickActionShortcutName") ?? ""
+        self.quickActionApplicationPath = defaults.string(forKey: "quickActionApplicationPath") ?? ""
+        let firstRow = defaults.string(forKey: "firstUtilityRow").flatMap(PopupUtilityRow.init(rawValue:)) ?? .none
+        let secondRow = defaults.string(forKey: "secondUtilityRow").flatMap(PopupUtilityRow.init(rawValue:)) ?? .none
+        self.firstUtilityRow = firstRow
+        self.secondUtilityRow = firstRow != .none && firstRow == secondRow ? .none : secondRow
         self.popupUtility = defaults.string(forKey: "popupUtility").flatMap(PopupUtility.init(rawValue:)) ?? .performance
         self.scrollToAdjustVolume = defaults.object(forKey: "scrollToAdjustVolume") as? Bool ?? false
         self.screenshotMode = defaults.string(forKey: "screenshotMode").flatMap(ScreenshotMode.init(rawValue:)) ?? .toolbar
         self.screenshotDestination = defaults.string(forKey: "screenshotDestination").flatMap(ScreenshotDestination.init(rawValue:)) ?? .desktop
         self.automaticallyShrinksCardText = defaults.object(forKey: "automaticallyShrinksCardText") as? Bool ?? true
+        self.temperatureUnit = defaults.string(forKey: "temperatureUnit").flatMap(TemperatureUnit.init(rawValue:)) ?? .celsius
         self.showsClockSeconds = defaults.bool(forKey: "showsClockSeconds")
         self.uses24HourClock = defaults.object(forKey: "uses24HourClock") as? Bool ?? true
         let storedIconSize = (defaults.object(forKey: Self.iconSizeDefaultsKey) as? NSNumber)?.doubleValue

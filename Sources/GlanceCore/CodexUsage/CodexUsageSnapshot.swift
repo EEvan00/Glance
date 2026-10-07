@@ -27,6 +27,12 @@ struct CodexUsageWindow: Identifiable, Equatable, Sendable {
 struct CodexUsageSnapshot: Equatable, Sendable {
     let windows: [CodexUsageWindow]
 
+    // Popup summaries prefer the five-hour window, independent of API ordering.
+    // Detail menus retain all windows in their original order.
+    var preferredPopupWindow: CodexUsageWindow? {
+        windows.first { $0.windowDurationMins == 300 } ?? windows.first
+    }
+
     static func decode(_ data: Data) throws -> Self {
         guard let root = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw CocoaError(.coderReadCorrupt)

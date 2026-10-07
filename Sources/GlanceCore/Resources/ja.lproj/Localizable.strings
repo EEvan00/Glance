@@ -248,36 +248,36 @@
 
 "media.play" = "再生";
 
-"weather.unavailable" = "Weather unavailable";
-"weather.clear" = "Clear";
-"weather.partlyCloudy" = "Partly cloudy";
-"weather.cloudy" = "Cloudy";
-"weather.fog" = "Fog";
-"weather.rain" = "Rain";
-"weather.snow" = "Snow";
-"weather.thunderstorm" = "Thunderstorm";
-"weather.unknown" = "Unknown condition";
+"weather.unavailable" = "天気を取得できません";
+"weather.clear" = "晴れ";
+"weather.partlyCloudy" = "晴れ時々曇り";
+"weather.cloudy" = "曇り";
+"weather.fog" = "霧";
+"weather.rain" = "雨";
+"weather.snow" = "雪";
+"weather.thunderstorm" = "雷雨";
+"weather.unknown" = "不明な天気";
 "settings.clockFormat" = "Time format";
 "settings.clock12" = "12-hour";
 "settings.clock24" = "24-hour";
-"settings.weatherShortcut" = "Weather setup";
+"settings.weatherShortcut" = "天気";
 "settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
 "settings.weatherOpenShortcut" = "Open weather shortcut…";
 
-"weather.title" = "Weather";
-"weather.temperature" = "Temperature";
-"weather.condition" = "Conditions";
-"weather.source" = "Source";
-"weather.updated" = "Updated %@";
-"weather.loading" = "Loading weather…";
-"weather.openApp" = "Open Weather…";
+"weather.title" = "天気";
+"weather.temperature" = "気温";
+"weather.condition" = "天気概況";
+"weather.source" = "情報源";
+"weather.updated" = "更新 %@";
+"weather.loading" = "天気を読み込み中…";
+"weather.openApp" = "天気を開く…";
 
-"weather.low" = "Low";
-"weather.high" = "High";
-"weather.hourly" = "Hourly Forecast";
-"weather.forecastUnavailable" = "Forecast unavailable";
+"weather.low" = "最低";
+"weather.high" = "最高";
+"weather.hourly" = "時間別予報";
+"weather.forecastUnavailable" = "予報を取得できません";
 
-"weather.currentLocation" = "Current Location";
+"weather.currentLocation" = "現在地";
 
 "settings.weatherAddCurrent" = "Add current weather…";
 
@@ -290,11 +290,11 @@
 
 "settings.about.upstream" = "Based on Status Trio";
 
-"weather.uvIndex" = "UV Index";
-"weather.sunrise" = "Sunrise";
-"weather.sunset" = "Sunset";
-"weather.refresh" = "Refresh now";
-"weather.rainChance" = "Chance of rain";
+"weather.uvIndex" = "UV指数";
+"weather.sunrise" = "日の出";
+"weather.sunset" = "日の入り";
+"weather.refresh" = "今すぐ更新";
+"weather.rainChance" = "降水確率";
 
 "battery.state.paused" = "一時停止中";
 "battery.chargeToFull" = "今すぐフル充電";
@@ -312,7 +312,7 @@
 "claude.connectHelp" = "Connect your existing Claude Code status line. Glance preserves its output and reads local 5-hour and weekly limits after your next response. No API tokens are used.";
 "claude.setupFailed" = "Install and run Claude Code first, then try connecting again.";
 "shortcut.manageRemove" = "Remove in Shortcuts…";
-"shortcut.removeHelp" = "Delete it in the system Shortcuts library. Returning to Glance updates its installation status.";
+"shortcut.removeHelp" = "ショートカットの「すべてのショートカット」で項目を選び、⌘⌫で削除します。追加や更新は天気サブメニューから行えます。";
 "shortcut.discoveryFailed" = "Unable to check shortcuts. Click refresh to try again.";
 
 "performance.title" = "Performance";
@@ -351,8 +351,8 @@
 "compact.charged" = "充電完了";
 "compact.charging" = "充電中";
 "compact.lowPower" = "省電力";
-"compact.power" = "電源接続";
-"compact.onBattery" = "電池使用";
+"compact.power" = "供給元：電源";
+"compact.onBattery" = "供給元：電池";
 "compact.connected" = "接続済み";
 "compact.disconnected" = "未接続";
 "compact.off" = "オフ";
@@ -383,3 +383,34 @@
 "settings.cardTextAutoShrink" = "スペースが足りないときにカードの文字を自動縮小";
 
 "settings.screenshotSystemHelp" = "macOSのスクリーンショットを開きます。範囲、ウインドウ、画面を選び、オプションでクリップボードまたはファイルへの保存を指定します。";
+
+"quick.FirstSlot" = "左のショートカット";
+"quick.SecondSlot" = "右のショートカット";
+"quick.Calculator" = "計算機";
+"quick.Notes" = "メモ";
+"quick.Reminders" = "リマインダー";
+"quick.Shortcut" = "ショートカット";
+"quick.Application" = "カスタム App";
+"quick.ChooseApplication" = "App を選択…";
+"quick.ChooseShortcut" = "ショートカットを選択";
+
+"settings.UtilityFirstRow" = "上のバー";
+"settings.UtilitySecondRow" = "下のバー";
+"settings.UtilityCardDescription" = "カードに表示する機能を選択します。下の追加行で他の機能も同時に表示できます。";
+
+"weather.drizzle" = "霧雨";
+
+"weather.wind" = "風";
+
+"weather.summary" = "%@ · UV %@ · 降水確率 %@";
+
+"settings.temperatureUnit" = "温度の単位";
+
+"shortcut.update" = "ショートカットを更新…";
+"shortcut.updateHelp" = "読み込み時に「置き換える」を選び、元の名前を保持してください。新しいバージョンが正常に実行されると、更新の案内が消えます。";
+
+"settings.utilityStripPosition" = "バーはプレーヤーと下部のボタンの間に表示されます。";
+
+"shortcut.addWeather" = "天気ショートカットを追加…";
+"shortcut.continueSetup" = "設定を続ける…";
+"shortcut.sequentialInstallHelp" = "システムのウインドウで読み込みを確認し、ここに戻って続けてください。各ショートカットを個別に確認する必要があります。";

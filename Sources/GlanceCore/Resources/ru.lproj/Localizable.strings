@@ -248,36 +248,36 @@
 
 "media.play" = "Воспроизвести";
 
-"weather.unavailable" = "Weather unavailable";
-"weather.clear" = "Clear";
-"weather.partlyCloudy" = "Partly cloudy";
-"weather.cloudy" = "Cloudy";
-"weather.fog" = "Fog";
-"weather.rain" = "Rain";
-"weather.snow" = "Snow";
-"weather.thunderstorm" = "Thunderstorm";
-"weather.unknown" = "Unknown condition";
+"weather.unavailable" = "Погода недоступна";
+"weather.clear" = "Ясно";
+"weather.partlyCloudy" = "Переменная облачность";
+"weather.cloudy" = "Облачно";
+"weather.fog" = "Туман";
+"weather.rain" = "Дождь";
+"weather.snow" = "Снег";
+"weather.thunderstorm" = "Гроза";
+"weather.unknown" = "Неизвестная погода";
 "settings.clockFormat" = "Time format";
 "settings.clock12" = "12-hour";
 "settings.clock24" = "24-hour";
-"settings.weatherShortcut" = "Weather setup";
+"settings.weatherShortcut" = "Погода";
 "settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
 "settings.weatherOpenShortcut" = "Open weather shortcut…";
 
-"weather.title" = "Weather";
-"weather.temperature" = "Temperature";
-"weather.condition" = "Conditions";
-"weather.source" = "Source";
-"weather.updated" = "Updated %@";
-"weather.loading" = "Loading weather…";
-"weather.openApp" = "Open Weather…";
+"weather.title" = "Погода";
+"weather.temperature" = "Температура";
+"weather.condition" = "Условия";
+"weather.source" = "Источник";
+"weather.updated" = "Обновлено %@";
+"weather.loading" = "Загрузка погоды…";
+"weather.openApp" = "Открыть Погоду…";
 
-"weather.low" = "Low";
-"weather.high" = "High";
-"weather.hourly" = "Hourly Forecast";
-"weather.forecastUnavailable" = "Forecast unavailable";
+"weather.low" = "Мин.";
+"weather.high" = "Макс.";
+"weather.hourly" = "Почасовой прогноз";
+"weather.forecastUnavailable" = "Прогноз недоступен";
 
-"weather.currentLocation" = "Current Location";
+"weather.currentLocation" = "Текущая геопозиция";
 
 "settings.weatherAddCurrent" = "Add current weather…";
 
@@ -290,11 +290,11 @@
 
 "settings.about.upstream" = "Based on Status Trio";
 
-"weather.uvIndex" = "UV Index";
-"weather.sunrise" = "Sunrise";
-"weather.sunset" = "Sunset";
-"weather.refresh" = "Refresh now";
-"weather.rainChance" = "Chance of rain";
+"weather.uvIndex" = "УФ-индекс";
+"weather.sunrise" = "Восход";
+"weather.sunset" = "Закат";
+"weather.refresh" = "Обновить сейчас";
+"weather.rainChance" = "Вероятность дождя";
 
 "battery.state.paused" = "Приостановлено";
 "battery.chargeToFull" = "Зарядить полностью сейчас";
@@ -312,7 +312,7 @@
 "claude.connectHelp" = "Connect your existing Claude Code status line. Glance preserves its output and reads local 5-hour and weekly limits after your next response. No API tokens are used.";
 "claude.setupFailed" = "Install and run Claude Code first, then try connecting again.";
 "shortcut.manageRemove" = "Remove in Shortcuts…";
-"shortcut.removeHelp" = "Delete it in the system Shortcuts library. Returning to Glance updates its installation status.";
+"shortcut.removeHelp" = "В Командах вернитесь в Все команды, выберите нужную и нажмите ⌘⌫ для удаления. Добавление и обновление доступны в подменю Погода.";
 "shortcut.discoveryFailed" = "Unable to check shortcuts. Click refresh to try again.";
 
 "performance.title" = "Performance";
@@ -351,8 +351,8 @@
 "compact.charged" = "Заряжена";
 "compact.charging" = "Зарядка";
 "compact.lowPower" = "Экономия";
-"compact.power" = "От сети";
-"compact.onBattery" = "От батареи";
+"compact.power" = "Источник: Сеть";
+"compact.onBattery" = "Источник: АКБ";
 "compact.connected" = "Подключено";
 "compact.disconnected" = "Отключено";
 "compact.off" = "Выкл.";
@@ -383,3 +383,34 @@
 "settings.cardTextAutoShrink" = "Автоматически уменьшать текст карточек при нехватке места";
 
 "settings.screenshotSystemHelp" = "Открывает «Снимок экрана» macOS. Выберите область, окно или экран, а в параметрах — сохранение в буфер обмена или файл.";
+
+"quick.FirstSlot" = "Кнопка слева";
+"quick.SecondSlot" = "Кнопка справа";
+"quick.Calculator" = "Калькулятор";
+"quick.Notes" = "Заметки";
+"quick.Reminders" = "Напоминания";
+"quick.Shortcut" = "Быстрая команда";
+"quick.Application" = "Другое приложение";
+"quick.ChooseApplication" = "Выбрать приложение…";
+"quick.ChooseShortcut" = "Выбрать команду";
+
+"settings.UtilityFirstRow" = "Верхняя полоса";
+"settings.UtilitySecondRow" = "Нижняя полоса";
+"settings.UtilityCardDescription" = "Выберите содержимое карточки. Дополнительные строки позволяют показывать другие модули одновременно.";
+
+"weather.drizzle" = "Морось";
+
+"weather.wind" = "Ветер";
+
+"weather.summary" = "%@ · УФ %@ · %@ дождя";
+
+"settings.temperatureUnit" = "Единица температуры";
+
+"shortcut.update" = "Обновить команду…";
+"shortcut.updateHelp" = "При импорте выберите «Заменить» и сохраните исходное имя. Уведомление исчезнет после успешного запуска новой версии.";
+
+"settings.utilityStripPosition" = "Полосы расположены между плеером и нижними кнопками.";
+
+"shortcut.addWeather" = "Добавить команды погоды…";
+"shortcut.continueSetup" = "Продолжить настройку…";
+"shortcut.sequentialInstallHelp" = "Подтвердите импорт в системном окне и вернитесь сюда. Для каждой команды требуется отдельное подтверждение.";

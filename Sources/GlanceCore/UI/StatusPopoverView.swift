@@ -174,6 +174,26 @@ enum StatusPresentation {
         }
     }
 
+    static func compactWiFiSubtitle(_ wifi: WiFiStatus, localization: Localization) -> String {
+        if wifi.state == .connected, let ssid = wifi.ssid, !ssid.isEmpty { return ssid }
+        let key: LocalizationKey
+        switch wifi.state {
+        case .connected: key = .compactConnected
+        case .notAssociated: key = .compactDisconnected
+        case .off: key = .compactOff
+        case .noInternet: key = .compactNoInternet
+        case .hotspot: key = .compactHotspot
+        case .temporary: key = .compactTemporary
+        case .shared: key = .compactShared
+        case .unavailable: key = .compactUnavailable
+        }
+        let status = localization.string(key)
+        if wifi.state.isNetworkAssociated, let ssid = wifi.ssid, !ssid.isEmpty {
+            return ssid + " · " + status
+        }
+        return status
+    }
+
     static func volumeTitle(
         _ volume: VolumeStatus,
         localization: Localization
@@ -288,6 +308,7 @@ struct StatusPopoverView: View {
     let openWeather: () -> Void
     let openSoundSettings: () -> Void
     let quit: () -> Void
+    var openQuickAction: (PopupQuickAction) -> Void = { _ in }
     @State private var panel: PopoverPanel = .summary
 
     var body: some View {
@@ -369,7 +390,7 @@ struct StatusPopoverView: View {
                     }
                     PopupDivider().padding(.horizontal, CompactPopupLayout.moduleTextInset)
                     cell(symbol: "wifi", title: localization.string(.wifiTitle),
-                         subtitle: compactWiFiSubtitle) {
+                         subtitle: compactWiFiSubtitle, wifi: store.popupSnapshot.wifi) {
                         store.activateWiFiPanel()
                         panel = .wifi(showDetails: false)
                     }
@@ -406,19 +427,22 @@ struct StatusPopoverView: View {
             if !nowPlaying.items.isEmpty {
                 NowPlayingView(controller: nowPlaying)
             }
+            if settings.firstUtilityRow != .none || settings.secondUtilityRow != .none {
+                TimelineView(.everyMinute) { context in
+                    VStack(spacing: CompactPopupLayout.gap) {
+                        if let utility = settings.firstUtilityRow.utility { utilityRow(utility, date: context.date) }
+                        if let utility = settings.secondUtilityRow.utility { utilityRow(utility, date: context.date) }
+                    }
+                }
+            }
             TimelineView(.periodic(from: FooterClockFormatting.timelineStart(showsSeconds: settings.showsClockSeconds), by: settings.showsClockSeconds ? 1 : 60)) { context in
                 HStack(spacing: CompactPopupLayout.gap) {
                     footerButton(.compactSettings, symbol: "gearshape", action: openSettings)
-                    Button { panel = .timer } label: {
-                        Image(systemName: countdown.isFinished ? "timer.circle.fill" : "timer")
-                            .font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium))
-                            .frame(width: CompactPopupLayout.span(1), height: CompactPopupLayout.unit).systemModuleSurface()
-                    }.buttonStyle(.plain).accessibilityLabel(localization.string(.timerTitle))
-                        .help(localization.string(.timerTitle))
+                    quickActionButton(settings.firstQuickAction)
                     Button { panel = .weather } label: {
                         HStack(spacing: 3) {
                             Image(systemName: weather.snapshot?.symbol ?? "cloud").font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium))
-                            Text(weather.snapshot?.temperatureText ?? "—").monospacedDigit()
+                            Text(weather.snapshot.map { settings.temperatureUnit.text(celsius: $0.temperature) } ?? "—").monospacedDigit()
                         }
                         .font(.system(size: 11))
                         .frame(width: CompactPopupLayout.span(2), height: CompactPopupLayout.unit)
@@ -439,7 +463,7 @@ struct StatusPopoverView: View {
                             .frame(width: CompactPopupLayout.span(2), height: CompactPopupLayout.unit).systemModuleSurface()
                     }.buttonStyle(.plain)
                         .accessibilityLabel(localization.string(.footerOpenClock))
-                    footerButton(.compactScreenshot, symbol: "square.dashed", action: openScreenshot)
+                    quickActionButton(settings.secondQuickAction)
                     footerButton(.compactQuit, symbol: "xmark.circle", action: quit)
                 }
             }
@@ -452,11 +476,42 @@ struct StatusPopoverView: View {
     private var weatherHelp: String {
         let condition = weather.isUnavailable
             ? localization.string(.weatherUnavailable)
-            : weather.snapshot.map { $0.appleCondition ?? localization.string($0.conditionKey) }
+            : weather.snapshot.map { localization.string($0.conditionKey) }
                 ?? localization.string(.weatherUnknown)
         let uv = weather.snapshot?.uvIndex.map { $0.formatted() } ?? "—"
         let rainChance = weather.snapshot?.precipitationChance.map { "\(Int($0.rounded()))%" } ?? "—"
-        return "\(condition) · UV \(uv) · \(rainChance) Rain"
+        return localization.format(.weatherSummary, condition, uv, rainChance)
+    }
+
+    private func utilityRow(_ utility: PopupUtility, date: Date) -> some View {
+        PopupUtilityStripView(utility: utility, performance: performance, codexUsage: codexUsage,
+                             claudeUsage: claudeUsage, date: date) {
+            switch utility {
+            case .performance: panel = .performance
+            case .codex: panel = .codex
+            case .claude: panel = .claude
+            }
+        }
+    }
+
+    private func quickActionButton(_ action: PopupQuickAction) -> some View {
+        var label = localization.string(action.labelKey)
+        if action == .application, !settings.quickActionApplicationPath.isEmpty {
+            label = URL(fileURLWithPath: settings.quickActionApplicationPath).deletingPathExtension().lastPathComponent
+        } else if action == .shortcut, !settings.quickActionShortcutName.isEmpty {
+            label = settings.quickActionShortcutName
+        }
+        return Button {
+            switch action {
+            case .timer: panel = .timer
+            case .screenshot: openScreenshot()
+            default: openQuickAction(action)
+            }
+        } label: {
+            Image(systemName: action == .timer && countdown.isFinished ? "timer.circle.fill" : action.symbol)
+                .font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium))
+                .frame(width: CompactPopupLayout.span(1), height: CompactPopupLayout.unit).systemModuleSurface()
+        }.buttonStyle(.plain).help(label).accessibilityLabel(label)
     }
 
     private func footerButton(_ key: LocalizationKey, symbol: String, action: @escaping () -> Void) -> some View {
@@ -475,29 +530,13 @@ struct StatusPopoverView: View {
         let key: LocalizationKey
         if !battery.isPresent { key = .compactUnavailable }
         else if battery.isChargingPaused { key = .timerPaused }
-        else if battery.isCharged { key = .compactCharged }
-        else if battery.isCharging { key = .compactCharging }
-        else if battery.isLowPowerMode { key = .compactLowPower }
         else if battery.isConnectedToPower { key = .compactPower }
         else { key = .compactOnBattery }
         return localization.string(key)
     }
 
     private var compactWiFiSubtitle: String {
-        let wifi = store.popupSnapshot.wifi
-        if let ssid = wifi.ssid, !ssid.isEmpty { return ssid }
-        let key: LocalizationKey
-        switch wifi.state {
-        case .connected: key = .compactConnected
-        case .notAssociated: key = .compactDisconnected
-        case .off: key = .compactOff
-        case .noInternet: key = .compactNoInternet
-        case .hotspot: key = .compactHotspot
-        case .temporary: key = .compactTemporary
-        case .shared: key = .compactShared
-        case .unavailable: key = .compactUnavailable
-        }
-        return localization.string(key)
+        StatusPresentation.compactWiFiSubtitle(store.popupSnapshot.wifi, localization: localization)
     }
 
     private var bluetoothSummary: String {
@@ -533,46 +572,56 @@ struct StatusPopoverView: View {
     }
 
     private var claudeTitle: String {
-        guard let percent = claudeUsage.snapshot?.windows.first?.remainingPercent else { return "Claude" }
+        guard let percent = claudeUsage.snapshot?.preferredPopupWindow?.remainingPercent else { return "Claude" }
         return "Claude · \(percent)%"
     }
 
     private func claudeSubtitle(at date: Date) -> String {
         if claudeUsage.isUnavailable, claudeUsage.snapshot != nil { return localization.string(.compactCached) }
-        if let countdown = claudeUsage.snapshot?.windows.first?.resetCountdown(now: date) {
+        if let countdown = claudeUsage.snapshot?.preferredPopupWindow?.resetCountdown(now: date) {
             return "↻ " + countdown
         }
         return localization.string(.compactNoData)
     }
 
     private var codexTitle: String {
-        guard let window = codexUsage.snapshot?.windows.first, let percent = window.remainingPercent else { return "Codex" }
+        guard let window = codexUsage.snapshot?.preferredPopupWindow, let percent = window.remainingPercent else { return "Codex" }
         return "Codex · \(percent)%"
     }
 
     private func codexHelp(at date: Date) -> String {
-        guard let percent = codexUsage.snapshot?.windows.first?.remainingPercent else { return "Codex · \(codexSubtitle(at: date))" }
+        guard let percent = codexUsage.snapshot?.preferredPopupWindow?.remainingPercent else { return "Codex · \(codexSubtitle(at: date))" }
         return "Codex · \(localization.format(.codexRemaining, percent)) · \(codexSubtitle(at: date))"
     }
 
     private func codexSubtitle(at date: Date) -> String {
         if codexUsage.isUnavailable, codexUsage.snapshot != nil { return localization.string(.compactCached) }
-        if let countdown = codexUsage.snapshot?.windows.first?.resetCountdown(now: date) {
+        if let countdown = codexUsage.snapshot?.preferredPopupWindow?.resetCountdown(now: date) {
             return "↻ " + countdown
         }
         return localization.string(codexUsage.isLoading ? .compactLoading : .compactUnavailable)
     }
 
-    private func cell(symbol: String, title: String, subtitle: String, provider: UsageProviderIcon.Provider? = nil, action: @escaping () -> Void) -> some View {
+    // A 14pt SF Wi-Fi symbol is 18pt wide; bitmap size is a canvas width, not font size.
+    private var compactWiFiIconSize: CGFloat {
+        NSImage(systemSymbolName: "wifi", accessibilityDescription: nil)?
+            .withSymbolConfiguration(.init(pointSize: CompactPopupLayout.moduleIconSize, weight: .medium))?
+            .size.width ?? 18
+    }
+
+    private func cell(symbol: String, title: String, subtitle: String, provider: UsageProviderIcon.Provider? = nil, wifi: WiFiStatus? = nil, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 0) {
                 Group {
                     if let provider {
                         UsageProviderIcon(provider: provider).scaleEffect(provider == .codex ? 1 : CompactPopupLayout.moduleIconSize / 18).frame(width: provider == .codex ? 18 : CompactPopupLayout.moduleIconSize, height: provider == .codex ? 18 : CompactPopupLayout.moduleIconSize)
+                    } else if let wifi {
+                        Image(nsImage: StatusIconRenderer.popupWiFiImage(wifi: wifi, size: compactWiFiIconSize))
+                            .renderingMode(.template)
                     } else if symbol == "bluetooth", let image = NSImage(named: NSImage.bluetoothTemplateName) {
                         Image(nsImage: image).resizable().scaledToFit().frame(width: 16, height: 22)
                     } else {
-                        Image(systemName: symbol).font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium))
+                        Image(systemName: symbol).font(.system(size: CompactPopupLayout.moduleIconSize - (symbol == "battery.100" ? 1 : 0), weight: .medium))
                     }
                 }.frame(width: CompactPopupLayout.unit)
                     .offset(x: 1)

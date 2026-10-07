@@ -248,19 +248,19 @@
 
 "media.play" = "播放";
 
-"weather.unavailable" = "天氣暫不可用";
+"weather.unavailable" = "天氣無法使用";
 "weather.clear" = "晴";
-"weather.partlyCloudy" = "晴间多云";
-"weather.cloudy" = "阴";
-"weather.fog" = "雾";
+"weather.partlyCloudy" = "局部多雲";
+"weather.cloudy" = "多雲";
+"weather.fog" = "霧";
 "weather.rain" = "雨";
 "weather.snow" = "雪";
 "weather.thunderstorm" = "雷雨";
-"weather.unknown" = "天气状况未知";
+"weather.unknown" = "未知天氣";
 "settings.clockFormat" = "时间格式";
 "settings.clock12" = "12 小时制";
 "settings.clock24" = "24 小时制";
-"settings.weatherShortcut" = "天气设置";
+"settings.weatherShortcut" = "天氣";
 "settings.weatherShortcutDescription" = "使用内置快捷指令获取 Apple 天气。缓存 15 分钟，关闭弹窗取消请求。";
 "settings.weatherOpenShortcut" = "打开天气快捷指令…";
 
@@ -269,15 +269,15 @@
 "weather.condition" = "天氣狀況";
 "weather.source" = "來源";
 "weather.updated" = "更新於 %@";
-"weather.loading" = "正在取得天氣…";
-"weather.openApp" = "開啟天氣…";
+"weather.loading" = "正在載入天氣…";
+"weather.openApp" = "打開天氣…";
 
 "weather.low" = "最低";
 "weather.high" = "最高";
 "weather.hourly" = "每小時預報";
-"weather.forecastUnavailable" = "暫時無法取得預報";
+"weather.forecastUnavailable" = "預報無法使用";
 
-"weather.currentLocation" = "当前位置";
+"weather.currentLocation" = "目前位置";
 
 "settings.weatherAddCurrent" = "添加当前天气…";
 
@@ -290,11 +290,11 @@
 
 "settings.about.upstream" = "原项目致谢";
 
-"weather.uvIndex" = "紫外线指数";
+"weather.uvIndex" = "紫外線指數";
 "weather.sunrise" = "日出";
 "weather.sunset" = "日落";
-"weather.refresh" = "立即更新";
-"weather.rainChance" = "降雨概率";
+"weather.refresh" = "立即重新整理";
+"weather.rainChance" = "降雨機率";
 
 "battery.state.paused" = "Paused";
 "battery.chargeToFull" = "立即充滿";
@@ -312,7 +312,7 @@
 "claude.connectHelp" = "连接现有 Claude Code 状态栏。Glance 保留原有输出，在下一次回复后读取本地 5 小时和周额度，不读取 API 密钥。";
 "claude.setupFailed" = "请先安装并运行 Claude Code，然后重试连接。";
 "shortcut.manageRemove" = "在快捷指令中移除…";
-"shortcut.removeHelp" = "在系统快捷指令库中删除，返回 Glance 后更新安装状态。";
+"shortcut.removeHelp" = "在系統捷徑中返回「所有捷徑」，選取對應項目後按 ⌘⌫ 刪除。加入或更新請前往天氣子選單。";
 "shortcut.discoveryFailed" = "无法检查快捷指令，请点击刷新重试。";
 
 "performance.title" = "系统性能";
@@ -351,8 +351,8 @@
 "compact.charged" = "已充滿";
 "compact.charging" = "充電中";
 "compact.lowPower" = "低耗電模式";
-"compact.power" = "已接電源";
-"compact.onBattery" = "電池供電";
+"compact.power" = "來源：電源";
+"compact.onBattery" = "來源：電池";
 "compact.connected" = "已連線";
 "compact.disconnected" = "未連線";
 "compact.off" = "已關閉";
@@ -383,3 +383,34 @@
 "settings.cardTextAutoShrink" = "空間不足時自動縮小卡片文字";
 
 "settings.screenshotSystemHelp" = "開啟 macOS「截圖」工具。在系統工具中選擇區域、視窗或螢幕，並在「選項」中選擇儲存至剪貼板或檔案。";
+
+"quick.FirstSlot" = "左側快捷功能";
+"quick.SecondSlot" = "右側快捷功能";
+"quick.Calculator" = "計算機";
+"quick.Notes" = "備忘錄";
+"quick.Reminders" = "提醒事項";
+"quick.Shortcut" = "捷徑";
+"quick.Application" = "自選 App";
+"quick.ChooseApplication" = "選擇 App…";
+"quick.ChooseShortcut" = "選擇捷徑";
+
+"settings.UtilityFirstRow" = "上方長條";
+"settings.UtilitySecondRow" = "下方長條";
+"settings.UtilityCardDescription" = "選擇卡片顯示的功能。可在下方啟用長條，同時顯示其他模組。";
+
+"weather.drizzle" = "毛毛雨";
+
+"weather.wind" = "有風";
+
+"weather.summary" = "%@ · 紫外線 %@ · %@ 降雨";
+
+"settings.temperatureUnit" = "溫度單位";
+
+"shortcut.update" = "更新捷徑…";
+"shortcut.updateHelp" = "匯入時選擇「取代」，更新原有捷徑並保留原名稱。新版成功執行後，更新提示會消失。";
+
+"settings.utilityStripPosition" = "長條位於播放器與底部快捷按鈕之間。";
+
+"shortcut.addWeather" = "加入天氣捷徑…";
+"shortcut.continueSetup" = "繼續加入…";
+"shortcut.sequentialInstallHelp" = "在系統視窗確認匯入後，返回這裡繼續加入下一個捷徑。每個捷徑需分別確認。";

@@ -28,9 +28,9 @@ on:
         default: false
         type: boolean
       publish_appcast:
-        description: "Also publish a signed Sparkle appcast using this fork’s matching key pair."
+        description: "Publish the signed update feed required by public downloads."
         required: true
-        default: false
+        default: true
         type: boolean
       release_notes:
         description: "English release notes. One bullet per line. Defaults to commits since the previous tag."
@@ -56,7 +56,7 @@ jobs:
       RELEASE_REPO: ${{ vars.RELEASE_REPO }}
       RELEASE_BRANCH: ${{ vars.RELEASE_BRANCH }}
       PUBLISH: ${{ github.event_name == 'workflow_dispatch' && inputs.publish || false }}
-      PUBLISH_APPCAST: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_appcast || false }}
+      PUBLISH_APPCAST: ${{ github.event_name == 'workflow_dispatch' && inputs.publish && inputs.publish_appcast || false }}
       RELEASE_TARGET: ${{ github.sha }}
 
     steps:
@@ -130,6 +130,12 @@ jobs:
           } >> "${GITHUB_ENV}"
 
           echo "Resolved release ${TAG}: upstream ${VERSION}, fork ${FORK_REVISION}, build ${BUILD}"
+      - name: Require updates for public downloads
+        if: ${{ env.PUBLISH == 'true' && env.PUBLISH_APPCAST != 'true' }}
+        run: |
+          echo "::error::Public Glance downloads must include a signed Sparkle update feed. Enable publish_appcast."
+          exit 1
+
       - name: Validate Sparkle signing configuration
         if: ${{ env.PUBLISH_APPCAST == 'true' }}
         env:

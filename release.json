@@ -7,7 +7,7 @@
   "bundle_name": "Glance.app",
   "dmg_name": "Glance.dmg",
   "appcast_file": "appcast.xml",
-  "sparkle_enabled": false,
+  "sparkle_enabled": true,
   "derived_data_prefixes": [
     "Glance-"
   ],

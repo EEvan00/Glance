@@ -8,6 +8,19 @@
 	<array>
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.comment</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFCommentActionText</key>
+				<string>Glance Weather
+Version / 版本: 1
+
+Update: import with the same name and choose Replace.
+更新：同名导入，并选择“替换”。</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.weather.currentconditions</string>
 			<key>WFWorkflowActionParameters</key>
 			<dict>
@@ -171,7 +184,9 @@
 UV
 ￼
 RAIN_CHANCE
-￼</string>
+￼
+GLANCE_VERSION
+1</string>
 					</dict>
 					<key>WFSerializationType</key>
 					<string>WFTextTokenString</string>

@@ -79,7 +79,7 @@ struct NowPlayingView: View {
 
     private func controls(_ item: NowPlayingItem) -> some View {
         let alignsToFooter = controller.items.count > 1
-        return HStack(spacing: alignsToFooter ? CompactPopupLayout.gap : 6) {
+        return HStack(spacing: alignsToFooter ? CompactPopupLayout.gap : CompactPopupLayout.singlePlaybackControlSpacing) {
             button(.previous, symbol: "backward.fill", label: .mediaPrevious, item: item, enabled: item.canPrevious, alignment: alignsToFooter ? .trailing : .center)
             button(item.isPlaying ? .pause : .play, symbol: item.isPlaying ? "pause.fill" : "play.fill", label: item.isPlaying ? .mediaPause : .mediaPlay, item: item, enabled: item.isPlaying ? item.canPause : item.canPlay == true)
             button(.next, symbol: "forward.fill", label: .mediaNext, item: item, enabled: item.canNext)

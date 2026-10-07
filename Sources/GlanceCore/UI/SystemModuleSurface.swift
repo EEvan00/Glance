@@ -2,6 +2,10 @@ import SwiftUI
 
 enum CompactPopupLayout {
     static let unit: CGFloat = 24
+    static let singlePlaybackControlSpacing: CGFloat = 6
+    static var singlePlaybackPreviousLeading: CGFloat {
+        (span(10) - (unit * 3 + singlePlaybackControlSpacing * 2)) / 2
+    }
     static let moduleIconSize: CGFloat = 14
     static let gap: CGFloat = 4
     static func span(_ count: Int) -> CGFloat { unit * CGFloat(count) + gap * CGFloat(max(0, count - 1)) }

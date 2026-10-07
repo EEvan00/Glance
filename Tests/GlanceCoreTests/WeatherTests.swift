@@ -3,6 +3,62 @@ import XCTest
 @testable import GlanceCore
 
 final class WeatherTests: XCTestCase {
+    func testTemperatureUnitConversionsAndInvalidInput() {
+        XCTAssertEqual(TemperatureUnit.fahrenheit.text(celsius: 0), "32°")
+        XCTAssertEqual(TemperatureUnit.fahrenheit.text(celsius: 100, includesUnit: true), "212°F")
+        XCTAssertEqual(TemperatureUnit.celsius.text(celsius: -2.6), "-3°")
+        XCTAssertEqual(TemperatureUnit.fahrenheit.text(celsius: -40), "-40°")
+        XCTAssertEqual(TemperatureUnit.fahrenheit.text(celsius: .nan), "—")
+        XCTAssertEqual(TemperatureUnit.celsius.text(celsius: .infinity), "—")
+    }
+
+    @MainActor
+    func testTemperaturePreferencePersistsAndRecoversInvalidValues() {
+        let name = "Glance.Temperature.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        defer { defaults.removePersistentDomain(forName: name) }
+        let settings = SettingsStore(defaults: defaults)
+        XCTAssertEqual(settings.temperatureUnit, .celsius)
+        settings.temperatureUnit = .fahrenheit
+        XCTAssertEqual(SettingsStore(defaults: defaults).temperatureUnit, .fahrenheit)
+        defaults.set("invalid", forKey: "temperatureUnit")
+        XCTAssertEqual(SettingsStore(defaults: defaults).temperatureUnit, .celsius)
+    }
+
+    func testForecastTemperaturesNormalizeBeforeDisplayConversion() throws {
+        let snapshot = try XCTUnwrap(WeatherSnapshot.fromShortcut("68°F\nRain\nLOW\n32°F\nHIGH\n86°F\nDATES\n2026-10-06T06:00:00+11:00\nHOURS\n50°F and Drizzle"))
+        XCTAssertEqual(TemperatureUnit.fahrenheit.text(celsius: snapshot.temperature), "68°")
+        XCTAssertEqual(TemperatureUnit.celsius.text(celsius: try XCTUnwrap(snapshot.low)), "0°")
+        XCTAssertEqual(TemperatureUnit.fahrenheit.text(celsius: try XCTUnwrap(snapshot.high)), "86°")
+        XCTAssertEqual(TemperatureUnit.celsius.text(celsius: try XCTUnwrap(snapshot.hourly?.first?.temperature)), "10°")
+    }
+
+    @MainActor
+    func testWeatherTranslationsAndSystemLanguageConditionMapping() throws {
+        let localization = Localization(defaults: UserDefaults(suiteName: "Glance.Weather.LocalizationTests")!)
+        let cases: [(String, LocalizationKey)] = [
+            ("Drizzle", .weatherDrizzle), ("毛毛雨", .weatherDrizzle), ("Nieselregen", .weatherDrizzle),
+            ("Pluie", .weatherRain), ("雨", .weatherRain), ("Lluvia", .weatherRain),
+            ("曇り", .weatherCloudy), ("흐림", .weatherCloudy), ("Neve", .weatherSnow),
+            ("Гроза", .weatherThunderstorm), ("عاصفة رعدية", .weatherThunderstorm),
+            ("Céu limpo", .weatherClear), ("Windy", .weatherWind)
+        ]
+        for (condition, key) in cases {
+            XCTAssertEqual(try XCTUnwrap(WeatherSnapshot.fromShortcut("18°C\n" + condition)).conditionKey, key, condition)
+        }
+        for language in AppLanguage.allCases {
+            localization.setPreference(.language(language))
+            let summary = localization.format(.weatherSummary, localization.string(.weatherDrizzle), "0", "96%")
+            XCTAssertFalse(summary.contains("%@"))
+            for key in LocalizationKey.allCases where key.rawValue.hasPrefix("weather.") || key == .settingsTemperatureUnit {
+                let bundle = try XCTUnwrap(Localization.resourceBundle(for: language))
+                XCTAssertNotEqual(bundle.localizedString(forKey: key.rawValue, value: nil, table: nil), key.rawValue)
+            }
+        }
+        localization.setPreference(.language(.simplifiedChinese))
+        XCTAssertEqual(localization.format(.weatherSummary, localization.string(.weatherDrizzle), "0", "96%"), "毛毛雨 · 紫外线 0 · 96% 降雨")
+    }
+
     @MainActor
     func testWeatherCacheAvoidsRequestsForEmptyShortcutAndFreshData() {
         let now = Date(timeIntervalSince1970: 1000)

@@ -248,36 +248,36 @@
 
 "media.play" = "Lire";
 
-"weather.unavailable" = "Weather unavailable";
-"weather.clear" = "Clear";
-"weather.partlyCloudy" = "Partly cloudy";
-"weather.cloudy" = "Cloudy";
-"weather.fog" = "Fog";
-"weather.rain" = "Rain";
-"weather.snow" = "Snow";
-"weather.thunderstorm" = "Thunderstorm";
-"weather.unknown" = "Unknown condition";
+"weather.unavailable" = "Météo indisponible";
+"weather.clear" = "Dégagé";
+"weather.partlyCloudy" = "Partiellement nuageux";
+"weather.cloudy" = "Nuageux";
+"weather.fog" = "Brouillard";
+"weather.rain" = "Pluie";
+"weather.snow" = "Neige";
+"weather.thunderstorm" = "Orage";
+"weather.unknown" = "Conditions inconnues";
 "settings.clockFormat" = "Time format";
 "settings.clock12" = "12-hour";
 "settings.clock24" = "24-hour";
-"settings.weatherShortcut" = "Weather setup";
+"settings.weatherShortcut" = "Météo";
 "settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
 "settings.weatherOpenShortcut" = "Open weather shortcut…";
 
-"weather.title" = "Weather";
-"weather.temperature" = "Temperature";
+"weather.title" = "Météo";
+"weather.temperature" = "Température";
 "weather.condition" = "Conditions";
 "weather.source" = "Source";
-"weather.updated" = "Updated %@";
-"weather.loading" = "Loading weather…";
-"weather.openApp" = "Open Weather…";
+"weather.updated" = "Mis à jour %@";
+"weather.loading" = "Chargement de la météo…";
+"weather.openApp" = "Ouvrir Météo…";
 
-"weather.low" = "Low";
-"weather.high" = "High";
-"weather.hourly" = "Hourly Forecast";
-"weather.forecastUnavailable" = "Forecast unavailable";
+"weather.low" = "Min.";
+"weather.high" = "Max.";
+"weather.hourly" = "Prévisions horaires";
+"weather.forecastUnavailable" = "Prévisions indisponibles";
 
-"weather.currentLocation" = "Current Location";
+"weather.currentLocation" = "Position actuelle";
 
 "settings.weatherAddCurrent" = "Add current weather…";
 
@@ -290,11 +290,11 @@
 
 "settings.about.upstream" = "Based on Status Trio";
 
-"weather.uvIndex" = "UV Index";
-"weather.sunrise" = "Sunrise";
-"weather.sunset" = "Sunset";
-"weather.refresh" = "Refresh now";
-"weather.rainChance" = "Chance of rain";
+"weather.uvIndex" = "Indice UV";
+"weather.sunrise" = "Lever du soleil";
+"weather.sunset" = "Coucher du soleil";
+"weather.refresh" = "Actualiser";
+"weather.rainChance" = "Risque de pluie";
 
 "battery.state.paused" = "En pause";
 "battery.chargeToFull" = "Charger complètement maintenant";
@@ -312,7 +312,7 @@
 "claude.connectHelp" = "Connect your existing Claude Code status line. Glance preserves its output and reads local 5-hour and weekly limits after your next response. No API tokens are used.";
 "claude.setupFailed" = "Install and run Claude Code first, then try connecting again.";
 "shortcut.manageRemove" = "Remove in Shortcuts…";
-"shortcut.removeHelp" = "Delete it in the system Shortcuts library. Returning to Glance updates its installation status.";
+"shortcut.removeHelp" = "Dans Raccourcis, revenez à Tous les raccourcis, sélectionnez l’élément et appuyez sur ⌘⌫ pour le supprimer. Ajoutez ou mettez à jour les raccourcis depuis le sous-menu Météo.";
 "shortcut.discoveryFailed" = "Unable to check shortcuts. Click refresh to try again.";
 
 "performance.title" = "Performance";
@@ -351,8 +351,8 @@
 "compact.charged" = "Chargée";
 "compact.charging" = "En charge";
 "compact.lowPower" = "Éco énergie";
-"compact.power" = "Branchée";
-"compact.onBattery" = "Sur batterie";
+"compact.power" = "Source : Secteur";
+"compact.onBattery" = "Source : Batterie";
 "compact.connected" = "Connecté";
 "compact.disconnected" = "Déconnecté";
 "compact.off" = "Désactivé";
@@ -383,3 +383,34 @@
 "settings.cardTextAutoShrink" = "Réduire automatiquement le texte des cartes si l’espace est limité";
 
 "settings.screenshotSystemHelp" = "Ouvre Capture d’écran de macOS. Choisissez une zone, une fenêtre ou l’écran, puis utilisez Options pour enregistrer dans le presse-papiers ou un fichier.";
+
+"quick.FirstSlot" = "Raccourci gauche";
+"quick.SecondSlot" = "Raccourci droit";
+"quick.Calculator" = "Calculette";
+"quick.Notes" = "Notes";
+"quick.Reminders" = "Rappels";
+"quick.Shortcut" = "Raccourci";
+"quick.Application" = "App personnalisée";
+"quick.ChooseApplication" = "Choisir une app…";
+"quick.ChooseShortcut" = "Choisir un raccourci";
+
+"settings.UtilityFirstRow" = "Barre du haut";
+"settings.UtilitySecondRow" = "Barre du bas";
+"settings.UtilityCardDescription" = "Choisissez le contenu de la carte. Activez des bandeaux pour afficher aussi les autres modules.";
+
+"weather.drizzle" = "Bruine";
+
+"weather.wind" = "Vent";
+
+"weather.summary" = "%@ · UV %@ · %@ de pluie";
+
+"settings.temperatureUnit" = "Unité de température";
+
+"shortcut.update" = "Mettre à jour le raccourci…";
+"shortcut.updateHelp" = "Lors de l’importation, choisissez Remplacer et conservez le nom original. Le message disparaît après une exécution réussie de la nouvelle version.";
+
+"settings.utilityStripPosition" = "Les barres se trouvent entre le lecteur et les boutons du bas.";
+
+"shortcut.addWeather" = "Ajouter les raccourcis météo…";
+"shortcut.continueSetup" = "Continuer la configuration…";
+"shortcut.sequentialInstallHelp" = "Confirmez l’importation dans la fenêtre système, puis revenez ici pour continuer. Chaque raccourci nécessite une confirmation distincte.";

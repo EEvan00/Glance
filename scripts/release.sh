@@ -30,7 +30,11 @@ FORK_REVISION="${FORK_REVISION:-$(/usr/libexec/PlistBuddy -c 'Print :GlanceForkR
 BUILD="${BUILD:-$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' Support/Info.plist)}"
 TAG="${TAG:-v$VERSION}"
 PUBLISH="${PUBLISH:-true}"
-PUBLISH_APPCAST="${PUBLISH_APPCAST:-$SPARKLE_ENABLED_DEFAULT}"
+if [[ "$PUBLISH" == "true" ]]; then
+    PUBLISH_APPCAST="${PUBLISH_APPCAST:-$SPARKLE_ENABLED_DEFAULT}"
+else
+    PUBLISH_APPCAST="${PUBLISH_APPCAST:-false}"
+fi
 UNIVERSAL_BUILD="${UNIVERSAL_BUILD:-1}"
 OUTPUT_DIR="${OUTPUT_DIR:-$ROOT/dist}"
 RELEASE_TARGET="${RELEASE_TARGET:-$(git rev-parse HEAD)}"
@@ -49,6 +53,10 @@ EXPECTED_TAG="v${VERSION}"
 case "$PUBLISH" in true|false) ;; *) echo "Error: PUBLISH must be true or false." >&2; exit 2 ;; esac
 case "$PUBLISH_APPCAST" in true|false) ;; *) echo "Error: PUBLISH_APPCAST must be true or false." >&2; exit 2 ;; esac
 case "$UNIVERSAL_BUILD" in 0|1) ;; *) echo "Error: UNIVERSAL_BUILD must be 0 or 1." >&2; exit 2 ;; esac
+if [[ "$PUBLISH" == "true" && "$PUBLISH_APPCAST" != "true" ]]; then
+    echo "Error: public Glance downloads require a signed Sparkle update feed." >&2
+    exit 2
+fi
 if [[ -n "$NOTARY_PROFILE" && "$CODE_SIGN_IDENTITY" == "-" ]]; then echo "Error: NOTARY_PROFILE requires Developer ID signing." >&2; exit 2; fi
 if ! git rev-parse --verify "$RELEASE_TARGET^{commit}" >/dev/null 2>&1; then echo "Error: RELEASE_TARGET is not a checkout commit." >&2; exit 2; fi
 RELEASE_TARGET="$(git rev-parse "$RELEASE_TARGET^{commit}")"

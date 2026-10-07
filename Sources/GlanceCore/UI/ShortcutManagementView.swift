@@ -29,46 +29,68 @@ final class ShortcutInstallationController: ObservableObject {
     }
 
     func stop() { process.stop(); isLoading = false }
-
-    static func editorURL(name: String) -> URL? {
-        var url = URLComponents(string: "shortcuts://open-shortcut")
-        url?.queryItems = [URLQueryItem(name: "name", value: name)]
-        return url?.url
-    }
 }
 
 struct ShortcutManagementView: View {
-    enum Purpose { case missingOnly, installedOnly }
+    enum Purpose { case missingOnly, settings }
     struct Item: Identifiable {
         let name: String
         let addLabel: LocalizationKey
         let resource: URL?
+        var version: Int = 1
         var id: String { name }
     }
     let items: [Item]
     var purpose: Purpose = .missingOnly
     @EnvironmentObject private var localization: Localization
+    @ObservedObject private var installation = WeatherShortcutInstallFlow.shared
+    @ObservedObject private var versions = WeatherShortcutVersions.shared
     @StateObject private var controller = ShortcutInstallationController()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             if let installed = controller.installed {
-                ForEach(items.filter { purpose == .installedOnly ? installed.contains($0.name) : !installed.contains($0.name) }) { item in
+                let missing = items.filter { !installed.contains($0.name) }
+                if !missing.isEmpty {
+                    let next = installation.pending.first(where: { pending in missing.contains { $0.name == pending.rawValue } })?.rawValue ?? missing[0].name
+                    Text(next).font(.caption).lineLimit(1)
+                    Button(localization.string(installation.isInProgress ? .shortcutContinueSetup : .shortcutAddWeather)) {
+                        if let next = installation.nextToOpen(installed: installed),
+                           let resource = items.first(where: { $0.name == next.rawValue })?.resource {
+                            versions.requestVerification(name: next.rawValue)
+                            NSWorkspace.shared.open(resource)
+                        }
+                    }
+                    Text(localization.string(.shortcutSequentialInstallHelp))
+                        .font(.caption2).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                ForEach(items.filter { installed.contains($0.name) &&
+                    (purpose == .settings || versions.needsUpdate(name: $0.name, bundledVersion: $0.version)) }) { item in
                     HStack {
                         Text(item.name).font(.caption).lineLimit(1)
                         Spacer()
-                        if installed.contains(item.name) {
+                        if purpose == .settings {
                             Button(localization.string(.shortcutManageRemove)) {
-                                if let url = ShortcutInstallationController.editorURL(name: item.name) { NSWorkspace.shared.open(url) }
+                                if let url = URL(string: "shortcuts://") { NSWorkspace.shared.open(url) }
                             }
                         } else {
-                            Button(localization.string(item.addLabel)) {
-                                if let resource = item.resource { NSWorkspace.shared.open(resource) }
+                            Button(localization.string(.shortcutUpdate)) {
+                                if let resource = item.resource {
+                                    versions.requestVerification(name: item.name)
+                                    NSWorkspace.shared.open(resource)
+                                }
                             }
                         }
                     }
                 }
-                if purpose == .installedOnly, items.contains(where: { installed.contains($0.name) }) {
+                if purpose == .missingOnly, items.contains(where: {
+                    installed.contains($0.name) && versions.needsUpdate(name: $0.name, bundledVersion: $0.version)
+                }) {
+                    Text(localization.string(.shortcutUpdateHelp)).font(.caption2).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                if purpose == .settings, items.contains(where: { installed.contains($0.name) }) {
                     Text(localization.string(.shortcutRemoveHelp)).font(.caption2).foregroundStyle(.secondary).lineLimit(nil).fixedSize(horizontal: false, vertical: true)
                 }
             } else if controller.failed {
@@ -81,6 +103,9 @@ struct ShortcutManagementView: View {
         }.buttonStyle(.bordered).controlSize(.small)
             .onAppear { controller.refresh() }
             .onDisappear { controller.stop() }
+            .onChange(of: controller.installed) { _, installed in
+                if let installed { installation.reconcile(installed: installed) }
+            }
             .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in controller.refresh() }
     }
 }

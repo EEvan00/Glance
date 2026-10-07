@@ -4,6 +4,29 @@ import XCTest
 @testable import GlanceCore
 
 final class StatusIconRendererTests: XCTestCase {
+    func testPopupSpecialWiFiStatesHaveNoTransparentSideMargins() throws {
+        for state: WiFiState in [.hotspot, .temporary, .shared] {
+            let image = StatusIconRenderer.popupWiFiImage(wifi: WiFiStatus(state: state, rssi: -40), size: 18)
+            let cg = try XCTUnwrap(image.cgImage(forProposedRect: nil, context: nil, hints: nil))
+            let bitmap = NSBitmapImageRep(cgImage: cg)
+            for x in [0, bitmap.pixelsWide - 1] {
+                XCTAssertTrue((0..<bitmap.pixelsHigh).contains { y in
+                    (bitmap.colorAt(x: x, y: y)?.alphaComponent ?? 0) > 0.01
+                }, "\(state) still has transparent side padding")
+            }
+            XCTAssertGreaterThan(image.size.width, 14)
+            XCTAssertLessThanOrEqual(image.size.width, 18)
+            XCTAssertLessThanOrEqual(image.size.height, 18)
+        }
+    }
+
+    func testPopupSignalStrengthKeepsOriginalCanvasSize() {
+        for rssi in [-40, -65, -80] {
+            XCTAssertEqual(StatusIconRenderer.popupWiFiImage(wifi: WiFiStatus(state: .connected, rssi: rssi), size: 18).size,
+                           NSSize(width: 18, height: 18))
+        }
+    }
+
     func testCountdownChangesBatteryAndBlinkDimsEntireIcon() throws {
         func rendered(_ countdown: CountdownIndicator?) throws -> CGImage {
             try XCTUnwrap(StatusIconRenderer.render(menuBarStatus: .placeholder, size: 20,

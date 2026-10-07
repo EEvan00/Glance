@@ -248,36 +248,36 @@
 
 "media.play" = "تشغيل";
 
-"weather.unavailable" = "Weather unavailable";
-"weather.clear" = "Clear";
-"weather.partlyCloudy" = "Partly cloudy";
-"weather.cloudy" = "Cloudy";
-"weather.fog" = "Fog";
-"weather.rain" = "Rain";
-"weather.snow" = "Snow";
-"weather.thunderstorm" = "Thunderstorm";
-"weather.unknown" = "Unknown condition";
+"weather.unavailable" = "الطقس غير متاح";
+"weather.clear" = "صافي";
+"weather.partlyCloudy" = "غائم جزئيًا";
+"weather.cloudy" = "غائم";
+"weather.fog" = "ضباب";
+"weather.rain" = "مطر";
+"weather.snow" = "ثلج";
+"weather.thunderstorm" = "عاصفة رعدية";
+"weather.unknown" = "طقس غير معروف";
 "settings.clockFormat" = "Time format";
 "settings.clock12" = "12-hour";
 "settings.clock24" = "24-hour";
-"settings.weatherShortcut" = "Weather setup";
+"settings.weatherShortcut" = "الطقس";
 "settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
 "settings.weatherOpenShortcut" = "Open weather shortcut…";
 
-"weather.title" = "Weather";
-"weather.temperature" = "Temperature";
-"weather.condition" = "Conditions";
-"weather.source" = "Source";
-"weather.updated" = "Updated %@";
-"weather.loading" = "Loading weather…";
-"weather.openApp" = "Open Weather…";
+"weather.title" = "الطقس";
+"weather.temperature" = "درجة الحرارة";
+"weather.condition" = "حالة الطقس";
+"weather.source" = "المصدر";
+"weather.updated" = "تم التحديث %@";
+"weather.loading" = "جارٍ تحميل الطقس…";
+"weather.openApp" = "فتح الطقس…";
 
-"weather.low" = "Low";
-"weather.high" = "High";
-"weather.hourly" = "Hourly Forecast";
-"weather.forecastUnavailable" = "Forecast unavailable";
+"weather.low" = "الصغرى";
+"weather.high" = "العظمى";
+"weather.hourly" = "التوقعات بالساعة";
+"weather.forecastUnavailable" = "التوقعات غير متاحة";
 
-"weather.currentLocation" = "Current Location";
+"weather.currentLocation" = "الموقع الحالي";
 
 "settings.weatherAddCurrent" = "Add current weather…";
 
@@ -290,11 +290,11 @@
 
 "settings.about.upstream" = "Based on Status Trio";
 
-"weather.uvIndex" = "UV Index";
-"weather.sunrise" = "Sunrise";
-"weather.sunset" = "Sunset";
-"weather.refresh" = "Refresh now";
-"weather.rainChance" = "Chance of rain";
+"weather.uvIndex" = "مؤشر الأشعة فوق البنفسجية";
+"weather.sunrise" = "شروق الشمس";
+"weather.sunset" = "غروب الشمس";
+"weather.refresh" = "تحديث الآن";
+"weather.rainChance" = "احتمال المطر";
 
 "battery.state.paused" = "متوقف مؤقتًا";
 "battery.chargeToFull" = "الشحن الكامل الآن";
@@ -312,7 +312,7 @@
 "claude.connectHelp" = "Connect your existing Claude Code status line. Glance preserves its output and reads local 5-hour and weekly limits after your next response. No API tokens are used.";
 "claude.setupFailed" = "Install and run Claude Code first, then try connecting again.";
 "shortcut.manageRemove" = "Remove in Shortcuts…";
-"shortcut.removeHelp" = "Delete it in the system Shortcuts library. Returning to Glance updates its installation status.";
+"shortcut.removeHelp" = "في تطبيق الاختصارات، ارجع إلى جميع الاختصارات وحدد العنصر واضغط ⌘⌫ لحذفه. أضف اختصارات الطقس أو حدّثها من قائمة الطقس الفرعية.";
 "shortcut.discoveryFailed" = "Unable to check shortcuts. Click refresh to try again.";
 
 "performance.title" = "Performance";
@@ -351,8 +351,8 @@
 "compact.charged" = "مكتملة";
 "compact.charging" = "قيد الشحن";
 "compact.lowPower" = "توفير الطاقة";
-"compact.power" = "موصولة";
-"compact.onBattery" = "على البطارية";
+"compact.power" = "المصدر: الطاقة";
+"compact.onBattery" = "المصدر: البطارية";
 "compact.connected" = "متصل";
 "compact.disconnected" = "غير متصل";
 "compact.off" = "متوقف";
@@ -383,3 +383,34 @@
 "settings.cardTextAutoShrink" = "تصغير نص البطاقات تلقائيًا عند ضيق المساحة";
 
 "settings.screenshotSystemHelp" = "يفتح تطبيق لقطة الشاشة في macOS. اختر منطقة أو نافذة أو الشاشة، واستخدم الخيارات للحفظ في الحافظة أو ملف.";
+
+"quick.FirstSlot" = "الاختصار الأيسر";
+"quick.SecondSlot" = "الاختصار الأيمن";
+"quick.Calculator" = "الحاسبة";
+"quick.Notes" = "الملاحظات";
+"quick.Reminders" = "التذكيرات";
+"quick.Shortcut" = "اختصار";
+"quick.Application" = "تطبيق مخصص";
+"quick.ChooseApplication" = "اختيار تطبيق…";
+"quick.ChooseShortcut" = "اختيار اختصار";
+
+"settings.UtilityFirstRow" = "الشريط العلوي";
+"settings.UtilitySecondRow" = "الشريط السفلي";
+"settings.UtilityCardDescription" = "اختر محتوى البطاقة. فعّل أشرطة إضافية لعرض وحدات أخرى في الوقت نفسه.";
+
+"weather.drizzle" = "رذاذ";
+
+"weather.wind" = "رياح";
+
+"weather.summary" = "%@ · UV %@ · %@ مطر";
+
+"settings.temperatureUnit" = "وحدة درجة الحرارة";
+
+"shortcut.update" = "تحديث الاختصار…";
+"shortcut.updateHelp" = "عند الاستيراد، اختر الاستبدال واحتفظ بالاسم الأصلي. تختفي رسالة التحديث بعد تشغيل الإصدار الجديد بنجاح.";
+
+"settings.utilityStripPosition" = "تقع الأشرطة بين المشغّل والأزرار السفلية.";
+
+"shortcut.addWeather" = "إضافة اختصارات الطقس…";
+"shortcut.continueSetup" = "متابعة الإعداد…";
+"shortcut.sequentialInstallHelp" = "أكد الاستيراد في نافذة النظام ثم ارجع هنا للمتابعة. يتطلب كل اختصار تأكيدًا منفصلًا.";

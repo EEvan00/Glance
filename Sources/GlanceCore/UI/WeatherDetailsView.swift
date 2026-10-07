@@ -26,14 +26,14 @@ struct WeatherDetailsView: View {
                 HStack(spacing: 12) {
                     Image(systemName: snapshot.symbol).font(.system(size: 28))
                         .accessibilityHidden(true)
-                    Text(snapshot.temperatureText).font(.system(size: 28, weight: .medium))
+                    Text(settings.temperatureUnit.text(celsius: snapshot.temperature, includesUnit: true)).font(.system(size: 28, weight: .medium))
                         .monospacedDigit()
                     VStack(alignment: .leading, spacing: 2) {
-                        if let high = snapshot.high { Text("H: \(temperature(high))") }
-                        if let low = snapshot.low { Text("L: \(temperature(low))") }
+                        if let high = snapshot.high { Text("\(localization.string(.weatherHigh)): \(temperature(high))") }
+                        if let low = snapshot.low { Text("\(localization.string(.weatherLow)): \(temperature(low))") }
                     }.font(.caption).monospacedDigit()
                 }
-                detail(.weatherCondition, value: snapshot.appleCondition ?? localization.string(snapshot.conditionKey))
+                detail(.weatherCondition, value: localization.string(snapshot.conditionKey))
                 detail(.weatherUVIndex, value: snapshot.uvIndex.map { $0.formatted() } ?? "—")
 
             } else {
@@ -79,11 +79,16 @@ struct WeatherDetailsView: View {
             }
         }
         .onAppear { forecast.setVisible(true, shortcutName: settings.weatherForecastShortcutName) }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            // Verify the installed output after returning from the system importer.
+            controller.refreshNow(shortcutName: settings.weatherShortcutName)
+            forecast.refreshNow(shortcutName: settings.weatherForecastShortcutName)
+        }
         .onDisappear { forecast.setVisible(false, shortcutName: settings.weatherForecastShortcutName) }
     }
 
     private func temperature(_ value: Double) -> String {
-        WeatherSnapshot(temperature: value, code: 0, isDay: -1).temperatureText
+        settings.temperatureUnit.text(celsius: value)
     }
 
     private func forecastCell(_ entry: WeatherForecastEntry) -> some View {
@@ -94,9 +99,9 @@ struct WeatherDetailsView: View {
         switch entry {
         case .hour(let hour):
             symbol = hour.symbol
-            caption = hour.temperatureText
+            caption = settings.temperatureUnit.text(celsius: hour.temperature)
             rainChance = hour.precipitationChance.map { "\(Int($0.rounded()))%" } ?? "—"
-            help = hour.condition
+            help = localization.string(WeatherSnapshot(temperature: hour.temperature, code: hour.code, isDay: hour.isDay).conditionKey)
         case .sunrise:
             symbol = "sunrise.fill"
             caption = localization.string(.weatherSunrise)

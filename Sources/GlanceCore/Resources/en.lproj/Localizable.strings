@@ -260,7 +260,7 @@
 "settings.clockFormat" = "Time format";
 "settings.clock12" = "12-hour";
 "settings.clock24" = "24-hour";
-"settings.weatherShortcut" = "Weather setup";
+"settings.weatherShortcut" = "Weather";
 "settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
 "settings.weatherOpenShortcut" = "Open weather shortcut…";
 
@@ -312,7 +312,7 @@
 "claude.connectHelp" = "Connect your existing Claude Code status line. Glance preserves its output and reads local 5-hour and weekly limits after your next response. No API tokens are used.";
 "claude.setupFailed" = "Install and run Claude Code first, then try connecting again.";
 "shortcut.manageRemove" = "Remove in Shortcuts…";
-"shortcut.removeHelp" = "Delete it in the system Shortcuts library. Returning to Glance updates its installation status.";
+"shortcut.removeHelp" = "In Shortcuts, return to All Shortcuts, select the item, and press ⌘⌫ to delete it. Add or update weather shortcuts from the Weather submenu.";
 "shortcut.discoveryFailed" = "Unable to check shortcuts. Click refresh to try again.";
 
 "performance.title" = "Performance";
@@ -351,8 +351,8 @@
 "compact.charged" = "Full";
 "compact.charging" = "Charging";
 "compact.lowPower" = "Low Power";
-"compact.power" = "Plugged in";
-"compact.onBattery" = "On Battery";
+"compact.power" = "Source: Power";
+"compact.onBattery" = "Source: Battery";
 "compact.connected" = "Connected";
 "compact.disconnected" = "Disconnected";
 "compact.off" = "Off";
@@ -383,3 +383,34 @@
 "settings.cardTextAutoShrink" = "Automatically shrink card text when space is limited";
 
 "settings.screenshotSystemHelp" = "Opens the macOS Screenshot app. Choose a region, window or screen there, and use Options to save to the Clipboard or a file.";
+
+"quick.FirstSlot" = "Shortcut left";
+"quick.SecondSlot" = "Shortcut right";
+"quick.Calculator" = "Calculator";
+"quick.Notes" = "Notes";
+"quick.Reminders" = "Reminders";
+"quick.Shortcut" = "Shortcut";
+"quick.Application" = "Custom App";
+"quick.ChooseApplication" = "Choose App…";
+"quick.ChooseShortcut" = "Choose Shortcut";
+
+"settings.UtilityFirstRow" = "Top strip";
+"settings.UtilitySecondRow" = "Bottom strip";
+"settings.UtilityCardDescription" = "Choose what appears in the card. Enable extra strips below to show other modules at the same time.";
+
+"weather.drizzle" = "Drizzle";
+
+"weather.wind" = "Windy";
+
+"weather.summary" = "%@ · UV %@ · %@ Rain";
+
+"settings.temperatureUnit" = "Temperature unit";
+
+"shortcut.update" = "Update shortcut…";
+"shortcut.updateHelp" = "When importing, choose Replace to update the existing shortcut. Keep its original name. The prompt disappears after the new version runs successfully.";
+
+"settings.utilityStripPosition" = "The strips sit between the player and the shortcut buttons.";
+
+"shortcut.addWeather" = "Add weather shortcuts…";
+"shortcut.continueSetup" = "Continue setup…";
+"shortcut.sequentialInstallHelp" = "Import the shortcut in the system window, then return here to continue. Each shortcut requires separate confirmation.";

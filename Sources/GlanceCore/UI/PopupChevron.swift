@@ -13,7 +13,7 @@ struct PopupChevron: View {
     var body: some View {
         Image(systemName: symbol)
             .font(.system(size: alignsToModuleEdge ? 12 : 11, weight: alignsToModuleEdge ? .medium : .semibold))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.primary.opacity(0.85))
             .frame(width: isHorizontal ? (fitsSymbolWidth ? nil : (alignsToModuleEdge ? CompactPopupLayout.unit : 12)) : 28,
                    height: 24, alignment: alignsToModuleEdge ? .trailing : .center)
             .padding(.trailing, alignsToModuleEdge ? CompactPopupLayout.moduleTextInset : 0)

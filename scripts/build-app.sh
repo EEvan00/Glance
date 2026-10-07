@@ -167,10 +167,12 @@ fi
 
 if [[ "$AUTOMATIC_UPDATES_ENABLED" == "1" ]]; then
     /usr/libexec/PlistBuddy -c "Set :GlanceEnableSparkle true" "$CONTENTS/Info.plist"
+    /usr/libexec/PlistBuddy -c "Add :SUEnableAutomaticChecks bool true" "$CONTENTS/Info.plist"
     /usr/libexec/PlistBuddy -c "Add :SUFeedURL string $SU_FEED_URL" "$CONTENTS/Info.plist"
     /usr/libexec/PlistBuddy -c "Add :SUPublicEDKey string $SPARKLE_PUBLIC_KEY" "$CONTENTS/Info.plist"
 else
     /usr/libexec/PlistBuddy -c "Set :GlanceEnableSparkle false" "$CONTENTS/Info.plist"
+    /usr/libexec/PlistBuddy -c "Delete :SUEnableAutomaticChecks" "$CONTENTS/Info.plist" 2>/dev/null || true
     /usr/libexec/PlistBuddy -c "Delete :SUFeedURL" "$CONTENTS/Info.plist" 2>/dev/null || true
     /usr/libexec/PlistBuddy -c "Delete :SUPublicEDKey" "$CONTENTS/Info.plist" 2>/dev/null || true
 fi

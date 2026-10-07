@@ -248,36 +248,36 @@
 
 "media.play" = "재생";
 
-"weather.unavailable" = "Weather unavailable";
-"weather.clear" = "Clear";
-"weather.partlyCloudy" = "Partly cloudy";
-"weather.cloudy" = "Cloudy";
-"weather.fog" = "Fog";
-"weather.rain" = "Rain";
-"weather.snow" = "Snow";
-"weather.thunderstorm" = "Thunderstorm";
-"weather.unknown" = "Unknown condition";
+"weather.unavailable" = "날씨를 불러올 수 없음";
+"weather.clear" = "맑음";
+"weather.partlyCloudy" = "구름 조금";
+"weather.cloudy" = "흐림";
+"weather.fog" = "안개";
+"weather.rain" = "비";
+"weather.snow" = "눈";
+"weather.thunderstorm" = "뇌우";
+"weather.unknown" = "알 수 없는 날씨";
 "settings.clockFormat" = "Time format";
 "settings.clock12" = "12-hour";
 "settings.clock24" = "24-hour";
-"settings.weatherShortcut" = "Weather setup";
+"settings.weatherShortcut" = "날씨";
 "settings.weatherShortcutDescription" = "Use Apple Weather through the included shortcuts. Cached for 15 minutes; requests stop when the popup closes.";
 "settings.weatherOpenShortcut" = "Open weather shortcut…";
 
-"weather.title" = "Weather";
-"weather.temperature" = "Temperature";
-"weather.condition" = "Conditions";
-"weather.source" = "Source";
-"weather.updated" = "Updated %@";
-"weather.loading" = "Loading weather…";
-"weather.openApp" = "Open Weather…";
+"weather.title" = "날씨";
+"weather.temperature" = "기온";
+"weather.condition" = "날씨 상태";
+"weather.source" = "출처";
+"weather.updated" = "업데이트 %@";
+"weather.loading" = "날씨 불러오는 중…";
+"weather.openApp" = "날씨 열기…";
 
-"weather.low" = "Low";
-"weather.high" = "High";
-"weather.hourly" = "Hourly Forecast";
-"weather.forecastUnavailable" = "Forecast unavailable";
+"weather.low" = "최저";
+"weather.high" = "최고";
+"weather.hourly" = "시간별 예보";
+"weather.forecastUnavailable" = "예보를 불러올 수 없음";
 
-"weather.currentLocation" = "Current Location";
+"weather.currentLocation" = "현재 위치";
 
 "settings.weatherAddCurrent" = "Add current weather…";
 
@@ -290,11 +290,11 @@
 
 "settings.about.upstream" = "Based on Status Trio";
 
-"weather.uvIndex" = "UV Index";
-"weather.sunrise" = "Sunrise";
-"weather.sunset" = "Sunset";
-"weather.refresh" = "Refresh now";
-"weather.rainChance" = "Chance of rain";
+"weather.uvIndex" = "자외선 지수";
+"weather.sunrise" = "일출";
+"weather.sunset" = "일몰";
+"weather.refresh" = "지금 새로 고침";
+"weather.rainChance" = "강수 확률";
 
 "battery.state.paused" = "일시 정지됨";
 "battery.chargeToFull" = "지금 완전히 충전";
@@ -312,7 +312,7 @@
 "claude.connectHelp" = "Connect your existing Claude Code status line. Glance preserves its output and reads local 5-hour and weekly limits after your next response. No API tokens are used.";
 "claude.setupFailed" = "Install and run Claude Code first, then try connecting again.";
 "shortcut.manageRemove" = "Remove in Shortcuts…";
-"shortcut.removeHelp" = "Delete it in the system Shortcuts library. Returning to Glance updates its installation status.";
+"shortcut.removeHelp" = "단축어의 모든 단축어로 돌아가 항목을 선택하고 ⌘⌫로 삭제하세요. 추가 및 업데이트는 날씨 하위 메뉴에서 할 수 있습니다.";
 "shortcut.discoveryFailed" = "Unable to check shortcuts. Click refresh to try again.";
 
 "performance.title" = "Performance";
@@ -351,8 +351,8 @@
 "compact.charged" = "충전 완료";
 "compact.charging" = "충전 중";
 "compact.lowPower" = "저전력";
-"compact.power" = "전원 연결";
-"compact.onBattery" = "배터리 사용";
+"compact.power" = "전원: 외부 전원";
+"compact.onBattery" = "전원: 배터리";
 "compact.connected" = "연결됨";
 "compact.disconnected" = "연결 안 됨";
 "compact.off" = "꺼짐";
@@ -383,3 +383,34 @@
 "settings.cardTextAutoShrink" = "공간이 부족할 때 카드 텍스트 자동 축소";
 
 "settings.screenshotSystemHelp" = "macOS 스크린샷 앱을 엽니다. 영역, 윈도우 또는 화면을 선택하고 옵션에서 클립보드나 파일로 저장할 수 있습니다.";
+
+"quick.FirstSlot" = "왼쪽 바로가기";
+"quick.SecondSlot" = "오른쪽 바로가기";
+"quick.Calculator" = "계산기";
+"quick.Notes" = "메모";
+"quick.Reminders" = "미리 알림";
+"quick.Shortcut" = "단축어";
+"quick.Application" = "사용자 지정 앱";
+"quick.ChooseApplication" = "앱 선택…";
+"quick.ChooseShortcut" = "단축어 선택";
+
+"settings.UtilityFirstRow" = "위쪽 바";
+"settings.UtilitySecondRow" = "아래쪽 바";
+"settings.UtilityCardDescription" = "카드에 표시할 기능을 선택합니다. 추가 줄에서 다른 기능을 함께 표시할 수 있습니다.";
+
+"weather.drizzle" = "이슬비";
+
+"weather.wind" = "바람";
+
+"weather.summary" = "%@ · 자외선 %@ · 강수 확률 %@";
+
+"settings.temperatureUnit" = "온도 단위";
+
+"shortcut.update" = "단축어 업데이트…";
+"shortcut.updateHelp" = "가져올 때 기존 단축어를 대치하고 원래 이름을 유지하세요. 새 버전이 정상적으로 실행되면 업데이트 안내가 사라집니다.";
+
+"settings.utilityStripPosition" = "바는 플레이어와 하단 버튼 사이에 표시됩니다.";
+
+"shortcut.addWeather" = "날씨 단축어 추가…";
+"shortcut.continueSetup" = "설정 계속…";
+"shortcut.sequentialInstallHelp" = "시스템 창에서 가져오기를 확인한 뒤 돌아와 다음 단축어를 추가하세요. 각 단축어를 따로 확인해야 합니다.";

@@ -115,12 +115,12 @@ final class StatusBarController: NSObject {
                 self?.renderLatestSnapshot()
             }
 
-        utilityCancellable = settings.$popupUtility.removeDuplicates().sink { [weak self] utility in
-            guard let self else { return }
-            self.performance.setVisible(self.popover.isShown && utility == .performance)
-            self.codexUsage.setVisible(self.popover.isShown && utility == .codex)
-            self.claudeUsage.setVisible(self.popover.isShown && utility == .claude)
-        }
+        utilityCancellable = Publishers.CombineLatest3(settings.$popupUtility, settings.$firstUtilityRow, settings.$secondUtilityRow)
+            .map { card, first, second in SettingsStore.popupUtilities(card: card, first: first, second: second) }
+            .removeDuplicates()
+            .sink { [weak self] utilities in
+                self?.updateUtilityVisibility(utilities)
+            }
 
         iconSizeCancellable = settings.$iconSize
             .removeDuplicates()
@@ -320,7 +320,8 @@ final class StatusBarController: NSObject {
                     NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Weather.app"))
                 },
                 openSoundSettings: handleOpenSoundSettings,
-                quit: quitAction
+                quit: quitAction,
+                openQuickAction: { [weak self] action in self?.handleQuickAction(action) }
             )
         }
         let hostingController = NSHostingController(
@@ -337,6 +338,40 @@ final class StatusBarController: NSObject {
         popover.contentViewController = hostingController
     }
 
+    private func updateUtilityVisibility(_ utilities: Set<PopupUtility>, isVisible: Bool? = nil) {
+        let visible = isVisible ?? popover.isShown
+        performance.setVisible(visible && utilities.contains(.performance))
+        codexUsage.setVisible(visible && utilities.contains(.codex))
+        claudeUsage.setVisible(visible && utilities.contains(.claude))
+    }
+
+    private func handleQuickAction(_ action: PopupQuickAction) {
+        popover.performClose(nil)
+        guard let url = action.launchURL(applicationPath: settings.quickActionApplicationPath,
+                                         shortcutName: settings.quickActionShortcutName) else {
+            handleOpenSettings()
+            return
+        }
+        if action == .shortcut {
+            guard NSWorkspace.shared.open(url) else { handleOpenSettings(); return }
+        } else {
+            guard FileManager.default.fileExists(atPath: url.path), url.pathExtension == "app" else {
+                handleOpenSettings()
+                return
+            }
+            NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration()) { _, error in
+                if error != nil {
+                    Task { @MainActor in
+                        let alert = NSAlert()
+                        alert.messageText = url.deletingPathExtension().lastPathComponent
+                        alert.informativeText = error?.localizedDescription ?? ""
+                        alert.runModal()
+                    }
+                }
+            }
+        }
+    }
+
     private func togglePopover() {
         guard let button = statusItem.button else { return }
         if popover.isShown {
@@ -344,9 +379,7 @@ final class StatusBarController: NSObject {
         } else {
             store.setPopoverVisible(true)
             brightness.refresh()
-            performance.setVisible(settings.popupUtility == .performance)
-            codexUsage.setVisible(settings.popupUtility == .codex)
-            claudeUsage.setVisible(settings.popupUtility == .claude)
+            updateUtilityVisibility(settings.visiblePopupUtilities, isVisible: true)
             weather.setVisible(true, shortcutName: settings.weatherShortcutName)
             nowPlaying.setVisible(true)
             installPopoverContentIfNeeded()

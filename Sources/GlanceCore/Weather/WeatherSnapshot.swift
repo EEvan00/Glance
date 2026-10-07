@@ -4,6 +4,7 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
     let temperature: Double
     let code: Int
     let isDay: Int
+    var shortcutVersion: Int? = nil
     var appleCondition: String? = nil
     var low: Double? = nil
     var high: Double? = nil
@@ -20,7 +21,7 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
         case temperature = "temperature_2m"
         case code = "weather_code"
         case isDay = "is_day"
-        case appleCondition, low, high, hourly, location, uvIndex, precipitationChance, sunrise, sunset, sunrises, sunsets
+        case shortcutVersion, appleCondition, low, high, hourly, location, uvIndex, precipitationChance, sunrise, sunset, sunrises, sunsets
     }
 
     static func fromShortcut(_ output: String) -> WeatherSnapshot? {
@@ -39,21 +40,27 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
             condition = condition.trimmingCharacters(in: CharacterSet(charactersIn: " ,，和且"))
         }
         guard !condition.isEmpty, condition.count <= 160 else { return nil }
-        let value = condition.lowercased()
-        let code: Int
-        if value.contains("clear") { code = 0 }
-        else if value.contains("thunder") || value.contains("雷") { code = 95 }
-        else if value.contains("snow") || value.contains("sleet") || value.contains("雪") { code = 71 }
-        else if value.contains("rain") || value.contains("drizzle") || value.contains("shower") || value.contains("雨") { code = 61 }
-        else if value.contains("fog") || value.contains("haze") || value.contains("mist") || value.contains("雾") || value.contains("霧") { code = 45 }
-        else if value.contains("wind") || value.contains("breez") || value.contains("风") || value.contains("風") { code = 100 }
-        else if value.contains("partly") || value.contains("mostly sunny") || value.contains("晴间") { code = 2 }
-        else if value.contains("cloud") || value.contains("overcast") || value.contains("云") || value.contains("雲") || value.contains("阴") || value.contains("陰") { code = 3 }
-        else if value.contains("clear") || value.contains("sunny") || value == "晴" { code = 0 }
-        else { code = 999 }
+        let code = Self.conditionCode(condition)
         var snapshot = WeatherSnapshot(temperature: temperature, code: code, isDay: -1, appleCondition: condition)
         snapshot.readForecast(lines: Array(lines.dropFirst(2)))
         return snapshot
+    }
+
+    // Shortcuts return conditions in the system language, independently of the app language.
+    static func conditionCode(_ condition: String) -> Int {
+        let value = condition.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: Locale(identifier: "en_US_POSIX"))
+        let groups: [(Int, [String])] = [
+            (95, ["thunder", "雷", "천둥", "뇌우", "tormenta", "orage", "gewitter", "temporale", "trovo", "гроза", "رعد"]),
+            (71, ["snow", "sleet", "雪", "눈", "nieve", "neige", "schnee", "neve", "снег", "ثلج"]),
+            (51, ["drizzle", "毛毛雨", "細雨", "细雨", "霧雨", "이슬비", "llovizna", "bruine", "niesel", "pioviggine", "garoa", "морось", "رذاذ"]),
+            (61, ["rain", "shower", "雨", "비", "lluvia", "chubasco", "pluie", "averse", "regen", "pioggia", "chuva", "дожд", "مطر"]),
+            (45, ["fog", "haze", "mist", "雾", "霧", "안개", "niebla", "brouillard", "nebel", "nebbia", "nevoeiro", "туман", "ضباب"]),
+            (100, ["wind", "breez", "风", "風", "바람", "viento", "vent", "vento", "ветер", "ветр", "رياح"]),
+            (2, ["partly", "mostly sunny", "晴间", "晴間", "晴れ時々", "구름 조금", "parcialmente", "partiellement", "teilweise", "parzialmente", "переменная", "غائم جزئيا"]),
+            (3, ["cloud", "overcast", "云", "雲", "阴", "陰", "曇", "구름", "흐림", "nublado", "nuboso", "nuage", "bewolkt", "nuvoloso", "облач", "غائم"]),
+            (0, ["clear", "sunny", "晴", "맑", "despejado", "degagé", "degage", "klar", "sereno", "limpo", "ясно", "صافي"])
+        ]
+        return groups.first { group in group.1.contains { value.contains($0) } }?.0 ?? 999
     }
 
     var symbol: String {
@@ -76,9 +83,11 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
         case 1, 2: return .weatherPartlyCloudy
         case 3: return .weatherCloudy
         case 45, 48: return .weatherFog
-        case 51...67, 80...82: return .weatherRain
+        case 51...57: return .weatherDrizzle
+        case 61...67, 80...82: return .weatherRain
         case 71...77, 85, 86: return .weatherSnow
         case 95...99: return .weatherThunderstorm
+        case 100: return .weatherWind
         default: return .weatherUnknown
         }
     }
@@ -98,7 +107,7 @@ struct WeatherSnapshot: Decodable, Equatable, Sendable {
     }
 
     var temperatureText: String {
-        temperature.isFinite && abs(temperature) < 1000 ? "\(Int(temperature.rounded()))°" : "—"
+        TemperatureUnit.celsius.text(celsius: temperature)
     }
 }
 
@@ -111,7 +120,7 @@ struct WeatherHour: Decodable, Equatable, Sendable, Identifiable {
     var precipitationChance: Double? = nil
     var id: Date { date }
     var symbol: String {
-        if condition.localizedCaseInsensitiveContains("clear") {
+        if code == 0 {
             let daytime = isDay == -1 ? (6..<18).contains(Calendar.current.component(.hour, from: date)) : isDay == 1
             return daytime ? "sun.max.fill" : "moon.fill"
         }
@@ -156,13 +165,15 @@ private extension WeatherSnapshot {
 
     mutating func readForecast(lines: [String]) {
         guard !lines.isEmpty, lines.count <= 200 else { return }
-        let markers: Set<String> = ["LOW", "HIGH", "DATES", "HOURS", "LOCATION", "UV", "SUNRISE", "SUNSET", "RAIN_CHANCES", "RAIN_CHANCE"]
+        let markers: Set<String> = ["LOW", "HIGH", "DATES", "HOURS", "LOCATION", "UV", "SUNRISE", "SUNSET", "RAIN_CHANCES", "RAIN_CHANCE", "GLANCE_VERSION"]
         var sections: [String: [String]] = [:]
         var current: String?
         for line in lines {
             if markers.contains(line) { current = line; sections[line] = [] }
             else if let current { sections[current, default: []].append(line) }
         }
+        if let values = sections["GLANCE_VERSION"], values.count == 1,
+           let version = Int(values[0]), version > 0 { shortcutVersion = version }
         if let values = sections["UV"], values.count == 1,
            let value = Double(values[0].replacingOccurrences(of: ",", with: ".")),
            value.isFinite, (0...30).contains(value) { uvIndex = value }

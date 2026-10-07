@@ -82,6 +82,28 @@ enum StatusIconRenderer {
         return image
     }
 
+    static func popupWiFiImage(wifi: WiFiStatus, size: CGFloat) -> NSImage {
+        // Signal bars keep their relative size. Special states have narrower
+        // geometry in the shared menu-bar canvas, so normalize their visible ink.
+        guard [.hotspot, .temporary, .shared].contains(wifi.state) else {
+            return wifiImage(wifi: wifi, size: size)
+        }
+        let source = wifiImage(wifi: wifi, size: 72)
+        let reference = wifiImage(wifi: WiFiStatus(state: .connected, rssi: -40), size: 72)
+        guard let sourceCG = source.cgImage(forProposedRect: nil, context: nil, hints: nil),
+              let referenceCG = reference.cgImage(forProposedRect: nil, context: nil, hints: nil),
+              let cropped = visiblePixelImage(sourceCG),
+              let referenceInk = visiblePixelImage(referenceCG) else { return wifiImage(wifi: wifi, size: size) }
+        let referenceSize = NSSize(
+            width: size * CGFloat(referenceInk.width) / CGFloat(referenceCG.width),
+            height: size * CGFloat(referenceInk.height) / CGFloat(referenceCG.height)
+        )
+        let scale = min(referenceSize.width / CGFloat(cropped.width), referenceSize.height / CGFloat(cropped.height))
+        let image = NSImage(cgImage: cropped, size: NSSize(width: CGFloat(cropped.width) * scale, height: CGFloat(cropped.height) * scale))
+        image.isTemplate = true
+        return image
+    }
+
     static func render(
         snapshot: StatusSnapshot,
         size: CGFloat,
@@ -352,6 +374,10 @@ enum StatusIconRenderer {
         guard let symbol = NSImage(systemSymbolName: "powerplug.portrait.fill", accessibilityDescription: nil)?
             .withSymbolConfiguration(.init(pointSize: 180, weight: .regular)),
               let image = symbol.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return nil }
+        return visiblePixelImage(image)
+    }()
+
+    private static func visiblePixelImage(_ image: CGImage) -> CGImage? {
         let bitmap = NSBitmapImageRep(cgImage: image)
         var minX = bitmap.pixelsWide, minY = bitmap.pixelsHigh, maxX = -1, maxY = -1
         for y in 0..<bitmap.pixelsHigh {
@@ -362,6 +388,13 @@ enum StatusIconRenderer {
         }
         guard maxX >= minX, maxY >= minY else { return nil }
         return image.cropping(to: CGRect(x: minX, y: minY, width: maxX - minX + 1, height: maxY - minY + 1))
+    }
+
+    private static let personalHotspotMask: CGImage? = {
+        guard let symbol = NSImage(systemSymbolName: "personalhotspot", accessibilityDescription: nil)?
+            .withSymbolConfiguration(.init(pointSize: 180, weight: .medium)),
+              let image = symbol.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return nil }
+        return visiblePixelImage(image)
     }()
 
     static func batteryIndicatorRect(aspectRatio: CGFloat, textScale: Double) -> CGRect {
@@ -464,12 +497,17 @@ enum StatusIconRenderer {
         case .hotspot where options.showsWiFiIconForHotspot:
             drawStandardWiFi(wifi, in: context, foreground: foreground)
         case .hotspot:
-            context.setStrokeColor(foreground)
-            context.setLineWidth(5)
-            for path in StatusIconGeometry.hotspotOverlay() {
-                context.addPath(path)
-                context.strokePath()
-            }
+            guard let image = personalHotspotMask else { return }
+            let width: CGFloat = 42
+            let height = width * CGFloat(image.height) / CGFloat(image.width)
+            context.saveGState()
+            context.translateBy(x: 38.5, y: 58 + height / 2)
+            context.scaleBy(x: 1, y: -1)
+            let bounds = CGRect(x: 0, y: 0, width: width, height: height)
+            context.clip(to: bounds, mask: image)
+            context.setFillColor(foreground)
+            context.fill(bounds)
+            context.restoreGState()
         case .temporary where options.showsWiFiIconForTemporaryConnection:
             drawStandardWiFi(wifi, in: context, foreground: foreground)
         case .temporary:

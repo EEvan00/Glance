@@ -9,14 +9,16 @@ final class WeatherController: ObservableObject {
     @Published private(set) var isLoading = false
     private let connection = JSONLineProcess()
     private let executable: URL
+    private let versions: WeatherShortcutVersions
     private var shortcutName = ""
     private var lastAttempt: Date?
     private var visible = false
     // Exclusively main-actor owned while alive; deinit only removes this request's temporary file.
     nonisolated(unsafe) private var outputFile: URL?
 
-    init(executable: URL = URL(fileURLWithPath: "/usr/bin/shortcuts")) {
+    init(executable: URL = URL(fileURLWithPath: "/usr/bin/shortcuts"), versions: WeatherShortcutVersions? = nil) {
         self.executable = executable
+        self.versions = versions ?? .shared
     }
 
     static func shouldRefresh(shortcutName: String, lastAttempt: Date?, now: Date) -> Bool {
@@ -36,7 +38,7 @@ final class WeatherController: ObservableObject {
             stopRequest()
             return
         }
-        guard !isLoading, Self.shouldRefresh(shortcutName: shortcutName, lastAttempt: lastAttempt, now: Date()) else { return }
+        guard !isLoading, (versions.pendingVerification.contains(shortcutName) || Self.shouldRefresh(shortcutName: shortcutName, lastAttempt: lastAttempt, now: Date())) else { return }
         lastAttempt = Date()
         let file = FileManager.default.temporaryDirectory.appendingPathComponent("glance-weather-\(UUID().uuidString).txt")
         outputFile = file
@@ -55,6 +57,7 @@ final class WeatherController: ObservableObject {
                         self.snapshot = nil; self.updatedAt = nil; self.lastAttempt = nil; self.isUnavailable = true
                         return
                     }
+                    self.versions.record(name: self.shortcutName, version: snapshot.shortcutVersion)
                     self.snapshot = snapshot
                     self.updatedAt = Date()
                     self.isUnavailable = false
