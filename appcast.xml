@@ -7,6 +7,18 @@
     <description>Independent Glance releases.</description>
     <language>en</language>
     <item>
+      <title>Version 1.0.1 (Build 10) （English + 中文， 中文在下方）</title>
+      <pubDate>Wed, 07 Oct 2026 10:57:17 +0000</pubDate>
+      <sparkle:version>10</sparkle:version>
+      <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Version: 1.0.1 · Internal revision: 2 · Build: 10</li></ul><h2>English</h2><ul><li>Fix a countdown notification crash that could prevent Glance from reopening.</li><li>Make the entire countdown preset button clickable.</li><li>Fix MagSafe helper launch arguments.</li><li>Add a bilingual drag-to-Applications DMG installation guide.</li></ul><h2>中文</h2><ul><li>修复倒计时通知导致闪退及再次启动失败的问题。</li><li>扩大倒计时预设按钮的点击范围。</li><li>修复 MagSafe helper 启动参数。</li><li>增加中英文拖到「应用程序」的 DMG 安装引导。</li></ul>]]></description>
+      <enclosure url="https://github.com/EEvan00/Glance/releases/download/v1.0.1/Glance-1.0.1.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="SLCh5nWLwDxy7rwIOZuc9Zy4L7nkL0RDFYvw963/t0yLhNOht9blKU2P8iih1Lk5Pwcb9JyjjoZeRAjgdqwwCQ=="
+                 length="4568950" />
+    </item>
+    <item>
       <title>Version 1.0.0 (Build 9) （English + 中文， 中文在下方）</title>
       <pubDate>Wed, 07 Oct 2026 08:33:10 +0000</pubDate>
       <sparkle:version>9</sparkle:version>
