@@ -420,3 +420,4 @@
 "settings.uninstall.confirm" = "Desinstalar";
 "settings.uninstall.message" = "Eliminar el asistente MagSafe y el ítem de inicio, mover Glance a la papelera y salir. Se conservarán los ajustes guardados y los atajos del sistema.";
 "settings.uninstall.error" = "No se pudo desinstalar Glance";
+"settings.uninstall.shortcuts" = "Los atajos del tiempo se conservan. Puedes eliminar Glance Weather y Glance Weather Forecast en Atajos.";

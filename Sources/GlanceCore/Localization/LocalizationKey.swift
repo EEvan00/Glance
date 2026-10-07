@@ -1,5 +1,6 @@
 // Glance modifications by EEvan00, 2026. Original project notices: NOTICE.
 enum LocalizationKey: String, CaseIterable, Hashable, Sendable {
+    case settingsUninstallShortcuts = "settings.uninstall.shortcuts"
     case settingsUninstall = "settings.uninstall"
     case settingsUninstallTitle = "settings.uninstall.title"
     case settingsUninstallConfirm = "settings.uninstall.confirm"

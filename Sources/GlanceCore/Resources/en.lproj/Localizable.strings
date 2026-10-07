@@ -418,5 +418,6 @@
 "settings.uninstall" = "Uninstall Glance…";
 "settings.uninstall.title" = "Uninstall Glance?";
 "settings.uninstall.confirm" = "Uninstall";
-"settings.uninstall.message" = "Remove the MagSafe helper and login item, move Glance to the Trash, and quit. Saved settings and system shortcuts will be kept.";
+"settings.uninstall.message" = "Remove the MagSafe helper, login item and Claude integration, move Glance to the Trash, and quit. Saved settings and system shortcuts will be kept.";
 "settings.uninstall.error" = "Unable to uninstall Glance";
+"settings.uninstall.shortcuts" = "Weather shortcuts are kept. You can delete Glance Weather and Glance Weather Forecast in the Shortcuts app.";

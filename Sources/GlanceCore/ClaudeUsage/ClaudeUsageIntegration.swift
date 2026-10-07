@@ -44,5 +44,35 @@ enum ClaudeUsageIntegration {
         try JSONSerialization.data(withJSONObject: settings, options: [.prettyPrinted, .sortedKeys]).write(to: settingsURL, options: .atomic)
     }
 
+    /// Restore only our status-line entry; never replace unrelated Claude settings.
+    static func uninstall(home: URL = FileManager.default.homeDirectoryForCurrentUser, support: URL = directory) throws {
+        let files = FileManager.default
+        let destination = support.appendingPathComponent("claude-statusline.pl")
+        let original = support.appendingPathComponent("claude-statusline-original.json")
+        let settingsURL = home.appendingPathComponent(".claude/settings.json")
+        let command = "/usr/bin/perl " + shellQuote(destination.path)
+        if files.fileExists(atPath: destination.path) || files.fileExists(atPath: original.path),
+           files.fileExists(atPath: settingsURL.path) {
+            guard var settings = try JSONSerialization.jsonObject(with: Data(contentsOf: settingsURL)) as? [String: Any] else {
+                throw CocoaError(.coderReadCorrupt)
+            }
+            if let statusLine = settings["statusLine"] as? [String: Any], statusLine["command"] as? String == command {
+                guard let previous = try JSONSerialization.jsonObject(with: Data(contentsOf: original)) as? [String: Any] else {
+                    throw CocoaError(.coderReadCorrupt)
+                }
+                if previous.isEmpty { settings.removeValue(forKey: "statusLine") }
+                else { settings["statusLine"] = previous }
+                try JSONSerialization.data(withJSONObject: settings, options: [.prettyPrinted, .sortedKeys]).write(to: settingsURL, options: .atomic)
+            }
+        }
+        for name in ["claude-statusline.pl", "claude-statusline-original.json", "claude-settings-backup.json", "claude-usage.json"] {
+            let url = support.appendingPathComponent(name)
+            if files.fileExists(atPath: url.path) { try files.removeItem(at: url) }
+        }
+        if files.fileExists(atPath: support.path), try files.contentsOfDirectory(atPath: support.path).isEmpty {
+            try files.removeItem(at: support)
+        }
+    }
+
     private static func shellQuote(_ text: String) -> String { "'" + text.replacingOccurrences(of: "'", with: "'\\''") + "'" }
 }

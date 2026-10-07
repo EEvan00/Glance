@@ -7,11 +7,12 @@ final class UninstallCoordinatorTests: XCTestCase {
         let coordinator = UninstallCoordinator(
             removeHelper: { events.append("helper") },
             removeLoginItem: { events.append("login") },
+            removeIntegrations: { events.append("integrations") },
             moveApplicationToTrash: { events.append("trash") },
             quit: { events.append("quit") }
         )
         try await coordinator.uninstall()
-        XCTAssertEqual(events, ["helper", "login", "trash", "quit"])
+        XCTAssertEqual(events, ["helper", "login", "integrations", "trash", "quit"])
     }
 
     @MainActor func testHelperFailureDoesNotTrashOrQuit() async {

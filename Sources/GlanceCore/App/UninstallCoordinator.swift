@@ -5,12 +5,14 @@ import AppKit
 struct UninstallCoordinator {
     let removeHelper: () async throws -> Void
     let removeLoginItem: () throws -> Void
+    var removeIntegrations: () throws -> Void = {}
     let moveApplicationToTrash: () throws -> Void
     let quit: () -> Void
 
     func uninstall() async throws {
         try await removeHelper()
         try removeLoginItem()
+        try removeIntegrations()
         try moveApplicationToTrash()
         quit()
     }
@@ -23,6 +25,7 @@ struct UninstallCoordinator {
     static var live: UninstallCoordinator {
         UninstallCoordinator(
             removeHelper: {
+                guard supportsCurrentApplication else { throw CocoaError(.fileWriteNoPermission) }
                 let helper = SystemMagSafeLEDHelperManager()
                 if helper.status != .notRegistered { try await helper.uninstall() }
             },
@@ -30,6 +33,7 @@ struct UninstallCoordinator {
                 let login = SystemLaunchAtLoginService()
                 if login.status != .notRegistered { try login.unregister() }
             },
+            removeIntegrations: { try ClaudeUsageIntegration.uninstall() },
             moveApplicationToTrash: {
                 guard supportsCurrentApplication else {
                     throw CocoaError(.fileWriteNoPermission)

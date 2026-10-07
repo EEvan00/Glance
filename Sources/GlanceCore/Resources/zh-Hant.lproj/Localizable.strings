@@ -418,5 +418,6 @@
 "settings.uninstall" = "解除安裝 Glance…";
 "settings.uninstall.title" = "解除安裝 Glance？";
 "settings.uninstall.confirm" = "解除安裝";
-"settings.uninstall.message" = "移除 MagSafe 輔助程式和登入項目，將 Glance 移至垃圾桶並結束。保留已儲存的設定和系統捷徑。";
+"settings.uninstall.message" = "移除 MagSafe 輔助程式、登入項目和 Claude 整合，將 Glance 移至垃圾桶並結束。保留已儲存的設定和系統捷徑。";
 "settings.uninstall.error" = "無法解除安裝 Glance";
+"settings.uninstall.shortcuts" = "天氣捷徑會保留。你可以在「捷徑」App 中刪除 Glance Weather 和 Glance Weather Forecast。";

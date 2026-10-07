@@ -44,11 +44,6 @@ struct AboutSettingsPane: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            if UpdaterManager.isEnabled {
-                Divider()
-                UpdateSettingsControls()
-            }
-
             Divider()
 
             HStack(spacing: 8) {
@@ -63,14 +58,22 @@ struct AboutSettingsPane: View {
                 }
             }.buttonStyle(.bordered).controlSize(.small)
 
-            if UninstallCoordinator.supportsCurrentApplication {
+            if UpdaterManager.isEnabled || UninstallCoordinator.supportsCurrentApplication {
                 Divider()
-                Button(localization.string(.settingsUninstall)) {
-                    confirmsUninstall = true
+                HStack(alignment: .bottom, spacing: 12) {
+                    if UpdaterManager.isEnabled {
+                        UpdateSettingsControls()
+                    }
+                    Spacer(minLength: 12)
+                    if UninstallCoordinator.supportsCurrentApplication {
+                        Button(localization.string(.settingsUninstall)) {
+                            confirmsUninstall = true
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                        .disabled(isUninstalling)
+                    }
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-                .disabled(isUninstalling)
             }
 
         }
@@ -85,9 +88,12 @@ struct AboutSettingsPane: View {
                     }
                 }
             }
+            Button(localization.string(.settingsWeatherOpenShortcut)) {
+                NSWorkspace.shared.open(URL(string: "shortcuts://")!)
+            }
             Button(localization.string(.commonCancel), role: .cancel) {}
         } message: {
-            Text(localization.string(.settingsUninstallMessage))
+            Text(localization.string(.settingsUninstallMessage) + "\n\n" + localization.string(.settingsUninstallShortcuts))
         }
         .alert(localization.string(.settingsUninstallError), isPresented: Binding(
             get: { uninstallError != nil },

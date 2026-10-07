@@ -420,3 +420,4 @@
 "settings.uninstall.confirm" = "제거";
 "settings.uninstall.message" = "MagSafe 도우미와 로그인 항목을 제거하고 Glance를 휴지통으로 이동한 후 종료합니다. 저장된 설정과 시스템 단축어는 유지됩니다.";
 "settings.uninstall.error" = "Glance를 제거할 수 없습니다";
+"settings.uninstall.shortcuts" = "날씨 단축어는 유지됩니다. 단축어 앱에서 Glance Weather와 Glance Weather Forecast를 삭제할 수 있습니다.";

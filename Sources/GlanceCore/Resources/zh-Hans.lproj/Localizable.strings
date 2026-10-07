@@ -418,5 +418,6 @@
 "settings.uninstall" = "卸载 Glance…";
 "settings.uninstall.title" = "卸载 Glance？";
 "settings.uninstall.confirm" = "卸载";
-"settings.uninstall.message" = "移除 MagSafe 辅助程序和登录项，将 Glance 移到废纸篓并退出。保留已保存的设置和系统快捷指令。";
+"settings.uninstall.message" = "移除 MagSafe 辅助程序、登录项和 Claude 集成，将 Glance 移到废纸篓并退出。保留已保存的设置和系统快捷指令。";
 "settings.uninstall.error" = "无法卸载 Glance";
+"settings.uninstall.shortcuts" = "天气快捷指令会保留。你可以在“快捷指令”App 中删除 Glance Weather 和 Glance Weather Forecast。";

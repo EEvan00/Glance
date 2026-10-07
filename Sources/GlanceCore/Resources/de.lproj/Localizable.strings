@@ -420,3 +420,4 @@
 "settings.uninstall.confirm" = "Deinstallieren";
 "settings.uninstall.message" = "MagSafe-Hilfsprogramm und Anmeldeobjekt entfernen, Glance in den Papierkorb verschieben und beenden. Gespeicherte Einstellungen und Systemkurzbefehle bleiben erhalten.";
 "settings.uninstall.error" = "Glance konnte nicht deinstalliert werden";
+"settings.uninstall.shortcuts" = "Wetterkurzbefehle bleiben erhalten. Glance Weather und Glance Weather Forecast können in der Kurzbefehle-App gelöscht werden.";
