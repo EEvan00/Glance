@@ -306,7 +306,7 @@ jobs:
           DIAGNOSTIC_PID=$!
           trap 'kill "$DIAGNOSTIC_PID" 2>/dev/null || true' EXIT
           set +e
-          swift test
+          swift test --parallel --num-workers 1
           TEST_EXIT_CODE=$?
           set -e
 
