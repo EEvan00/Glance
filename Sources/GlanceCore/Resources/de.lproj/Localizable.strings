@@ -414,3 +414,9 @@
 "shortcut.addWeather" = "Wetter-Kurzbefehle hinzufügen…";
 "shortcut.continueSetup" = "Einrichtung fortsetzen…";
 "shortcut.sequentialInstallHelp" = "Bestätige den Import im Systemfenster und kehre hierher zurück. Jeder Kurzbefehl muss einzeln bestätigt werden.";
+
+"settings.uninstall" = "Glance deinstallieren…";
+"settings.uninstall.title" = "Glance deinstallieren?";
+"settings.uninstall.confirm" = "Deinstallieren";
+"settings.uninstall.message" = "MagSafe-Hilfsprogramm und Anmeldeobjekt entfernen, Glance in den Papierkorb verschieben und beenden. Gespeicherte Einstellungen und Systemkurzbefehle bleiben erhalten.";
+"settings.uninstall.error" = "Glance konnte nicht deinstalliert werden";

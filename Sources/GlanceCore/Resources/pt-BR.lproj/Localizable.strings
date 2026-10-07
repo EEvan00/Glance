@@ -414,3 +414,9 @@
 "shortcut.addWeather" = "Adicionar atalhos do clima…";
 "shortcut.continueSetup" = "Continuar configuração…";
 "shortcut.sequentialInstallHelp" = "Confirme a importação na janela do sistema e volte aqui para continuar. Cada atalho exige uma confirmação separada.";
+
+"settings.uninstall" = "Desinstalar Glance…";
+"settings.uninstall.title" = "Desinstalar Glance?";
+"settings.uninstall.confirm" = "Desinstalar";
+"settings.uninstall.message" = "Remover o auxiliar MagSafe e o item de início, mover o Glance para o Lixo e sair. Os ajustes salvos e os atalhos do sistema serão mantidos.";
+"settings.uninstall.error" = "Não foi possível desinstalar o Glance";

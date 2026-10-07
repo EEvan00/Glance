@@ -414,3 +414,9 @@
 "shortcut.addWeather" = "Add weather shortcuts…";
 "shortcut.continueSetup" = "Continue setup…";
 "shortcut.sequentialInstallHelp" = "Import the shortcut in the system window, then return here to continue. Each shortcut requires separate confirmation.";
+
+"settings.uninstall" = "Uninstall Glance…";
+"settings.uninstall.title" = "Uninstall Glance?";
+"settings.uninstall.confirm" = "Uninstall";
+"settings.uninstall.message" = "Remove the MagSafe helper and login item, move Glance to the Trash, and quit. Saved settings and system shortcuts will be kept.";
+"settings.uninstall.error" = "Unable to uninstall Glance";

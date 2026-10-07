@@ -414,3 +414,9 @@
 "shortcut.addWeather" = "날씨 단축어 추가…";
 "shortcut.continueSetup" = "설정 계속…";
 "shortcut.sequentialInstallHelp" = "시스템 창에서 가져오기를 확인한 뒤 돌아와 다음 단축어를 추가하세요. 각 단축어를 따로 확인해야 합니다.";
+
+"settings.uninstall" = "Glance 제거…";
+"settings.uninstall.title" = "Glance를 제거하시겠습니까?";
+"settings.uninstall.confirm" = "제거";
+"settings.uninstall.message" = "MagSafe 도우미와 로그인 항목을 제거하고 Glance를 휴지통으로 이동한 후 종료합니다. 저장된 설정과 시스템 단축어는 유지됩니다.";
+"settings.uninstall.error" = "Glance를 제거할 수 없습니다";

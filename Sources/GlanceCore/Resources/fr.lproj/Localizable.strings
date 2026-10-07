@@ -414,3 +414,9 @@
 "shortcut.addWeather" = "Ajouter les raccourcis météo…";
 "shortcut.continueSetup" = "Continuer la configuration…";
 "shortcut.sequentialInstallHelp" = "Confirmez l’importation dans la fenêtre système, puis revenez ici pour continuer. Chaque raccourci nécessite une confirmation distincte.";
+
+"settings.uninstall" = "Désinstaller Glance…";
+"settings.uninstall.title" = "Désinstaller Glance ?";
+"settings.uninstall.confirm" = "Désinstaller";
+"settings.uninstall.message" = "Supprimer l’assistant MagSafe et l’élément de connexion, placer Glance dans la corbeille et quitter. Les réglages enregistrés et les raccourcis système sont conservés.";
+"settings.uninstall.error" = "Impossible de désinstaller Glance";

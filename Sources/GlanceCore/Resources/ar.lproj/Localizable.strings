@@ -414,3 +414,9 @@
 "shortcut.addWeather" = "إضافة اختصارات الطقس…";
 "shortcut.continueSetup" = "متابعة الإعداد…";
 "shortcut.sequentialInstallHelp" = "أكد الاستيراد في نافذة النظام ثم ارجع هنا للمتابعة. يتطلب كل اختصار تأكيدًا منفصلًا.";
+
+"settings.uninstall" = "إلغاء تثبيت Glance…";
+"settings.uninstall.title" = "إلغاء تثبيت Glance؟";
+"settings.uninstall.confirm" = "إلغاء التثبيت";
+"settings.uninstall.message" = "إزالة مساعد MagSafe وعنصر تسجيل الدخول، ونقل Glance إلى سلة المهملات ثم إنهاؤه. سيتم الاحتفاظ بالإعدادات المحفوظة واختصارات النظام.";
+"settings.uninstall.error" = "تعذر إلغاء تثبيت Glance";

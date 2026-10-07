@@ -414,3 +414,9 @@
 "shortcut.addWeather" = "Добавить команды погоды…";
 "shortcut.continueSetup" = "Продолжить настройку…";
 "shortcut.sequentialInstallHelp" = "Подтвердите импорт в системном окне и вернитесь сюда. Для каждой команды требуется отдельное подтверждение.";
+
+"settings.uninstall" = "Удалить Glance…";
+"settings.uninstall.title" = "Удалить Glance?";
+"settings.uninstall.confirm" = "Удалить";
+"settings.uninstall.message" = "Удалить помощник MagSafe и элемент входа, переместить Glance в Корзину и завершить работу. Сохранённые настройки и системные команды останутся.";
+"settings.uninstall.error" = "Не удалось удалить Glance";

@@ -414,3 +414,9 @@
 "shortcut.addWeather" = "加入天氣捷徑…";
 "shortcut.continueSetup" = "繼續加入…";
 "shortcut.sequentialInstallHelp" = "在系統視窗確認匯入後，返回這裡繼續加入下一個捷徑。每個捷徑需分別確認。";
+
+"settings.uninstall" = "解除安裝 Glance…";
+"settings.uninstall.title" = "解除安裝 Glance？";
+"settings.uninstall.confirm" = "解除安裝";
+"settings.uninstall.message" = "移除 MagSafe 輔助程式和登入項目，將 Glance 移至垃圾桶並結束。保留已儲存的設定和系統捷徑。";
+"settings.uninstall.error" = "無法解除安裝 Glance";
