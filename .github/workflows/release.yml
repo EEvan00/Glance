@@ -293,7 +293,18 @@ jobs:
           } >> "${GITHUB_ENV}"
 
       - name: Run tests
+        timeout-minutes: 8
         run: |
+          # Capture stalled test-runner stacks without skipping or weakening tests.
+          (
+            sleep 120
+            for TEST_PID in $(pgrep -x xctest || true); do
+              sample "$TEST_PID" 5 -file "${RUNNER_TEMP}/test-${TEST_PID}.sample.txt" || true
+              cat "${RUNNER_TEMP}/test-${TEST_PID}.sample.txt" || true
+            done
+          ) &
+          DIAGNOSTIC_PID=$!
+          trap 'kill "$DIAGNOSTIC_PID" 2>/dev/null || true' EXIT
           set +e
           swift test
           TEST_EXIT_CODE=$?
