@@ -45,7 +45,36 @@ private func designatedRequirement(for appURL: URL) -> String? {
     return requirementString as String?
 }
 
+if CommandLine.arguments == [CommandLine.arguments[0], "--restore-system"] {
+    exit(MagSafeSMC.setLEDMode(.system) ? EXIT_SUCCESS : EXIT_FAILURE)
+}
+
+if CommandLine.arguments == [CommandLine.arguments[0], "--configure-installation"] {
+    let appURL = URL(fileURLWithPath: "/Applications/Glance.app")
+    guard geteuid() == 0,
+          let build = Bundle(url: appURL)?.object(forInfoDictionaryKey: "CFBundleVersion") as? String,
+          let requirement = MagSafeHelperInstallation.requirement(for: appURL), !requirement.isEmpty else {
+        fputs("Unable to validate the application for helper installation.\n", stderr)
+        exit(EXIT_FAILURE)
+    }
+    do {
+        let data = try JSONEncoder().encode(MagSafeHelperInstallation(build: build, requirement: requirement))
+        try data.write(to: URL(fileURLWithPath: MagSafeHelperInstallation.configurationPath), options: .atomic)
+        exit(EXIT_SUCCESS)
+    } catch {
+        fputs("Unable to save trusted helper installation.\n", stderr)
+        exit(EXIT_FAILURE)
+    }
+}
+
 private let clientRequirement: String = {
+    if ProcessInfo.processInfo.environment["GLANCE_LEGACY_HELPER"] == "1" {
+        guard let installation = MagSafeHelperInstallation.read() else {
+            fputs("Missing trusted installation configuration.\n", stderr)
+            exit(EXIT_FAILURE)
+        }
+        return installation.requirement
+    }
     guard let appURL = enclosingAppURL(),
           let requirement = designatedRequirement(for: appURL) else {
         fputs("Unable to derive the containing app's code-signing requirement.\n", stderr)

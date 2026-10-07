@@ -180,8 +180,17 @@ struct SystemMagSafeLEDHelperManager: MagSafeLEDHelperManaging {
         SMAppService.daemon(plistName: Self.plistName)
     }
 
+    var hasInstalledHelper: Bool {
+        LegacyMagSafeHelperManager.hasInstalledFiles || service.status != .notRegistered && service.status != .notFound
+    }
+
     var status: MagSafeLEDHelperStatus {
-        switch service.status {
+        if LegacyMagSafeHelperManager.hasInstalledFiles {
+            return LegacyMagSafeHelperManager().isCurrent ? .enabled : .notRegistered
+        }
+        // Public ad-hoc releases use the independent installer, not SMAppService.
+        if Bundle.main.url(forResource: "GlanceHelperInstall", withExtension: "pkg") != nil { return .notRegistered }
+        return switch service.status {
         case .enabled: .enabled
         case .requiresApproval: .requiresApproval
         case .notRegistered, .notFound: .notRegistered
@@ -190,11 +199,17 @@ struct SystemMagSafeLEDHelperManager: MagSafeLEDHelperManaging {
     }
 
     func install() async throws {
-        try service.register()
+        if Bundle.main.url(forResource: "GlanceHelperInstall", withExtension: "pkg") != nil {
+            if service.status == .enabled || service.status == .requiresApproval { try await service.unregister() }
+            try await LegacyMagSafeHelperManager().install()
+        } else {
+            try service.register()
+        }
     }
 
     func uninstall() async throws {
-        try await service.unregister()
+        if LegacyMagSafeHelperManager.hasInstalledFiles { try await LegacyMagSafeHelperManager().uninstall() }
+        if service.status == .enabled || service.status == .requiresApproval { try await service.unregister() }
     }
 
     func openSystemSettings() {

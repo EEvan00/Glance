@@ -249,6 +249,7 @@ codesign "${SIGNING_ARGS[@]}" --identifier "$BUNDLE_ID" "$CONTENTS/Resources/Gla
 # Hardened Runtime requires this entitlement before macOS can show the
 # location permission prompt used by the existing Wi-Fi authorization flow.
 plutil -lint "$ROOT/Support/Glance.entitlements"
+bash "$ROOT/scripts/build-helper-packages.sh" "$APP_DIR"
 codesign "${SIGNING_ARGS[@]}" --entitlements "$ROOT/Support/Glance.entitlements" "$APP_DIR"
 codesign --verify --deep --strict --verbose=2 "$APP_DIR"
 

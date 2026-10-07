@@ -27,7 +27,7 @@ struct UninstallCoordinator {
             removeHelper: {
                 guard supportsCurrentApplication else { throw CocoaError(.fileWriteNoPermission) }
                 let helper = SystemMagSafeLEDHelperManager()
-                if helper.status != .notRegistered { try await helper.uninstall() }
+                if helper.hasInstalledHelper { try await helper.uninstall() }
             },
             removeLoginItem: {
                 let login = SystemLaunchAtLoginService()

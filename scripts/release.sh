@@ -104,6 +104,9 @@ mkdir -p "$OUTPUT_DIR"
 echo "Building $APP_NAME $VERSION ($BUILD) for $RELEASE_REPO..."
 env -u GH_TOKEN -u SPARKLE_PRIVATE_KEY APP_VERSION="$VERSION" FORK_REVISION="$FORK_REVISION" BUILD_NUMBER="$BUILD" SU_FEED_URL="$SU_FEED_URL" SPARKLE_PUBLIC_KEY="$SPARKLE_PUBLIC_KEY" AUTOMATIC_UPDATES_ENABLED="$UPDATE_MODE" UNIVERSAL_BUILD="$UNIVERSAL_BUILD" BUNDLE_ID="$BUNDLE_ID" APP_NAME="$APP_NAME" CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY" KEYCHAIN_PATH="$KEYCHAIN_PATH" bash "$ROOT/scripts/build-app.sh" release no-open
 
+HELPER_UNINSTALL_PATH="$OUTPUT_DIR/Glance-MagSafe-Helper-Uninstall.pkg"
+cp "$ROOT/dist/Glance.app/Contents/Resources/GlanceHelperUninstall.pkg" "$HELPER_UNINSTALL_PATH"
+
 STAGING_DIR="$TEMP_ROOT/dmg"
 mkdir -p "$STAGING_DIR"
 ditto "$ROOT/dist/Glance.app" "$STAGING_DIR/$APP_NAME.app"
@@ -186,7 +189,7 @@ if gh release view "$TAG" --repo "$RELEASE_REPO" >/dev/null 2>&1; then echo "Err
 if gh api "repos/$RELEASE_REPO/git/ref/tags/$TAG" >/dev/null 2>&1; then echo "Error: Git tag $TAG already exists; refusing to reuse or move it." >&2; exit 1; fi
 
 RELEASE_REPO="$RELEASE_REPO" BUNDLE_ID="$BUNDLE_ID" BUILD="$BUILD" ruby "$ROOT/scripts/validate-release-history.rb"
-gh release create "$TAG" "$DMG_PATH" "$DMG_PATH.sha256" "$METADATA_PATH" --repo "$RELEASE_REPO" --target "$RELEASE_TARGET" --title "$APP_NAME $VERSION" --latest --notes-file "$RELEASE_BODY_FILE"
+gh release create "$TAG" "$DMG_PATH" "$DMG_PATH.sha256" "$METADATA_PATH" "$HELPER_UNINSTALL_PATH" --repo "$RELEASE_REPO" --target "$RELEASE_TARGET" --title "$APP_NAME $VERSION" --latest --notes-file "$RELEASE_BODY_FILE"
 PUBLISHED_TAG_SHA="$(gh api "repos/$RELEASE_REPO/git/ref/tags/$TAG" --jq .object.sha)"
 [[ "$PUBLISHED_TAG_SHA" == "$RELEASE_TARGET" ]] || { echo "Error: release tag does not point to the built commit." >&2; exit 1; }
 
