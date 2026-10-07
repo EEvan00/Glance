@@ -40,6 +40,11 @@ struct AboutSettingsPane: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
 
+            if UpdaterManager.isEnabled {
+                Divider()
+                UpdateSettingsControls()
+            }
+
             Divider()
 
             HStack(spacing: 8) {

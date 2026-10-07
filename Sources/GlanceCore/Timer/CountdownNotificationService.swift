@@ -32,16 +32,28 @@ final class CountdownNotificationService: NSObject, UNUserNotificationCenterDele
             guard let self else { return }
             do {
                 // Remove timers left by a previous process before installing this process's request.
-                let pending = await center.pendingNotificationRequests()
-                let delivered = await center.deliveredNotifications()
+                let pending: [String] = await withCheckedContinuation { continuation in
+                    center.getPendingNotificationRequests { requests in
+                        continuation.resume(returning: requests.map(\.identifier))
+                    }
+                }
+                let delivered: [String] = await withCheckedContinuation { continuation in
+                    center.getDeliveredNotifications { notifications in
+                        continuation.resume(returning: notifications.map { $0.request.identifier })
+                    }
+                }
                 guard !Task.isCancelled else { return }
-                center.removePendingNotificationRequests(withIdentifiers: pending.map(\.identifier).filter { $0.hasPrefix(Self.identifier) })
-                center.removeDeliveredNotifications(withIdentifiers: delivered.map { $0.request.identifier }.filter { $0.hasPrefix(Self.identifier) })
+                center.removePendingNotificationRequests(withIdentifiers: pending.filter { $0.hasPrefix(Self.identifier) })
+                center.removeDeliveredNotifications(withIdentifiers: delivered.filter { $0.hasPrefix(Self.identifier) })
                 let granted = try await center.requestAuthorization(options: [.alert, .sound])
                 guard !Task.isCancelled else { return }
-                let settings = await center.notificationSettings()
+                let alertsEnabled: Bool = await withCheckedContinuation { continuation in
+                    center.getNotificationSettings { settings in
+                        continuation.resume(returning: settings.alertSetting == .enabled)
+                    }
+                }
                 guard !Task.isCancelled else { return }
-                onUnavailable?(!granted || settings.alertSetting != .enabled)
+                onUnavailable?(!granted || !alertsEnabled)
                 guard granted else { return }
                 let action = UNNotificationAction(identifier: "timer.done", title: done, options: [])
                 center.setNotificationCategories([UNNotificationCategory(identifier: "timer", actions: [action], intentIdentifiers: [], options: [])])

@@ -2,7 +2,7 @@ import SwiftUI
 
 enum SettingsTab: String, CaseIterable, Identifiable {
     static var visibleCases: [SettingsTab] {
-        allCases.filter { $0 != .updates || UpdaterManager.isEnabled }
+        allCases.filter { $0 != .updates }
     }
     case basics
     case menuBar
