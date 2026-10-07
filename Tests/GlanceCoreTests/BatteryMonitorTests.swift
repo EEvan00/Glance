@@ -5,16 +5,20 @@ import XCTest
 @MainActor
 final class BatteryMonitorTests: XCTestCase {
     func testConfirmedSystemHoldFlowsIntoStatusAndClearsOnUnplug() async {
+        let gate = ChargingHoldGate()
         let reader = FakeBatteryReader(result: BatteryReading(
             currentCapacity: 80, maxCapacity: 100, isCharging: false,
             isConnectedToPower: true, isPresent: true
         ))
-        let monitor = BatteryMonitor(reader: reader, chargingHoldProvider: { .resumable },
+        let monitor = BatteryMonitor(reader: reader, chargingHoldProvider: { await gate.read() },
                                      lowPowerModeProvider: { false })
         monitor.refresh()
         var iterator = monitor.updates.makeAsyncIterator()
         let initial = await iterator.next()
         XCTAssertFalse(initial?.isChargingPaused == true)
+        // The stream retains only the newest event. Release confirmation only
+        // after consuming the initial reading, independently of executor timing.
+        await gate.release()
         let confirmed = await iterator.next()
         XCTAssertTrue(confirmed?.isChargingPaused == true)
         XCTAssertTrue(confirmed?.canChargeToFull == true)
