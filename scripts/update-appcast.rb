@@ -74,7 +74,7 @@ description = "<p>Glance #{xml_escape(version)} is available.</p>" if descriptio
 pub_date = Time.now.utc.strftime("%a, %d %b %Y %H:%M:%S +0000")
 item = <<~XML.gsub(/^/, "    ").rstrip
   <item>
-    <title>Version #{xml_escape(version)} (Build #{xml_escape(build)}) （English + 中文， 中文在下方）</title>
+    <title>Version #{xml_escape(version)} （English + 中文， 中文在下方）</title>
     <pubDate>#{pub_date}</pubDate>
     <sparkle:version>#{xml_escape(build)}</sparkle:version>
     <sparkle:shortVersionString>#{xml_escape(version)}</sparkle:shortVersionString>

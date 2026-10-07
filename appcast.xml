@@ -7,12 +7,12 @@
     <description>Independent Glance releases.</description>
     <language>en</language>
     <item>
-      <title>Version 1.0.2 (Build 11) （English + 中文， 中文在下方）</title>
+      <title>Version 1.0.2 （English + 中文， 中文在下方）</title>
       <pubDate>Wed, 07 Oct 2026 11:50:22 +0000</pubDate>
       <sparkle:version>11</sparkle:version>
       <sparkle:shortVersionString>1.0.2</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-      <description><![CDATA[<ul><li>Version: 1.0.2 · Internal revision: 2 · Build: 11</li></ul><h2>English</h2><ul><li>Fix MagSafe helper installation for ad-hoc signed releases and prevent indefinite waiting after installation.</li><li>Remove the helper, service and configuration during in-app uninstall; include a standalone helper removal package.</li><li>Show a cleaner version number in About.</li><li>After updating, reinstall the MagSafe helper from the battery menu if prompted.</li></ul><h2>中文</h2><ul><li>修复临时签名发布版的 MagSafe 辅助程序安装，以及安装后持续转圈的问题。</li><li>软件内卸载会清理辅助程序、后台服务及配置，并附带独立卸载包。</li><li>关于页面只显示版本号。</li><li>更新后如有提示，请在电池菜单重新安装 MagSafe 辅助程序。</li></ul>]]></description>
+      <description><![CDATA[<ul><li>Version: 1.0.2</li></ul><h2>English</h2><ul><li>Fix MagSafe helper installation for ad-hoc signed releases and prevent indefinite waiting after installation.</li><li>Remove the helper, service and configuration during in-app uninstall; include a standalone helper removal package.</li><li>Show a cleaner version number in About.</li><li>After updating, reinstall the MagSafe helper from the battery menu if prompted.</li></ul><h2>中文</h2><ul><li>修复临时签名发布版的 MagSafe 辅助程序安装，以及安装后持续转圈的问题。</li><li>软件内卸载会清理辅助程序、后台服务及配置，并附带独立卸载包。</li><li>关于页面只显示版本号。</li><li>更新后如有提示，请在电池菜单重新安装 MagSafe 辅助程序。</li></ul>]]></description>
       <enclosure url="https://github.com/EEvan00/Glance/releases/download/v1.0.2/Glance-1.0.2.dmg"
                  type="application/octet-stream"
                  sparkle:edSignature="fsesc3m4jAgQSuPedgTCWW6c3xucNq4Lro8+6VPTbqczjJFIeejYotn0ehhASWQn9FFo9rN2DExIV2XjI4XyDQ=="
