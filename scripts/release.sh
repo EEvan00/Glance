@@ -13,7 +13,7 @@ require_command() {
     command -v "$1" >/dev/null 2>&1 || { echo "Error: required command '$1' is not available." >&2; exit 1; }
 }
 
-for command in ruby swift hdiutil shasum plutil ditto file lipo otool /usr/bin/codesign /usr/bin/xcrun; do require_command "$command"; done
+for command in ruby python3 swift hdiutil shasum plutil ditto file lipo otool /usr/bin/codesign /usr/bin/xcrun; do require_command "$command"; done
 cd "$ROOT"
 
 APP_NAME="${APP_NAME:-$(read_config app_name)}"
@@ -110,12 +110,27 @@ ditto "$ROOT/dist/Glance.app" "$STAGING_DIR/$APP_NAME.app"
 ln -s /Applications "$STAGING_DIR/Applications"
 DMG_PATH="$OUTPUT_DIR/$DMG_BASENAME-$VERSION.dmg"
 rm -f "$DMG_PATH" "$DMG_PATH.sha256"
-hdiutil create -quiet -volname "$APP_NAME" -srcfolder "$STAGING_DIR" -ov -format UDZO "$DMG_PATH"
+# Lay out the installer on a writable image, then compress it for distribution.
+mkdir -p "$STAGING_DIR/.background"
+swift "$ROOT/scripts/dmg-background.swift" "$STAGING_DIR/.background/install.png"
+python3 -m venv "$TEMP_ROOT/dmg-tools"
+"$TEMP_ROOT/dmg-tools/bin/pip" install --quiet ds-store==1.3.1 mac-alias==2.2.2
+WRITABLE_DMG="$TEMP_ROOT/installer.dmg"
+hdiutil create -quiet -volname "$APP_NAME" -srcfolder "$STAGING_DIR" -ov -format UDRW "$WRITABLE_DMG"
+LAYOUT_MOUNT="$TEMP_ROOT/layout-mount"
+mkdir -p "$LAYOUT_MOUNT"
+hdiutil attach -quiet -nobrowse -mountpoint "$LAYOUT_MOUNT" "$WRITABLE_DMG"
+if ! "$TEMP_ROOT/dmg-tools/bin/python" "$ROOT/scripts/dmg-layout.py" "$LAYOUT_MOUNT" "$APP_NAME"; then
+    hdiutil detach -quiet "$LAYOUT_MOUNT" || true
+    exit 1
+fi
+hdiutil detach -quiet "$LAYOUT_MOUNT"
+hdiutil convert -quiet "$WRITABLE_DMG" -format UDZO -o "$DMG_PATH"
 hdiutil verify "$DMG_PATH"
 MOUNT_POINT="$TEMP_ROOT/mount"
 mkdir -p "$MOUNT_POINT"
 hdiutil attach -quiet -readonly -nobrowse -mountpoint "$MOUNT_POINT" "$DMG_PATH"
-if [[ ! -d "$MOUNT_POINT/$APP_NAME.app" || ! -L "$MOUNT_POINT/Applications" || "$(readlink "$MOUNT_POINT/Applications")" != "/Applications" ]]; then
+if [[ ! -f "$MOUNT_POINT/.DS_Store" || ! -f "$MOUNT_POINT/.background/install.png" || ! -d "$MOUNT_POINT/$APP_NAME.app" || ! -L "$MOUNT_POINT/Applications" || "$(readlink "$MOUNT_POINT/Applications")" != "/Applications" ]]; then
     hdiutil detach -quiet "$MOUNT_POINT" || true
     echo "Error: DMG must contain $APP_NAME.app and an Applications shortcut." >&2
     exit 1

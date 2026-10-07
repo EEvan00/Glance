@@ -274,6 +274,10 @@ plutil -lint "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.magsafe-h
     echo "Error: packaged MagSafe Mach service does not match the expected XPC endpoint." >&2
     exit 1
 }
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :ProgramArguments:0' "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.magsafe-helper.plist")" == "GlanceMagSafeHelper" ]] || {
+    echo "Error: packaged MagSafe helper launch arguments are missing or invalid." >&2
+    exit 1
+}
 codesign --verify --strict --verbose=2 "$CONTENTS/Resources/GlanceMagSafeHelper"
 
 if [[ "$UNIVERSAL_BUILD" == "1" ]]; then

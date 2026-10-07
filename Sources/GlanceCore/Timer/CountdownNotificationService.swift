@@ -33,12 +33,12 @@ final class CountdownNotificationService: NSObject, UNUserNotificationCenterDele
             do {
                 // Remove timers left by a previous process before installing this process's request.
                 let pending: [String] = await withCheckedContinuation { continuation in
-                    center.getPendingNotificationRequests { requests in
+                    center.getPendingNotificationRequests { @Sendable requests in
                         continuation.resume(returning: requests.map(\.identifier))
                     }
                 }
                 let delivered: [String] = await withCheckedContinuation { continuation in
-                    center.getDeliveredNotifications { notifications in
+                    center.getDeliveredNotifications { @Sendable notifications in
                         continuation.resume(returning: notifications.map { $0.request.identifier })
                     }
                 }
@@ -48,7 +48,7 @@ final class CountdownNotificationService: NSObject, UNUserNotificationCenterDele
                 let granted = try await center.requestAuthorization(options: [.alert, .sound])
                 guard !Task.isCancelled else { return }
                 let alertsEnabled: Bool = await withCheckedContinuation { continuation in
-                    center.getNotificationSettings { settings in
+                    center.getNotificationSettings { @Sendable settings in
                         continuation.resume(returning: settings.alertSetting == .enabled)
                     }
                 }

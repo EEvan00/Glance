@@ -36,8 +36,13 @@ struct CountdownView: View {
             } else {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                     ForEach([1, 5, 10, 15, 25, 30], id: \.self) { minutes in
-                        Button(localization.format(.timerMinutes, minutes)) { controller.start(minutes: minutes) }
-                            .buttonStyle(.plain).frame(maxWidth: .infinity).padding(.vertical, 10).systemModuleSurface()
+                        Button { controller.start(minutes: minutes) } label: {
+                            Text(localization.format(.timerMinutes, minutes))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain).systemModuleSurface()
                     }
                 }
                 PopupDivider()
