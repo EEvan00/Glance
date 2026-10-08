@@ -14,7 +14,10 @@ struct WeatherDetailsView: View {
                 Button(action: onBack) { PopupChevron(symbol: "chevron.backward") }
                     .buttonStyle(.plain)
                     .accessibilityLabel(localization.string(.commonBack))
-                Text(localization.string(.weatherTitle)).font(.headline)
+                Button(action: onBack) {
+                    Text(localization.string(.weatherTitle)).font(.headline)
+                }
+                .buttonStyle(.plain)
                 Spacer(minLength: 4)
                 Text((forecast.snapshot?.location ?? localization.string(.weatherCurrentLocation)).uppercased())
                     .font(.caption).foregroundStyle(.primary.opacity(0.78))
@@ -68,14 +71,14 @@ struct WeatherDetailsView: View {
                         forecast.refreshNow(shortcutName: settings.weatherForecastShortcutName)
                     } label: {
                         Image(systemName: "arrow.clockwise").frame(width: 24, height: 24).contentShape(Rectangle())
-                    }.buttonStyle(.plain)
+                    }.buttonStyle(PopupHoverButtonStyle())
                         .accessibilityLabel(localization.string(.weatherRefresh))
                         .disabled(controller.isLoading || forecast.isLoading)
                 }.padding(.bottom, 8)
                 PopupDivider()
                 Button(localization.string(.weatherOpenApp), action: onOpenWeather)
-                    .buttonStyle(.plain)
                     .popupFooterInsets()
+                    .buttonStyle(PopupHoverButtonStyle(fullWidth: true))
             }
         }
         .onAppear { forecast.setVisible(true, shortcutName: settings.weatherForecastShortcutName) }

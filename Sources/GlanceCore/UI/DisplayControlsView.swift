@@ -9,18 +9,34 @@ struct DisplayControlsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: CompactPopupLayout.gap) {
+            HStack(alignment: .top, spacing: CompactPopupLayout.gap) {
                 Button(action: onBack) { PopupChevron(symbol: "chevron.backward") }
                     .buttonStyle(.plain).accessibilityLabel(localization.string(.commonBack))
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(localization.string(.displayTitle)).font(.headline)
-                    Text(controller.presets.first { $0.id == controller.activePreset }?.name ?? controller.displayName)
-                        .font(.caption).foregroundStyle(.primary.opacity(0.78)).lineLimit(1)
-                }
-                Spacer()
-                if !controller.presets.isEmpty {
-                    Button { expandsPresets.toggle() } label: { PopupChevron(symbol: expandsPresets ? "chevron.up" : "chevron.down") }
-                        .buttonStyle(.plain).accessibilityLabel(localization.string(.displayTitle))
+                    Button(action: onBack) {
+                        Text(localization.string(.displayTitle)).font(.headline)
+                            .frame(height: 24, alignment: .leading)
+                    }
+                    .buttonStyle(.plain)
+                    Button {
+                        expandsPresets.toggle()
+                    } label: {
+                        HStack(spacing: CompactPopupLayout.gap) {
+                            Text(controller.presets.first { $0.id == controller.activePreset }?.name ?? controller.displayName)
+                                .font(.caption).foregroundStyle(.primary.opacity(0.78)).lineLimit(1)
+                            Spacer()
+                            if !controller.presets.isEmpty {
+                                Image(systemName: expandsPresets ? "chevron.down" : "chevron.right")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundStyle(.primary.opacity(0.85))
+                                    .frame(width: 28, height: 24)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(controller.presets.isEmpty)
                 }
             }
             if expandsPresets {
@@ -37,7 +53,7 @@ struct DisplayControlsView: View {
                                     Text(preset.name).font(.system(size: 12)).lineLimit(2)
                                     Spacer(minLength: 0)
                                 }.padding(.vertical, 6).contentShape(Rectangle())
-                            }.buttonStyle(.plain)
+                            }.buttonStyle(PopupHoverButtonStyle())
                         }
                     }
                 }.frame(maxHeight: 250)
@@ -55,8 +71,8 @@ struct DisplayControlsView: View {
             VStack(alignment: .leading, spacing: 0) {
                 PopupDivider()
                 Button(localization.string(.displaySettings)) { controller.openSettings() }
-                    .buttonStyle(.plain)
                     .popupFooterInsets()
+                    .buttonStyle(PopupHoverButtonStyle(fullWidth: true))
             }
         }
         .onAppear { controller.refresh(); brightness.refresh() }

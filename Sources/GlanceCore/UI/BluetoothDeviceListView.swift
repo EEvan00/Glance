@@ -56,7 +56,7 @@ struct BluetoothStatusView: View {
             return localization.string(.bluetoothAuthorizationRestricted)
         case .available:
             let devices = controller.connectedDevices
-            if devices.isEmpty { return localization.string(.bluetoothNoConnectedDevices) }
+            if devices.isEmpty { return localization.string(.compactOn) }
             return devices.map(\.name).joined(separator: ", ")
         case .poweredOff:
             return localization.string(.bluetoothOff)
@@ -87,43 +87,37 @@ struct BluetoothDeviceListView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(localization.string(.commonBack))
-                Text(localization.string(.bluetoothTitle))
-                    .font(.headline)
+                Button(action: onBack) {
+                    Text(localization.string(.bluetoothTitle))
+                        .font(.headline)
+                }
+                .buttonStyle(.plain)
                 Spacer()
                 Button(action: { controller.refresh(forceMetadata: true) }) {
                     Image(systemName: "arrow.clockwise")
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PopupHoverButtonStyle())
                 .accessibilityLabel(localization.string(.bluetoothRefresh))
             }
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 10) {
-                    if controller.availability == .available {
-                        if !groups.connected.isEmpty {
-                            section(localization.string(.bluetoothConnected), devices: groups.connected)
-                        }
-                        if !groups.disconnected.isEmpty {
-                            section(localization.string(.bluetoothNotConnected), devices: groups.disconnected)
-                        }
-                    }
-                    message
+            VStack(alignment: .leading, spacing: 10) {
+                if controller.availability == .available && !controller.devices.isEmpty {
+                    section(localization.string(.bluetoothDevices), devices: groups.connected + groups.disconnected)
                 }
+                message
             }
-            .frame(maxHeight: 330)
+            .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: 0) {
                 PopupDivider()
                 Button(localization.string(.bluetoothActionOpenSettings), action: onOpenBluetoothSettings)
-                    .buttonStyle(.plain)
                     .popupFooterInsets()
+                    .buttonStyle(PopupHoverButtonStyle(fullWidth: true))
             }
         }
         .onAppear { controller.activate() }
         .onDisappear { controller.deactivate() }
     }
-
-    @State private var expandedDeviceID: String?
 
     private func section(_ title: String, devices: [BluetoothDevice]) -> some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -133,50 +127,47 @@ struct BluetoothDeviceListView: View {
             ForEach(devices) { device in
                 VStack(alignment: .leading, spacing: 8) {
                     Button {
-                        expandedDeviceID = expandedDeviceID == device.id ? nil : device.id
+                        controller.toggleConnection(to: device)
                     } label: {
                         HStack(spacing: 10) {
-                            Image(systemName: BluetoothDevicePresentation.symbolName(for: device))
-                                .font(.system(size: CompactPopupLayout.moduleIconSize))
-                                .frame(width: 16)
-                                .foregroundStyle(.primary.opacity(0.78))
+                            Group {
+                                if controller.queuedConnectionDevice?.id == device.id || (controller.connectionDeviceID == device.id && controller.cancellingConnectionDeviceID != device.id) {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                        .frame(width: 22, height: 22)
+                                        .background(Color.gray.opacity(0.55), in: Circle())
+                                } else {
+                                    Image(systemName: BluetoothDevicePresentation.symbolName(for: device))
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(.white)
+                                        .frame(width: 22, height: 22)
+                                        .background(device.isConnected ? Color.blue : Color.gray.opacity(0.55), in: Circle())
+                                }
+                            }
+                            .frame(width: 22, height: 22)
                             Text(device.name)
                                 .lineLimit(1)
                                 .truncationMode(.tail)
                             Spacer()
-                            Text(device.isConnected ? localization.string(.bluetoothConnected) : localization.string(.bluetoothNotConnected))
-                                .font(.caption)
-                                .foregroundStyle(.primary.opacity(0.78))
-                            PopupChevron(symbol: expandedDeviceID == device.id ? "chevron.up" : "chevron.down")
                         }
                         .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(PopupHoverButtonStyle())
+                    .accessibilityLabel("\(device.name), \(localization.string(device.isConnected ? .bluetoothDisconnect : .bluetoothConnect))")
 
-                    if expandedDeviceID == device.id {
-                        HStack(spacing: 8) {
-                            Button(localization.string(device.isConnected ? .bluetoothDisconnect : .bluetoothConnect)) {
-                                controller.toggleConnection(to: device)
-                            }
-                            .disabled(controller.connectionDeviceID != nil)
-                            if controller.connectionDeviceID == device.id {
-                                ProgressView().controlSize(.small)
-                            }
+                    if controller.connectionFailedDeviceID == device.id {
+                        Text(localization.string(.bluetoothConnectionFailed))
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                    if device.isConnected && BluetoothDevicePresentation.isAudioDevice(device) {
+                        Text(localization.string(.volumeOutputTitle))
+                            .font(.caption.weight(.semibold))
+                        OutputDeviceList(settings: settings, devices: volume.outputDevices, onSelect: onSelectOutputDevice)
+                        Button(localization.string(BluetoothDevicePresentation.isAirPods(device) ? .bluetoothDeviceSettings : .bluetoothActionOpenSettings)) {
+                            onOpenDeviceSettings(device)
                         }
-                        if controller.connectionFailedDeviceID == device.id {
-                            Text(localization.string(.bluetoothConnectionFailed))
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                        }
-                        if device.isConnected && BluetoothDevicePresentation.isAudioDevice(device) {
-                            Text(localization.string(.volumeOutputTitle))
-                                .font(.caption.weight(.semibold))
-                            OutputDeviceList(settings: settings, devices: volume.outputDevices, onSelect: onSelectOutputDevice)
-                            Button(localization.string(BluetoothDevicePresentation.isAirPods(device) ? .bluetoothDeviceSettings : .bluetoothActionOpenSettings)) {
-                                onOpenDeviceSettings(device)
-                            }
-                                .buttonStyle(.plain)
-                        }
+                        .buttonStyle(PopupHoverButtonStyle())
                     }
                 }
             }

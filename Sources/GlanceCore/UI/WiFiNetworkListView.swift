@@ -28,31 +28,30 @@ struct WiFiNetworkListView: View {
             )
             .disabled(controller.state == .noInterface || hotspots.connectingID != nil || controller.state.isConnectionFlow || controller.isDisconnecting)
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 10) {
-                    PersonalHotspotSection(
-                        controller: hotspots,
-                        currentSSID: currentHotspotSSID,
-                        disabled: isConnectingAnotherNetwork || wifi.state == .off,
-                        onDisconnect: { controller.disconnect() }
-                    ) { connectionDetails }
-                    knownNetworksSection
-                    otherNetworksSection
-                    if controller.disconnectFailed {
-                        Text(localization.string(.wifiDisconnectFailed))
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                    }
-                    stateMessage
+            VStack(alignment: .leading, spacing: 10) {
+                PersonalHotspotSection(
+                    controller: hotspots,
+                    currentSSID: currentHotspotSSID,
+                    disabled: wifi.state == .off,
+                    onDisconnect: { controller.disconnect() },
+                    onSelect: { controller.selectHotspot($0) }
+                ) { connectionDetails }
+                knownNetworksSection
+                otherNetworksSection
+                if controller.disconnectFailed {
+                    Text(localization.string(.wifiDisconnectFailed))
+                        .font(.caption)
+                        .foregroundStyle(.red)
                 }
+                stateMessage
             }
-            .frame(maxHeight: 330)
+            .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: 0) {
                 PopupDivider()
                 Button(localization.string(.wifiActionOpenSettings), action: onOpenWiFiSettings)
-                    .buttonStyle(.plain)
                     .popupFooterInsets()
+                    .buttonStyle(PopupHoverButtonStyle(fullWidth: true))
             }
         }
         .onAppear {
@@ -79,13 +78,16 @@ struct WiFiNetworkListView: View {
             .buttonStyle(.plain)
             .accessibilityLabel(localization.string(.commonBack))
 
-            Text(localization.string(.wifiTitle))
-                .font(.headline)
+            Button(action: onBack) {
+                Text(localization.string(.wifiTitle))
+                    .font(.headline)
+            }
+            .buttonStyle(.plain)
             Spacer()
             Button(action: { controller.refresh(nameAccess: wifi.nameAccess) }) {
                 Image(systemName: "arrow.clockwise")
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PopupHoverButtonStyle())
             .disabled(controller.state.isScanning)
             .accessibilityLabel(localization.string(.wifiRefresh))
         }
@@ -145,7 +147,7 @@ struct WiFiNetworkListView: View {
                 }
                 .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PopupHoverButtonStyle())
             .font(.caption)
             .accessibilityLabel(localization.string(showsDetails ? .wifiDetailsHide : .wifiDetailsShow))
             if showsDetails { WiFiDetailsView(details: controller.details) }
@@ -172,7 +174,7 @@ struct WiFiNetworkListView: View {
                 }
                 .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PopupHoverButtonStyle())
             .accessibilityAddTraits(showsOtherNetworks ? [.isSelected] : [])
             if showsOtherNetworks {
                 ForEach(networkGroups.other) { network in networkRow(network) }
@@ -184,13 +186,7 @@ struct WiFiNetworkListView: View {
     private var stateMessage: some View {
         switch controller.state {
         case .scanning:
-            HStack(spacing: 8) {
-                ProgressView()
-                    .controlSize(.small)
-                Text(localization.string(.wifiScanning))
-            }
-            .font(.caption)
-            .foregroundStyle(.primary.opacity(0.78))
+            EmptyView()
         case .ready where controller.credentialIssue == .saveFailed:
             Text(localization.string(.wifiPasswordSaveFailed))
                 .font(.caption)
@@ -272,16 +268,28 @@ struct WiFiNetworkListView: View {
 
     private func networkRow(_ network: WiFiNetwork) -> some View {
         Button {
-            if network.isConnected { controller.disconnect() }
-            else { controller.beginConnection(to: network) }
+            controller.selectNetwork(network)
         } label: {
             HStack(spacing: 10) {
-                Image(systemName: "wifi.circle.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(Color.white, network.isConnected ? Color.blue : Color.gray.opacity(0.55))
-                    .frame(width: 22, height: 22)
+                Group {
+                    if controller.state == .connecting(network.identity) || controller.queuedNetworkIdentity == network.identity {
+                        ProgressView()
+                                        .controlSize(.small)
+                                        .frame(width: 22, height: 22)
+                                        .background(Color.gray.opacity(0.55), in: Circle())
+                    } else {
+                        Image(
+                            systemName: "wifi.circle.fill",
+                            variableValue: Double(StatusMappings.wifiBars(rssi: network.rssi)) / 3
+                        )
+                            .resizable()
+                            .scaledToFit()
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(Color.white, network.isConnected ? Color.blue : Color.gray.opacity(0.55))
+                            .frame(width: 22, height: 22)
+                    }
+                }
+                .frame(width: 22, height: 22)
                 Text(displaySSID(network.ssid))
                     .lineLimit(1)
                     .truncationMode(.tail)
@@ -292,14 +300,10 @@ struct WiFiNetworkListView: View {
                         .foregroundStyle(.primary.opacity(0.78))
                         .accessibilityHidden(true)
                 }
-                if controller.state == .connecting(network.identity) {
-                    ProgressView().controlSize(.small)
-                }
             }
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .disabled(isConnectingAnotherNetwork)
+        .buttonStyle(PopupHoverButtonStyle())
         .accessibilityLabel(networkAccessibilityLabel(network))
     }
 
@@ -387,7 +391,7 @@ private struct WiFiDetailsView: View {
             Button(showsMore ? localization.string(.wifiDetailsLess) : localization.string(.wifiDetailsMore)) {
                 showsMore.toggle()
             }
-            .buttonStyle(.plain)
+            .buttonStyle(PopupHoverButtonStyle())
         }
         .padding(.leading, 26)
         .font(.caption)
@@ -405,7 +409,7 @@ private struct WiFiDetailsView: View {
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(value, forType: .string)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PopupHoverButtonStyle())
                 .textSelection(.enabled)
                 .accessibilityLabel("\(localization.string(label)): \(value)")
             } else {

@@ -395,6 +395,7 @@ struct StatusPopoverView: View {
                         panel = .wifi(showDetails: false)
                     }
                 }
+                .frame(width: CompactPopupLayout.span(5))
                 .systemModuleSurface()
                 VStack(spacing: 0) {
                     cell(symbol: "bluetooth", title: localization.string(.bluetoothTitle), subtitle: bluetoothSummary) {
@@ -415,6 +416,7 @@ struct StatusPopoverView: View {
                         }
                     }
                 }
+                .frame(width: CompactPopupLayout.span(5))
                 .systemModuleSurface()
             }
             VStack(spacing: 0) {
@@ -540,19 +542,12 @@ struct StatusPopoverView: View {
     }
 
     private var bluetoothSummary: String {
-        if let device = store.bluetoothDevices.connectedDevices.first { return device.name }
-        let key: LocalizationKey
-        switch store.bluetoothDevices.availability {
-        case .available: key = .compactDisconnected
-        case .poweredOff: key = .compactOff
-        case .idle, .initializing: key = .compactLoading
-        case .authorizationNotDetermined: key = .compactNoAccess
-        case .authorizationDenied: key = .compactNoAccess
-        case .authorizationRestricted: key = .compactNoAccess
-        case .failed: key = .compactUnavailable
-        case .unavailable: key = .compactUnavailable
-        }
-        return localization.string(key)
+        BluetoothSummaryPresentation.text(
+            devices: store.bluetoothDevices.devices,
+            availability: store.bluetoothDevices.availability,
+            localization: localization,
+            outputs: store.liveVolume.outputDevices
+        )
     }
 
     private var performanceCPUText: String {
@@ -626,10 +621,11 @@ struct StatusPopoverView: View {
                 }.frame(width: CompactPopupLayout.unit)
                     .offset(x: 1)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.system(size: 12, weight: .semibold)).lineLimit(1).minimumScaleFactor(settings.automaticallyShrinksCardText ? 0.85 : 1)
-                    Text(subtitle).font(.system(size: 10)).foregroundStyle(.primary.opacity(0.78)).lineLimit(1).minimumScaleFactor(settings.automaticallyShrinksCardText ? 0.85 : 1)
+                    Text(title).font(.system(size: 12, weight: .semibold)).lineLimit(1).minimumScaleFactor(settings.automaticallyShrinksCardText ? 0.85 : 1).fixedSize(horizontal: false, vertical: true)
+                    Text(subtitle).font(.system(size: 10)).foregroundStyle(.primary.opacity(0.78)).lineLimit(1).minimumScaleFactor(settings.automaticallyShrinksCardText ? 0.85 : 1).fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .layoutPriority(1)
                 .padding(.leading, CompactPopupLayout.gap)
                 PopupChevron(alignsToModuleEdge: true, fitsSymbolWidth: true)
                     .padding(.leading, CompactPopupLayout.gap)

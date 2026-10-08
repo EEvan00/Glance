@@ -31,6 +31,9 @@ final class PersonalHotspotController: ObservableObject {
     @Published private(set) var failed = false
     private let browser = STHotspotBrowser()
     private var active = false
+    @Published private(set) var isCancelling = false
+    private var afterCancellation: (() -> Void)?
+    private var requestGeneration: UInt64 = 0
     var didConnect: (() -> Void)?
 
     init() {
@@ -52,10 +55,33 @@ final class PersonalHotspotController: ObservableObject {
 
     func stop() {
         active = false
+        requestGeneration &+= 1
         browser.stop()
         devices = []
         connectingID = nil
+        isCancelling = false
+        afterCancellation = nil
         failed = false
+    }
+
+    func cancelConnection(then action: (() -> Void)? = nil) {
+        guard active, connectingID != nil else { return }
+        afterCancellation = action
+        guard !isCancelling else { return }
+        isCancelling = true
+        requestGeneration &+= 1
+        let generation = requestGeneration
+        browser.cancelConnection { [weak self] in
+            MainActor.assumeIsolated {
+                guard let self, self.active, self.requestGeneration == generation else { return }
+                self.connectingID = nil
+                self.isCancelling = false
+                self.failed = false
+                let action = self.afterCancellation
+                self.afterCancellation = nil
+                action?()
+            }
+        }
     }
 
     func connect(_ device: PersonalHotspot) {

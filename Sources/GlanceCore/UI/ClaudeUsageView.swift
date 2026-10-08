@@ -11,7 +11,10 @@ struct ClaudeUsageView: View {
                 HStack(spacing: CompactPopupLayout.gap) {
                     Button(action: onBack) { PopupChevron(symbol: "chevron.backward") }
                         .buttonStyle(.plain).accessibilityLabel(localization.string(.commonBack))
-                    Text("Claude").font(.headline)
+                    Button(action: onBack) {
+                        Text("Claude").font(.headline)
+                    }
+                    .buttonStyle(.plain)
                     Spacer()
                     if controller.isLoading { ProgressView().controlSize(.small) }
                 }
@@ -58,7 +61,7 @@ struct ClaudeUsageView: View {
                         .frame(width: 24, height: 24)
                         .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PopupHoverButtonStyle())
                 .accessibilityLabel(localization.string(.codexRefreshNow))
                 .disabled(controller.isLoading)
             }

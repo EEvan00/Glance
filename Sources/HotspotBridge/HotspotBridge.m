@@ -12,10 +12,13 @@
 @property(nonatomic, strong) NSObject *session;
 @property(nonatomic, strong) NSDictionary<NSString *, id> *devices;
 @property(nonatomic) NSUInteger generation;
+@property(nonatomic, copy) NSString *connectionSSID;
+@property(nonatomic, strong) dispatch_queue_t associationQueue;
 @end
 @implementation STHotspotBrowser
 - (BOOL)start {
     if (self.session) return YES;
+    if (!self.associationQueue) self.associationQueue=dispatch_queue_create("Glance.HotspotAssociation", DISPATCH_QUEUE_SERIAL);
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         dlopen("/System/Library/PrivateFrameworks/Sharing.framework/Sharing", RTLD_LAZY);
@@ -69,10 +72,24 @@
         if(self.devicesChanged) self.devicesChanged(rows);
     });
 }
+- (void)cancelConnectionWithCompletion:(void (^)(void))completion {
+    NSUInteger cancellationGeneration=++self.generation;
+    NSString *cancelledSSID=self.connectionSSID;
+    dispatch_async(self.associationQueue, ^{
+        __block BOOL current;
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            current=self.session && cancellationGeneration==self.generation;
+        });
+        CWInterface *interface=CWWiFiClient.sharedWiFiClient.interface;
+        if(current && cancelledSSID.length && [interface.ssid isEqualToString:cancelledSSID]) [interface disassociate];
+        dispatch_async(dispatch_get_main_queue(), completion);
+    });
+}
 - (void)connectIdentifier:(NSString *)identifier completion:(void (^)(BOOL))completion {
     id device=self.devices[identifier];
     if(!device || !self.session) {completion(NO);return;}
     NSUInteger generation=++self.generation;
+    self.connectionSSID=nil;
     __block BOOL finished=NO;
     __block BOOL associating=NO;
     __block BOOL receivedInfo=NO;
@@ -95,7 +112,8 @@
                     }
                 } @catch(NSException *exception) {}
                 if(![name isKindOfClass:NSString.class] || !name.length || ![password isKindOfClass:NSString.class]) {finish(NO);return;}
-                dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED,0), ^{
+                self.connectionSSID=name;
+                dispatch_async(self.associationQueue, ^{
                     CWInterface *interface=CWWiFiClient.sharedWiFiClient.interface;
                     BOOL success=NO;
                     for(int attempt=0;attempt<4;attempt++) {
@@ -112,12 +130,27 @@
                             });
                             if(cancelled) return;
                             BOOL accepted=[interface associateToNetwork:target password:password error:nil];
+                            __block BOOL ownsCancellation;
+                            dispatch_sync(dispatch_get_main_queue(),^{
+                                cancelled=generation!=self.generation;
+                                ownsCancellation=self.session && self.generation==generation+1;
+                            });
+                            if(cancelled) {
+                                if(ownsCancellation && [interface.ssid isEqualToString:name]) [interface disassociate];
+                                return;
+                            }
                             // Instant Hotspot can take time to become ready. Verify
                             // association even when CoreWLAN returns an error.
                             for (int check=0;check<20;check++) {
                                 if ([interface.ssid isEqualToString:name]) { success=YES; break; }
-                                dispatch_sync(dispatch_get_main_queue(),^{cancelled=finished || generation!=self.generation;});
-                                if(cancelled) return;
+                                dispatch_sync(dispatch_get_main_queue(),^{
+                                    cancelled=finished || generation!=self.generation;
+                                    ownsCancellation=self.session && self.generation==generation+1;
+                                });
+                                if(cancelled) {
+                                    if(ownsCancellation && [interface.ssid isEqualToString:name]) [interface disassociate];
+                                    return;
+                                }
                                 [NSThread sleepForTimeInterval:0.25];
                             }
                             if(success) break;

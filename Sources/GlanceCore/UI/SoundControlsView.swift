@@ -12,7 +12,10 @@ struct SoundControlsView: View {
             HStack(spacing: CompactPopupLayout.gap) {
                 Button(action: onBack) { PopupChevron(symbol: "chevron.backward") }
                     .buttonStyle(.plain).accessibilityLabel(localization.string(.commonBack))
-                Text(localization.string(.soundTitle)).font(.headline)
+                Button(action: onBack) {
+                    Text(localization.string(.soundTitle)).font(.headline)
+                }
+                .buttonStyle(.plain)
             }
             CompactVolumeControlsView(store: store)
             PopupDivider()
@@ -21,8 +24,8 @@ struct SoundControlsView: View {
             VStack(alignment: .leading, spacing: 0) {
                 PopupDivider()
                 Button(localization.string(.soundSettings), action: onOpenSettings)
-                    .buttonStyle(.plain)
                     .popupFooterInsets()
+                    .buttonStyle(PopupHoverButtonStyle(fullWidth: true))
             }
         }
     }

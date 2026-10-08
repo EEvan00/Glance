@@ -171,6 +171,9 @@ final class BluetoothDeviceController: ObservableObject {
     private var isActive = false
     private var requestGate = AsyncRequestGate()
     private var periodicRefreshTask: Task<Void, Never>?
+    @Published private(set) var queuedConnectionDevice: BluetoothDevice?
+    @Published private(set) var cancellingConnectionDeviceID: String?
+    private var connectionDesiredState = false
     private var connectionRefreshTask: Task<Void, Never>?
     private var connectionGeneration = 0
     private var applicationObserver: NSObjectProtocol?
@@ -225,6 +228,8 @@ final class BluetoothDeviceController: ObservableObject {
         connectionRefreshTask?.cancel()
         connectionRefreshTask = nil
         connectionDeviceID = nil
+        queuedConnectionDevice = nil
+        cancellingConnectionDeviceID = nil
         _ = requestGate.advance()
         periodicRefreshTask?.cancel()
         periodicRefreshTask = nil
@@ -258,6 +263,17 @@ final class BluetoothDeviceController: ObservableObject {
     }
 
     func toggleConnection(to device: BluetoothDevice) {
+        if let busyID = connectionDeviceID {
+            if queuedConnectionDevice?.id == device.id {
+                queuedConnectionDevice = nil
+                return
+            }
+            queuedConnectionDevice = busyID == device.id ? nil : device
+            if let busy = devices.first(where: { $0.id == busyID }) {
+                cancelConnection(to: busy)
+            }
+            return
+        }
         guard isActive, availability == .available, connectionDeviceID == nil,
               let current = devices.first(where: { $0.id == device.id }) else { return }
         connectionDeviceID = current.id
@@ -265,6 +281,7 @@ final class BluetoothDeviceController: ObservableObject {
         connectionGeneration += 1
         let generation = connectionGeneration
         let desired = !current.isConnected
+        connectionDesiredState = desired
         if !desired { volumeRestorer.capture(current) }
         _ = requestGate.advance()
         connections.setConnected(desired, deviceID: current.id) { [weak self] success in
@@ -278,6 +295,33 @@ final class BluetoothDeviceController: ObservableObject {
                 }
                 self.connectionRefreshTask = Task { @MainActor [weak self] in
                     await self?.confirmConnection(deviceID: current.id, desired: desired, generation: generation)
+                }
+            }
+        }
+    }
+
+    private func cancelConnection(to device: BluetoothDevice) {
+        guard isActive, connectionDeviceID == device.id, connectionDesiredState else { return }
+        connectionDesiredState = false
+        cancellingConnectionDeviceID = device.id
+        connectionGeneration += 1
+        let generation = connectionGeneration
+        connectionRefreshTask?.cancel()
+        connectionRefreshTask = nil
+        _ = requestGate.advance()
+        connections.setConnected(false, deviceID: device.id) { [weak self] success in
+            Task { @MainActor [weak self] in
+                guard let self, self.isActive, self.connectionGeneration == generation else { return }
+                if success {
+                    self.connectionRefreshTask = Task { @MainActor [weak self] in
+                        await self?.confirmConnection(deviceID: device.id, desired: false, generation: generation)
+                    }
+                } else {
+                    self.connectionDeviceID = nil
+                    self.connectionFailedDeviceID = device.id
+                    self.queuedConnectionDevice = nil
+                    self.cancellingConnectionDeviceID = nil
+                    self.refresh()
                 }
             }
         }
@@ -311,7 +355,14 @@ final class BluetoothDeviceController: ObservableObject {
         }
         connectionDeviceID = nil
         connectionFailedDeviceID = confirmed ? nil : deviceID
+        cancellingConnectionDeviceID = nil
         connectionRefreshTask = nil
+        if confirmed, let queued = queuedConnectionDevice {
+            queuedConnectionDevice = nil
+            toggleConnection(to: queued)
+        } else {
+            queuedConnectionDevice = nil
+        }
     }
 
     private func receiveSystemState(

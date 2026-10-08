@@ -52,7 +52,7 @@ struct OutputDeviceList: View {
                         .padding(.vertical, 5)
                         .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(PopupHoverButtonStyle())
                 }
             }
         }

@@ -424,3 +424,6 @@
 
 "wifi.knownNetworks" = "已知网络";
 "wifi.disconnectFailed" = "无法断开网络连接，请重试。";
+
+"compact.on" = "开启";
+"bluetooth.devices" = "设备";

@@ -424,3 +424,6 @@
 
 "wifi.knownNetworks" = "Known Networks";
 "wifi.disconnectFailed" = "Could not disconnect from the network. Try again.";
+
+"compact.on" = "Attivo";
+"bluetooth.devices" = "Dispositivi";

@@ -312,6 +312,58 @@ private final class BluetoothStateMonitorStub: BluetoothStateMonitoring {
 
 extension WirelessListModelsTests {
     @MainActor
+    func testSelectingAnotherBluetoothRowCancelsOldTargetAndStartsLatestSelection() async {
+        let first = BluetoothDevice(id: "first", name: "First", kind: .peripheral, isConnected: false)
+        let second = BluetoothDevice(id: "second", name: "Second", kind: .peripheral, isConnected: false)
+        let reader = BluetoothReaderStub(result: .success([first, second]))
+        let connections = BluetoothConnectionStub()
+        let notifications = NotificationCenter()
+        let controller = BluetoothDeviceController(worker: reader, connections: connections,
+            stateMonitor: BluetoothStateMonitorStub(authorization: .allowed, managerState: .poweredOn),
+            notificationCenter: notifications, workspaceNotificationCenter: notifications)
+        controller.activate()
+        defer { controller.deactivate() }
+        for _ in 0..<100 where controller.devices.isEmpty { await Task.yield() }
+        controller.toggleConnection(to: first)
+        controller.toggleConnection(to: second)
+        XCTAssertEqual(connections.requests.map { $0.connected }, [true, false])
+        XCTAssertEqual(controller.cancellingConnectionDeviceID, first.id)
+        XCTAssertEqual(controller.queuedConnectionDevice?.id, second.id)
+        connections.completion?(true)
+        for _ in 0..<100 where connections.requests.count < 3 { await Task.yield() }
+        XCTAssertEqual(connections.requests.last?.deviceID, second.id)
+        XCTAssertEqual(connections.requests.last?.connected, true)
+        XCTAssertEqual(controller.connectionDeviceID, second.id)
+    }
+
+    @MainActor
+    func testSecondClickCancelsBluetoothConnectionAndIgnoresLateConnectReply() async {
+        let device = BluetoothDevice(id: "earbuds", name: "Earbuds", kind: .audio, isConnected: false)
+        let reader = BluetoothReaderStub(result: .success([device]))
+        let connections = BluetoothConnectionStub()
+        let notifications = NotificationCenter()
+        let controller = BluetoothDeviceController(worker: reader, connections: connections,
+            stateMonitor: BluetoothStateMonitorStub(authorization: .allowed, managerState: .poweredOn),
+            notificationCenter: notifications, workspaceNotificationCenter: notifications)
+        controller.activate()
+        defer { controller.deactivate() }
+        for _ in 0..<100 where controller.devices.isEmpty { await Task.yield() }
+        controller.toggleConnection(to: device)
+        let oldReply = connections.completion
+        controller.toggleConnection(to: device)
+        XCTAssertEqual(connections.requests.map { $0.connected }, [true, false])
+        oldReply?(true)
+        for _ in 0..<20 { await Task.yield() }
+        XCTAssertEqual(controller.connectionDeviceID, device.id)
+        XCTAssertEqual(reader.readCount, 1)
+        connections.completion?(true)
+        for _ in 0..<100 where controller.connectionDeviceID != nil { await Task.yield() }
+        XCTAssertNil(controller.connectionDeviceID)
+        XCTAssertFalse(controller.devices[0].isConnected)
+        XCTAssertNil(controller.connectionFailedDeviceID)
+    }
+
+    @MainActor
     func testBluetoothConnectionWaitsForChangedSnapshot() async throws {
         let connected = BluetoothDevice(id: "earbuds", name: "Earbuds", kind: .audio, isConnected: true)
         let disconnected = BluetoothDevice(id: "earbuds", name: "Earbuds", kind: .audio, isConnected: false)

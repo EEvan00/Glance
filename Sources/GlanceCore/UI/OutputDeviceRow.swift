@@ -41,7 +41,7 @@ struct OutputDeviceRow: View {
             .padding(.vertical, 3)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(PopupHoverButtonStyle())
         .help(
             device.isCurrent
                 ? localization.string(.volumeOutputCurrent)

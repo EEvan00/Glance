@@ -392,6 +392,8 @@ final class WiFiNetworkController: ObservableObject {
     private var scanGate = AsyncRequestGate()
     private var connectionGate = AsyncRequestGate()
     private var pendingNetwork: WiFiNetwork?
+    private var afterCancellation: (() -> Void)?
+    @Published private(set) var queuedNetworkIdentity: WiFiNetworkIdentity?
     private var isActive = false
     private var periodicRefreshTask: Task<Void, Never>?
     private var lastNameAccess: WiFiNameAccess = .notDetermined
@@ -421,6 +423,8 @@ final class WiFiNetworkController: ObservableObject {
         periodicRefreshTask?.cancel()
         periodicRefreshTask = nil
         pendingNetwork = nil
+        afterCancellation = nil
+        queuedNetworkIdentity = nil
         passwordPromptNetwork = nil
         credentialIssue = nil
         if state.isConnectionFlow {
@@ -485,6 +489,53 @@ final class WiFiNetworkController: ObservableObject {
         }
     }
 
+    func selectNetwork(_ network: WiFiNetwork) {
+        if queuedNetworkIdentity == network.identity {
+            queuedNetworkIdentity = nil
+            afterCancellation = nil
+            return
+        }
+        if hotspots.connectingID != nil {
+            hotspots.cancelConnection { [weak self] in self?.selectNetwork(network) }
+        } else if isDisconnecting {
+            queuedNetworkIdentity = network.identity
+            afterCancellation = { [weak self] in self?.selectNetwork(network) }
+        } else if case let .connecting(identity) = state {
+            queuedNetworkIdentity = identity == network.identity ? nil : network.identity
+            afterCancellation = identity == network.identity ? nil : { [weak self] in self?.selectNetwork(network) }
+            if let pendingNetwork { cancelConnection(to: pendingNetwork) }
+        } else if network.isConnected {
+            disconnect()
+        } else {
+            beginConnection(to: network)
+        }
+    }
+
+    func selectHotspot(_ device: PersonalHotspot) {
+        queuedNetworkIdentity = nil
+        if let busy = hotspots.connectingID {
+            hotspots.cancelConnection(then: busy == device.id ? nil : { [weak self] in self?.selectHotspot(device) })
+        } else if isDisconnecting {
+            afterCancellation = { [weak self] in self?.selectHotspot(device) }
+        } else if case .connecting = state, let pendingNetwork {
+            afterCancellation = { [weak self] in self?.selectHotspot(device) }
+            cancelConnection(to: pendingNetwork)
+        } else {
+            hotspots.connect(device)
+        }
+    }
+
+    func cancelConnection(to network: WiFiNetwork) {
+        guard isActive, state == .connecting(network.identity) else { return }
+        _ = connectionGate.advance()
+        pendingNetwork = nil
+        passwordPromptNetwork = nil
+        credentialIssue = nil
+        state = .idle
+        // The serial worker disconnects after an in-flight synchronous association returns.
+        disconnect()
+    }
+
     func disconnect() {
         guard isActive, !state.isConnectionFlow, !isDisconnecting, hotspots.connectingID == nil else { return }
         let request = connectionGate.advance()
@@ -498,6 +549,10 @@ final class WiFiNetworkController: ObservableObject {
                 self.disconnectFailed = !success
                 self.state = .idle
                 self.connectionDidChange()
+                let action = self.afterCancellation
+                self.afterCancellation = nil
+                self.queuedNetworkIdentity = nil
+                if success { action?() }
             }
         }
     }

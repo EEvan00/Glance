@@ -15,8 +15,11 @@ struct BatteryDetailsView: View {
                 Button(action: onBack) { PopupChevron(symbol: "chevron.backward") }
                     .buttonStyle(.plain)
                     .accessibilityLabel(localization.string(.commonBack))
-                Text(StatusPresentation.batteryTitle(battery, localization: localization))
-                    .font(.headline)
+                Button(action: onBack) {
+                    Text(StatusPresentation.batteryTitle(battery, localization: localization))
+                        .font(.headline)
+                }
+                .buttonStyle(.plain)
                 Spacer()
             }
             Label(StatusPresentation.batterySubtitle(battery, localization: localization),
@@ -43,7 +46,7 @@ struct BatteryDetailsView: View {
                     .foregroundStyle(result == .failed ? Color.red : Color.secondary)
             }
             Button(localization.string(.batteryActionOpenSettings), action: onOpenSettings)
-                .buttonStyle(.plain)
+                .buttonStyle(PopupHoverButtonStyle(fullWidth: true))
             Divider()
             Text(localization.string(.magSafeTitle))
                 .font(.headline)

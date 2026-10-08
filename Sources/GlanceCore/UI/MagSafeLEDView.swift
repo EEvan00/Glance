@@ -29,8 +29,11 @@ struct MagSafeLEDView: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(localization.string(.commonBack))
-            Text(localization.string(.magSafeTitle))
-                .font(.headline)
+            Button(action: onBack) {
+                Text(localization.string(.magSafeTitle))
+                    .font(.headline)
+            }
+            .buttonStyle(.plain)
             Spacer()
         }
     }

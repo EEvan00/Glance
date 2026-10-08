@@ -6,6 +6,7 @@ struct PersonalHotspotSection<Details: View>: View {
     let currentSSID: String?
     let disabled: Bool
     let onDisconnect: () -> Void
+    let onSelect: (PersonalHotspot) -> Void
     @ViewBuilder let details: () -> Details
 
     private var visibleDevices: [PersonalHotspot] {
@@ -24,21 +25,29 @@ struct PersonalHotspotSection<Details: View>: View {
                 .foregroundStyle(.secondary)
             ForEach(visibleDevices) { device in
                 Button {
-                    if device.name == currentSSID { onDisconnect() }
-                    else { controller.connect(device) }
+                    if device.name == currentSSID && controller.connectingID == nil { onDisconnect() }
+                    else { onSelect(device) }
                 } label: {
                     HStack(spacing: 8) {
-                        Image(systemName: "personalhotspot.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(Color.white, device.name == currentSSID ? Color.blue : Color.gray.opacity(0.55))
-                            .frame(width: 22, height: 22)
+                        Group {
+                            if controller.connectingID == device.id && !controller.isCancelling {
+                                ProgressView()
+                                        .controlSize(.small)
+                                        .frame(width: 22, height: 22)
+                                        .background(Color.gray.opacity(0.55), in: Circle())
+                            } else {
+                                Image(systemName: "personalhotspot.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .symbolRenderingMode(.palette)
+                                    .foregroundStyle(Color.white, device.name == currentSSID ? Color.blue : Color.gray.opacity(0.55))
+                                    .frame(width: 22, height: 22)
+                            }
+                        }
+                        .frame(width: 22, height: 22)
                         Text(device.name).lineLimit(1).truncationMode(.tail).foregroundStyle(.primary)
                         Spacer(minLength: 4)
-                        if controller.connectingID == device.id {
-                            ProgressView().controlSize(.small)
-                        } else {
+                        if controller.connectingID != device.id {
                             if let signal = device.signal {
                                 HStack(alignment: .bottom, spacing: 2) {
                                     ForEach(0..<4) { index in
@@ -62,8 +71,8 @@ struct PersonalHotspotSection<Details: View>: View {
                     .foregroundStyle(.secondary)
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
-                .disabled(disabled || controller.connectingID != nil)
+                .buttonStyle(PopupHoverButtonStyle())
+                .disabled(disabled && controller.connectingID == nil)
                 if device.name == currentSSID { details() }
             }
             if controller.failed {

@@ -10,7 +10,10 @@ struct PerformanceDetailsView: View {
             HStack {
                 Button(action: onBack) { PopupChevron(symbol: "chevron.backward") }
                     .buttonStyle(.plain).accessibilityLabel(localization.string(.commonBack))
-                Text(localization.string(.performanceTitle)).font(.headline)
+                Button(action: onBack) {
+                    Text(localization.string(.performanceTitle)).font(.headline)
+                }
+                .buttonStyle(.plain)
                 Spacer()
             }
             if let snapshot = controller.snapshot {
@@ -28,7 +31,7 @@ struct PerformanceDetailsView: View {
             VStack(alignment: .leading, spacing: 0) {
                 PopupDivider()
                 Button(localization.string(.performanceOpenActivityMonitor)) { controller.openActivityMonitor() }
-                    .buttonStyle(.plain).popupFooterInsets()
+                    .popupFooterInsets().buttonStyle(PopupHoverButtonStyle(fullWidth: true))
             }
         }
     }

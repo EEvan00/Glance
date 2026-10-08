@@ -337,7 +337,7 @@ final class SettingsStore: ObservableObject {
         self.scrollToAdjustVolume = defaults.object(forKey: "scrollToAdjustVolume") as? Bool ?? false
         self.screenshotMode = defaults.string(forKey: "screenshotMode").flatMap(ScreenshotMode.init(rawValue:)) ?? .toolbar
         self.screenshotDestination = defaults.string(forKey: "screenshotDestination").flatMap(ScreenshotDestination.init(rawValue:)) ?? .desktop
-        self.automaticallyShrinksCardText = defaults.object(forKey: "automaticallyShrinksCardText") as? Bool ?? true
+        self.automaticallyShrinksCardText = defaults.object(forKey: "automaticallyShrinksCardText") as? Bool ?? false
         self.temperatureUnit = defaults.string(forKey: "temperatureUnit").flatMap(TemperatureUnit.init(rawValue:)) ?? .celsius
         self.showsClockSeconds = defaults.bool(forKey: "showsClockSeconds")
         self.uses24HourClock = defaults.object(forKey: "uses24HourClock") as? Bool ?? true

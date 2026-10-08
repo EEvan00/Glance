@@ -12,7 +12,10 @@ struct CountdownView: View {
             HStack {
                 Button(action: onBack) { PopupChevron(symbol: "chevron.backward") }
                     .buttonStyle(.plain).accessibilityLabel(localization.string(.commonBack))
-                Text(localization.string(.timerTitle)).font(.headline)
+                Button(action: onBack) {
+                    Text(localization.string(.timerTitle)).font(.headline)
+                }
+                .buttonStyle(.plain)
                 Spacer()
             }
             if controller.isRunning || controller.isPaused || controller.isFinished {
@@ -42,7 +45,7 @@ struct CountdownView: View {
                                 .padding(.vertical, 10)
                                 .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain).systemModuleSurface()
+                        .buttonStyle(PopupHoverButtonStyle()).systemModuleSurface()
                     }
                 }
                 PopupDivider()
@@ -65,7 +68,7 @@ struct CountdownView: View {
                         if let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension") {
                             NSWorkspace.shared.open(url)
                         }
-                    }.buttonStyle(.plain)
+                    }.buttonStyle(PopupHoverButtonStyle())
                 }
             }
         }

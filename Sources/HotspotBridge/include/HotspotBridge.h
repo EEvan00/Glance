@@ -5,6 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) void (^devicesChanged)(NSArray<NSDictionary<NSString *, id> *> *devices);
 - (BOOL)start;
 - (void)stop;
+- (void)cancelConnectionWithCompletion:(void (^)(void))completion;
 - (void)connectIdentifier:(NSString *)identifier completion:(void (^)(BOOL success))completion;
 @end
 NS_ASSUME_NONNULL_END

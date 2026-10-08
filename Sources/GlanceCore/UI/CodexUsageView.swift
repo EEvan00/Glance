@@ -11,7 +11,10 @@ struct CodexUsageView: View {
                 HStack(spacing: CompactPopupLayout.gap) {
                     Button(action: onBack) { PopupChevron(symbol: "chevron.backward") }
                         .buttonStyle(.plain).accessibilityLabel(localization.string(.commonBack))
-                    Text("Codex").font(.headline)
+                    Button(action: onBack) {
+                        Text("Codex").font(.headline)
+                    }
+                    .buttonStyle(.plain)
                     Spacer()
                     if controller.isLoading { ProgressView().controlSize(.small) }
                 }
@@ -53,7 +56,7 @@ struct CodexUsageView: View {
                         .frame(width: 24, height: 24)
                         .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PopupHoverButtonStyle())
                 .accessibilityLabel(localization.string(.codexRefreshNow))
                 .disabled(controller.isLoading)
             }
