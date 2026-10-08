@@ -1,25 +1,40 @@
 import SwiftUI
 
-struct PersonalHotspotSection: View {
+struct PersonalHotspotSection<Details: View>: View {
     @ObservedObject var controller: PersonalHotspotController
     @EnvironmentObject private var localization: Localization
     let currentSSID: String?
     let disabled: Bool
+    let onDisconnect: () -> Void
+    @ViewBuilder let details: () -> Details
+
+    private var visibleDevices: [PersonalHotspot] {
+        var devices = controller.devices
+        if let currentSSID, !devices.contains(where: { $0.name == currentSSID }),
+           let fallback = PersonalHotspot(row: ["id": "current-hotspot", "name": currentSSID]) {
+            devices.insert(fallback, at: 0)
+        }
+        return devices
+    }
 
     var body: some View {
-        if !controller.devices.isEmpty {
+        if !visibleDevices.isEmpty {
             Text(localization.string(.wifiPersonalHotspot))
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
-            ForEach(controller.devices) { device in
+            ForEach(visibleDevices) { device in
                 Button {
-                    controller.connect(device)
+                    if device.name == currentSSID { onDisconnect() }
+                    else { controller.connect(device) }
                 } label: {
                     HStack(spacing: 8) {
-                        Image(systemName: "personalhotspot")
-                            .frame(width: 20)
-                            .foregroundStyle(device.name == currentSSID ? Color.accentColor : .secondary)
-                        Text(device.name).lineLimit(1).truncationMode(.tail)
+                        Image(systemName: "personalhotspot.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(Color.white, device.name == currentSSID ? Color.blue : Color.gray.opacity(0.55))
+                            .frame(width: 22, height: 22)
+                        Text(device.name).lineLimit(1).truncationMode(.tail).foregroundStyle(.primary)
                         Spacer(minLength: 4)
                         if controller.connectingID == device.id {
                             ProgressView().controlSize(.small)
@@ -48,7 +63,8 @@ struct PersonalHotspotSection: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .disabled(disabled || controller.connectingID != nil || device.name == currentSSID)
+                .disabled(disabled || controller.connectingID != nil)
+                if device.name == currentSSID { details() }
             }
             if controller.failed {
                 Text(localization.string(.wifiConnectionFailed)).font(.caption).foregroundStyle(.red)

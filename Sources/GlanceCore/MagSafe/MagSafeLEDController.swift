@@ -147,7 +147,7 @@ final class MagSafeLEDController: ObservableObject {
                     hardwareProbe: self.hardwareProbe,
                     helperManager: helperManager
                 )
-                if self.availability == .requiresApproval {
+                if self.availability == .requiresApproval || (error as? CocoaError)?.code == .userCancelled || error is CancellationError {
                     self.error = nil
                 } else {
                     self.needsHelperRecovery = self.availability == .ready

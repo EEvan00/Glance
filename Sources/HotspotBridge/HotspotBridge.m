@@ -111,8 +111,17 @@
                                 if(!cancelled) associating=YES;
                             });
                             if(cancelled) return;
-                            success=[interface associateToNetwork:target password:password error:nil];
-                            break;
+                            BOOL accepted=[interface associateToNetwork:target password:password error:nil];
+                            // Instant Hotspot can take time to become ready. Verify
+                            // association even when CoreWLAN returns an error.
+                            for (int check=0;check<20;check++) {
+                                if ([interface.ssid isEqualToString:name]) { success=YES; break; }
+                                dispatch_sync(dispatch_get_main_queue(),^{cancelled=finished || generation!=self.generation;});
+                                if(cancelled) return;
+                                [NSThread sleepForTimeInterval:0.25];
+                            }
+                            if(success) break;
+                            (void)accepted;
                         }
                         if(attempt<3) [NSThread sleepForTimeInterval:3];
                     }

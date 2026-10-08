@@ -131,7 +131,7 @@
 "wifi.noInterface" = "没有可用的 Wi-Fi 网卡。";
 "wifi.permissionDenied" = "需要定位权限才能读取 Wi-Fi 名称和扫描结果。前往定位服务设置。";
 "wifi.scanFailed" = "无法扫描 Wi-Fi 网络。";
-"wifi.connectionFailed" = "无法加入此网络。请检查密码后重试。";
+"wifi.connectionFailed" = "无法加入此网络。请确认网络可用后重试，或使用系统 Wi-Fi 设置。";
 "wifi.connectionTimedOut" = "加入此网络超时。";
 "wifi.networkUnavailable" = "此网络已不可用。";
 "wifi.enterpriseUnsupported" = "企业 Wi-Fi 需要在系统 Wi-Fi 设置中完成认证。";
@@ -200,7 +200,7 @@
 "magsafe.off" = "熄灭";
 "magsafe.unsupported" = "这台 Mac 不支持控制 MagSafe 指示灯。";
 "magsafe.installHelper" = "启用 MagSafe 控制…";
-"magsafe.installExplanation" = "请先将 Glance 放入「应用程序」。启用辅助程序会打开安装器并要求管理员密码；软件更新后，如有提示，请重新安装辅助程序。";
+"magsafe.installExplanation" = "启用辅助程序会打开安装器并要求管理员密码；软件更新后，如有提示，请重新安装辅助程序。 删除 Glance 前，请先开启指示灯，再使用「设置 → 关于 → 卸载」。直接拖进废纸篓会留下辅助程序，灯光可能继续熄灭。若已删除软件，可在 glance.gadels.com 下载独立卸载包恢复系统控制。";
 "magsafe.uninstallHelper" = "移除 MagSafe 辅助程序";
 "magsafe.error.install" = "无法安装 MagSafe 辅助程序。";
 "magsafe.error.uninstall" = "无法移除 MagSafe 辅助程序。";
@@ -421,3 +421,6 @@
 "settings.uninstall.message" = "移除 MagSafe 辅助程序、登录项和 Claude 集成，将 Glance 移到废纸篓并退出。保留已保存的设置和系统快捷指令。";
 "settings.uninstall.error" = "无法卸载 Glance";
 "settings.uninstall.shortcuts" = "天气快捷指令会保留。你可以在“快捷指令”App 中删除 Glance Weather 和 Glance Weather Forecast。";
+
+"wifi.knownNetworks" = "已知网络";
+"wifi.disconnectFailed" = "无法断开网络连接，请重试。";

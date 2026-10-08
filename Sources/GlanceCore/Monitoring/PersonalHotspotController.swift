@@ -26,6 +26,7 @@ struct PersonalHotspot: Identifiable, Equatable {
 @MainActor
 final class PersonalHotspotController: ObservableObject {
     @Published private(set) var devices: [PersonalHotspot] = []
+    @Published private(set) var discoveredSSIDs: Set<String> = []
     @Published private(set) var connectingID: String?
     @Published private(set) var failed = false
     private let browser = STHotspotBrowser()
@@ -39,6 +40,7 @@ final class PersonalHotspotController: ObservableObject {
                 guard let self, self.active else { return }
                 self.devices = rows.compactMap { PersonalHotspot(row: $0) }
                     .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+                self.discoveredSSIDs.formUnion(self.devices.map(\.name))
             }
         }
     }

@@ -198,9 +198,30 @@ struct SystemMagSafeLEDHelperManager: MagSafeLEDHelperManaging {
         }
     }
 
+    @MainActor
+    static func unregisterForPackage(
+        status: () -> SMAppService.Status,
+        unregister: () async throws -> Void
+    ) async throws {
+        do {
+            try await unregister()
+        } catch {
+            // Service Management may report a stale-registration error after
+            // completing removal. Only proceed if the service is actually gone.
+            guard status() == .notRegistered || status() == .notFound else { throw error }
+        }
+    }
+
+    @MainActor
     func install() async throws {
         if Bundle.main.url(forResource: "GlanceHelperInstall", withExtension: "pkg") != nil {
-            if service.status == .enabled || service.status == .requiresApproval { try await service.unregister() }
+            if service.status == .enabled || service.status == .requiresApproval {
+                let existingService = service
+                try await Self.unregisterForPackage(
+                    status: { existingService.status },
+                    unregister: { try await existingService.unregister() }
+                )
+            }
             try await LegacyMagSafeHelperManager().install()
         } else {
             try service.register()

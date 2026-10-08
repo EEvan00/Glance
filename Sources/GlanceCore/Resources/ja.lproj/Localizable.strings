@@ -421,3 +421,6 @@
 "settings.uninstall.message" = "MagSafe ヘルパーとログイン項目を削除し、Glance をゴミ箱に移動して終了します。保存済みの設定とシステムのショートカットは保持します。";
 "settings.uninstall.error" = "Glance をアンインストールできません";
 "settings.uninstall.shortcuts" = "天気ショートカットは保持されます。「ショートカット」アプリで Glance Weather と Glance Weather Forecast を削除できます。";
+
+"wifi.knownNetworks" = "Known Networks";
+"wifi.disconnectFailed" = "Could not disconnect from the network. Try again.";

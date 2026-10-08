@@ -151,6 +151,28 @@ final class MagSafeLEDControllerTests: XCTestCase {
         XCTAssertEqual(missingHelper.availability, .needsInstallation)
     }
 
+    func testCancelledInstallationClearsBusyStateAndAllowsRetryWithoutError() async {
+        let suite = makeSuite()
+        defer { clear(suite) }
+        let manager = RecordingMagSafeHelperManager(status: .notRegistered)
+        manager.installError = CocoaError(.userCancelled)
+        let controller = MagSafeLEDController(
+            defaults: suite.defaults,
+            hardwareProbe: SupportedMagSafeProbe(),
+            helperManager: manager,
+            commandWriter: RecordingMagSafeCommandWriter()
+        )
+        controller.installHelper()
+        await waitUntilIdle(controller)
+        XCTAssertFalse(controller.isBusy)
+        XCTAssertEqual(controller.availability, .needsInstallation)
+        XCTAssertNil(controller.error)
+        controller.installHelper()
+        await waitUntilIdle(controller)
+        XCTAssertEqual(manager.installCount, 2)
+        XCTAssertNil(controller.error)
+    }
+
     func testInstallationPublishesRequiresApprovalState() async {
         let suite = makeSuite()
         defer { clear(suite) }

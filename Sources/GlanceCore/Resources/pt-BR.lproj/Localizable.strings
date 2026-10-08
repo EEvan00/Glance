@@ -421,3 +421,6 @@
 "settings.uninstall.message" = "Remover o auxiliar MagSafe e o item de início, mover o Glance para o Lixo e sair. Os ajustes salvos e os atalhos do sistema serão mantidos.";
 "settings.uninstall.error" = "Não foi possível desinstalar o Glance";
 "settings.uninstall.shortcuts" = "Os atalhos de previsão do tempo serão mantidos. Você pode excluir Glance Weather e Glance Weather Forecast no app Atalhos.";
+
+"wifi.knownNetworks" = "Known Networks";
+"wifi.disconnectFailed" = "Could not disconnect from the network. Try again.";

@@ -14,6 +14,7 @@ struct WiFiNetworkListView: View {
     let showsDetailsInitially: Bool
 
     @State private var showsDetails = false
+    @State private var showsOtherNetworks = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -25,13 +26,23 @@ struct WiFiNetworkListView: View {
                     set: { controller.setPower($0) }
                 )
             )
-            .disabled(controller.state == .noInterface || hotspots.connectingID != nil || controller.state.isConnectionFlow)
+            .disabled(controller.state == .noInterface || hotspots.connectingID != nil || controller.state.isConnectionFlow || controller.isDisconnecting)
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 10) {
-                    PersonalHotspotSection(controller: hotspots, currentSSID: controller.details.ssid ?? wifi.ssid, disabled: controller.state.isConnectionFlow || wifi.state == .off)
-                    currentNetworkSection
+                    PersonalHotspotSection(
+                        controller: hotspots,
+                        currentSSID: currentHotspotSSID,
+                        disabled: isConnectingAnotherNetwork || wifi.state == .off,
+                        onDisconnect: { controller.disconnect() }
+                    ) { connectionDetails }
+                    knownNetworksSection
                     otherNetworksSection
+                    if controller.disconnectFailed {
+                        Text(localization.string(.wifiDisconnectFailed))
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
                     stateMessage
                 }
             }
@@ -48,6 +59,8 @@ struct WiFiNetworkListView: View {
             controller.activate(nameAccess: wifi.nameAccess)
             showsDetails = showsDetails || showsDetailsInitially
         }
+        .onChange(of: wifi.ssid) { _, _ in controller.connectionDidChange() }
+        .onChange(of: wifi.state) { _, _ in controller.connectionDidChange() }
         .sheet(item: Binding(
             get: { controller.passwordPromptNetwork },
             set: { if $0 == nil { controller.cancelPasswordEntry() } }
@@ -78,46 +91,91 @@ struct WiFiNetworkListView: View {
         }
     }
 
-    @ViewBuilder
-    private var currentNetworkSection: some View {
-        if let connected = controller.networks.first(where: \.isConnected) {
-            Text(localization.string(.wifiCurrentNetwork))
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.primary.opacity(0.78))
-            networkRow(connected)
+    private var currentSSID: String? {
+        if controller.isDisconnecting { return controller.details.ssid ?? wifi.ssid }
+        return controller.details.ssid ?? (wifi.state.isNetworkAssociated ? wifi.ssid : nil)
+    }
 
+    private var currentHotspotSSID: String? {
+        guard let currentSSID else { return nil }
+        return wifi.state == .hotspot || hotspots.discoveredSSIDs.contains(currentSSID)
+            ? currentSSID : nil
+    }
+
+    private var networkGroups: WiFiNetworkGroups {
+        var hotspotSSIDs = hotspots.discoveredSSIDs
+        if let currentHotspotSSID { hotspotSSIDs.insert(currentHotspotSSID) }
+        var networks = controller.networks
+        // Keep the current connection visible even when a scan omits its AP.
+        if let currentSSID, currentHotspotSSID == nil,
+           !networks.contains(where: { $0.ssid == currentSSID && $0.isConnected }) {
+            networks.removeAll { $0.ssid == currentSSID }
+            let details = controller.details
+            let bssid = details.bssid ?? "current"
+            networks.insert(WiFiNetwork(
+                identity: .init(ssid: currentSSID, security: details.security),
+                candidates: [.init(ssid: currentSSID, bssid: bssid, rssi: details.rssi, channel: details.channel, security: details.security)],
+                connectedBSSID: bssid
+            ), at: 0)
+        }
+        return WiFiNetworkGroups(networks: networks, knownSSIDs: controller.knownSSIDs, hotspotSSIDs: hotspotSSIDs)
+    }
+
+    @ViewBuilder
+    private var knownNetworksSection: some View {
+        let known = networkGroups.known
+        if !known.isEmpty {
+            sectionTitle(.wifiKnownNetworks)
+            ForEach(known) { network in
+                networkRow(network)
+                if network.isConnected { connectionDetails }
+            }
+            PopupDivider()
+        }
+    }
+
+    private var connectionDetails: some View {
+        VStack(alignment: .leading, spacing: 8) {
             Button {
                 showsDetails.toggle()
             } label: {
                 HStack(spacing: 4) {
-                    if showsDetails { PopupChevron(symbol: "chevron.up") }
-                    else { Image(systemName: "info.circle") }
+                    Image(systemName: showsDetails ? "chevron.up" : "info.circle")
                     Text(localization.string(showsDetails ? .wifiDetailsHide : .wifiDetailsShow))
-                }.contentShape(Rectangle())
+                }
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(localization.string(.wifiDetailsShow))
-
-            if showsDetails {
-                WiFiDetailsView(details: controller.details)
-            }
-        } else if controller.details.ssid != nil {
-            Text(localization.string(.wifiCurrentNetwork))
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.primary.opacity(0.78))
-            WiFiDetailsView(details: controller.details)
+            .font(.caption)
+            .accessibilityLabel(localization.string(showsDetails ? .wifiDetailsHide : .wifiDetailsShow))
+            if showsDetails { WiFiDetailsView(details: controller.details) }
         }
+        .padding(.leading, currentHotspotSSID == nil ? 32 : 30)
     }
 
-    @ViewBuilder
+    private func sectionTitle(_ key: LocalizationKey) -> some View {
+        Text(localization.string(key))
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(.secondary)
+    }
+
     private var otherNetworksSection: some View {
-        let others = controller.networks.filter { !$0.isConnected }
-        if !others.isEmpty {
-            Text(localization.string(.wifiOtherNetworks))
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.primary.opacity(0.78))
-            ForEach(others) { network in
-                networkRow(network)
+        VStack(alignment: .leading, spacing: 10) {
+            Button {
+                showsOtherNetworks.toggle()
+            } label: {
+                HStack {
+                    sectionTitle(.wifiOtherNetworks)
+                    Spacer()
+                    Image(systemName: showsOtherNetworks ? "chevron.down" : "chevron.right")
+                        .foregroundStyle(.secondary)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(showsOtherNetworks ? [.isSelected] : [])
+            if showsOtherNetworks {
+                ForEach(networkGroups.other) { network in networkRow(network) }
             }
         }
     }
@@ -214,13 +272,16 @@ struct WiFiNetworkListView: View {
 
     private func networkRow(_ network: WiFiNetwork) -> some View {
         Button {
-            guard !network.isConnected else { return }
-            controller.beginConnection(to: network)
+            if network.isConnected { controller.disconnect() }
+            else { controller.beginConnection(to: network) }
         } label: {
             HStack(spacing: 10) {
-                Image(systemName: network.isConnected ? "checkmark" : "wifi")
-                    .frame(width: 16)
-                    .foregroundStyle(network.isConnected ? Color.accentColor : Color.secondary)
+                Image(systemName: "wifi.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(Color.white, network.isConnected ? Color.blue : Color.gray.opacity(0.55))
+                    .frame(width: 22, height: 22)
                 Text(displaySSID(network.ssid))
                     .lineLimit(1)
                     .truncationMode(.tail)
@@ -231,9 +292,9 @@ struct WiFiNetworkListView: View {
                         .foregroundStyle(.primary.opacity(0.78))
                         .accessibilityHidden(true)
                 }
-                Image(systemName: network.isConnected && wifi.state == .hotspot ? "personalhotspot" : signalSymbol(for: network.rssi))
-                    .foregroundStyle(.primary.opacity(0.78))
-                    .accessibilityHidden(true)
+                if controller.state == .connecting(network.identity) {
+                    ProgressView().controlSize(.small)
+                }
             }
             .contentShape(Rectangle())
         }
@@ -243,20 +304,11 @@ struct WiFiNetworkListView: View {
     }
 
     private var isConnectingAnotherNetwork: Bool {
-        controller.state.isConnectionFlow || hotspots.connectingID != nil
+        controller.state.isConnectionFlow || controller.isDisconnecting || hotspots.connectingID != nil
     }
 
     private func displaySSID(_ ssid: String) -> String {
         ssid.isEmpty ? localization.string(.wifiHiddenNetwork) : ssid
-    }
-
-    private func signalSymbol(for rssi: Int?) -> String {
-        guard let rssi else { return "wifi.exclamationmark" }
-        return switch StatusMappings.wifiBars(rssi: rssi) {
-        case 0: "wifi.exclamationmark"
-        case 1: "wifi"
-        default: "wifi"
-        }
     }
 
     private func networkAccessibilityLabel(_ network: WiFiNetwork) -> String {

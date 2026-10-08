@@ -421,3 +421,6 @@
 "settings.uninstall.message" = "إزالة مساعد MagSafe وعنصر تسجيل الدخول، ونقل Glance إلى سلة المهملات ثم إنهاؤه. سيتم الاحتفاظ بالإعدادات المحفوظة واختصارات النظام.";
 "settings.uninstall.error" = "تعذر إلغاء تثبيت Glance";
 "settings.uninstall.shortcuts" = "سيتم الاحتفاظ باختصارات الطقس. يمكنك حذف Glance Weather وGlance Weather Forecast في تطبيق الاختصارات.";
+
+"wifi.knownNetworks" = "Known Networks";
+"wifi.disconnectFailed" = "Could not disconnect from the network. Try again.";

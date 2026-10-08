@@ -1,4 +1,5 @@
 import AppKit
+import CoreGraphics
 import Foundation
 import MagSafeSMC
 
@@ -33,20 +34,38 @@ struct LegacyMagSafeHelperManager: Sendable {
     @MainActor
     private func runPackage(name: String, completed: () -> Bool) async throws {
         let started = Date()
-        guard let package = Bundle.main.url(forResource: name, withExtension: "pkg"),
-              NSWorkspace.shared.open(package) else { throw CocoaError(.fileNoSuchFile) }
-        // Installer owns the administrator prompt; no password is handled by Glance.
-        for _ in 0..<300 {
-            try Task.checkCancellation()
-            if completed() { return }
-            if name == "GlanceHelperInstall",
-               let attributes = try? FileManager.default.attributesOfItem(atPath: MagSafeHelperInstallation.directory + "/ready"),
-               let modified = attributes[.modificationDate] as? Date, modified >= started,
-               MagSafeHelperInstallation.read() == nil {
-                throw CocoaError(.fileReadCorruptFile)
-            }
-            try await Task.sleep(for: .seconds(1))
+        guard let package = Bundle.main.url(forResource: name, withExtension: "pkg") else {
+            throw CocoaError(.fileNoSuchFile)
         }
-        throw CocoaError(.userCancelled)
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = true
+        // Keep this package's window separate from unrelated Installer sessions.
+        configuration.createsNewApplicationInstance = true
+        let installer = try await NSWorkspace.shared.open(
+            [package],
+            withApplicationAt: URL(fileURLWithPath: "/System/Library/CoreServices/Installer.app"),
+            configuration: configuration
+        )
+        var session = MagSafeInstallerSessionState(startedAt: Date())
+        // Installer owns the administrator prompt; no password is handled by Glance.
+        try await MagSafeInstallerWaiter.waitForCompletion(
+            completed: completed,
+            isInstallerRunning: {
+                // Closing the package window may leave the process alive.
+                // Window metadata needs no screen recording or accessibility access.
+                let windows = CGWindowListCopyWindowInfo(.optionAll, kCGNullWindowID) as? [[String: Any]] ?? []
+                let hasWindow = windows.contains {
+                    ($0[kCGWindowOwnerPID as String] as? NSNumber)?.int32Value == installer.processIdentifier
+                        && ($0[kCGWindowLayer as String] as? NSNumber)?.intValue == 0
+                }
+                return session.isActive(processTerminated: installer.isTerminated, hasWindow: hasWindow, now: Date())
+            },
+            isCorrupt: {
+                guard name == "GlanceHelperInstall",
+                      let attributes = try? FileManager.default.attributesOfItem(atPath: MagSafeHelperInstallation.directory + "/ready"),
+                      let modified = attributes[.modificationDate] as? Date, modified >= started else { return false }
+                return MagSafeHelperInstallation.read() == nil
+            }
+        )
     }
 }

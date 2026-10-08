@@ -421,3 +421,6 @@
 "settings.uninstall.message" = "Rimuove l’assistente MagSafe e l’elemento di login, sposta Glance nel Cestino ed esce. Le impostazioni salvate e i comandi rapidi di sistema vengono conservati.";
 "settings.uninstall.error" = "Impossibile disinstallare Glance";
 "settings.uninstall.shortcuts" = "I comandi rapidi meteo vengono conservati. Puoi eliminare Glance Weather e Glance Weather Forecast in Comandi Rapidi.";
+
+"wifi.knownNetworks" = "Known Networks";
+"wifi.disconnectFailed" = "Could not disconnect from the network. Try again.";

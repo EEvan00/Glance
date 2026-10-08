@@ -131,7 +131,7 @@
 "wifi.noInterface" = "No Wi-Fi interface is available.";
 "wifi.permissionDenied" = "Location access is needed to read Wi-Fi names and scan results. Open Location Settings.";
 "wifi.scanFailed" = "Could not scan for Wi-Fi networks.";
-"wifi.connectionFailed" = "Could not join this network. Check its password and try again.";
+"wifi.connectionFailed" = "Could not join this network. Make sure it is available and try again, or use Wi-Fi Settings.";
 "wifi.connectionTimedOut" = "Joining this network timed out.";
 "wifi.networkUnavailable" = "This network is no longer available.";
 "wifi.enterpriseUnsupported" = "Enterprise Wi-Fi requires the system Wi-Fi settings.";
@@ -200,7 +200,7 @@
 "magsafe.off" = "Off";
 "magsafe.unsupported" = "This Mac does not expose MagSafe indicator control.";
 "magsafe.installHelper" = "Enable MagSafe Control…";
-"magsafe.installExplanation" = "Install Glance in Applications first. Enabling this helper opens Installer and requires an administrator password. After an app update, reinstall the helper if prompted.";
+"magsafe.installExplanation" = "Enabling this helper opens Installer and requires an administrator password. After an app update, reinstall the helper if prompted. Before deleting Glance, turn the light back on and use Settings → About → Uninstall. Moving the app to the Trash leaves the helper installed and may leave the light off. Use the standalone helper removal package on glance.gadels.com if the app is already deleted.";
 "magsafe.uninstallHelper" = "Remove MagSafe Helper";
 "magsafe.error.install" = "The MagSafe helper could not be installed.";
 "magsafe.error.uninstall" = "The MagSafe helper could not be removed.";
@@ -421,3 +421,6 @@
 "settings.uninstall.message" = "Remove the MagSafe helper, login item and Claude integration, move Glance to the Trash, and quit. Saved settings and system shortcuts will be kept.";
 "settings.uninstall.error" = "Unable to uninstall Glance";
 "settings.uninstall.shortcuts" = "Weather shortcuts are kept. You can delete Glance Weather and Glance Weather Forecast in the Shortcuts app.";
+
+"wifi.knownNetworks" = "Known Networks";
+"wifi.disconnectFailed" = "Could not disconnect from the network. Try again.";

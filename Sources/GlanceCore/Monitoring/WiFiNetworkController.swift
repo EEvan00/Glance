@@ -57,6 +57,7 @@ struct WiFiServiceNetworkConfiguration {
 
 private struct WiFiScanPayload: Sendable {
     let networks: [WiFiNetwork]
+    let knownSSIDs: Set<String>
     let details: WiFiConnectionDetails
 }
 
@@ -82,6 +83,25 @@ private final class CoreWLANNetworkWorker: @unchecked Sendable {
     func scan(completion: @escaping @Sendable (WiFiScanWorkerResult) -> Void) {
         queue.async { [self] in
             completion(scanSynchronously())
+        }
+    }
+
+    func disconnect(completion: @escaping @Sendable (Bool) -> Void) {
+        queue.async {
+            guard let interface = CWWiFiClient.shared().interface() else {
+                completion(false)
+                return
+            }
+            interface.disassociate()
+            let deadline = Date().addingTimeInterval(3)
+            while Date() < deadline {
+                if interface.ssid() == nil && interface.bssid() == nil {
+                    completion(true)
+                    return
+                }
+                Thread.sleep(forTimeInterval: 0.1)
+            }
+            completion(false)
         }
     }
 
@@ -127,6 +147,7 @@ private final class CoreWLANNetworkWorker: @unchecked Sendable {
             return .success(
                 WiFiScanPayload(
                     networks: WiFiNetwork.merge(candidates, connectedBSSID: associatedBSSID),
+                    knownSSIDs: Set((interface.configuration()?.networkProfiles.array as? [CWNetworkProfile] ?? []).compactMap { $0.ssid }),
                     details: makeDetails(interface: interface, actualNetwork: actualNetwork)
                 )
             )
@@ -357,6 +378,9 @@ private final class WiFiCredentialWorker: @unchecked Sendable {
 @MainActor
 final class WiFiNetworkController: ObservableObject {
     @Published private(set) var networks: [WiFiNetwork] = []
+    @Published private(set) var knownSSIDs: Set<String> = []
+    @Published private(set) var isDisconnecting = false
+    @Published private(set) var disconnectFailed = false
     @Published private(set) var details = WiFiConnectionDetails.unavailable
     @Published private(set) var state: WiFiListState = .idle
     @Published private(set) var passwordPromptNetwork: WiFiNetwork?
@@ -374,7 +398,7 @@ final class WiFiNetworkController: ObservableObject {
 
     init(credentialStore: any WiFiCredentialStoring = SessionWiFiCredentialStore()) {
         credentialWorker = WiFiCredentialWorker(store: credentialStore)
-        hotspots.didConnect = { [weak self] in self?.refresh() }
+        hotspots.didConnect = { [weak self] in self?.connectionDidChange() }
     }
     deinit {
         periodicRefreshTask?.cancel()
@@ -391,6 +415,7 @@ final class WiFiNetworkController: ObservableObject {
         guard isActive else { return }
         isActive = false
         hotspots.stop()
+        isDisconnecting = false
         _ = scanGate.advance()
         _ = connectionGate.advance()
         periodicRefreshTask?.cancel()
@@ -405,7 +430,7 @@ final class WiFiNetworkController: ObservableObject {
 
     func refresh(nameAccess: WiFiNameAccess? = nil) {
         if let nameAccess { lastNameAccess = nameAccess }
-        guard isActive, !state.isConnectionFlow, hotspots.connectingID == nil else { return }
+        guard isActive, !state.isConnectionFlow, !isDisconnecting, hotspots.connectingID == nil else { return }
         // CoreWLAN may return empty or redacted results before authorization.
         // Keep that distinct from a successful scan with no nearby networks.
         guard lastNameAccess == .authorized else {
@@ -423,11 +448,22 @@ final class WiFiNetworkController: ObservableObject {
         state = .scanning
         worker.scan { [weak self] result in
             Task { @MainActor [weak self] in
-                guard let self, self.isActive, self.scanGate.accepts(request), !self.state.isConnectionFlow else { return }
+                guard let self, self.isActive, self.scanGate.accepts(request), !self.state.isConnectionFlow, !self.isDisconnecting, self.hotspots.connectingID == nil else { return }
                 self.receiveScanResult(result)
             }
         }
     }
+    // Discard scans started before an association changed; they may still
+    // report the previous access point after the menu-bar monitor has updated.
+    func connectionDidChange() {
+        guard isActive else { return }
+        _ = scanGate.advance()
+        networks = []
+        details = .unavailable
+        if !state.isConnectionFlow { state = .idle }
+        refresh()
+    }
+
     func setPower(_ enabled: Bool) {
         guard isActive else { return }
 
@@ -449,9 +485,27 @@ final class WiFiNetworkController: ObservableObject {
         }
     }
 
-    func beginConnection(to network: WiFiNetwork) {
-        guard isActive, !state.isConnectionFlow, hotspots.connectingID == nil else { return }
+    func disconnect() {
+        guard isActive, !state.isConnectionFlow, !isDisconnecting, hotspots.connectingID == nil else { return }
+        let request = connectionGate.advance()
+        _ = scanGate.advance()
+        isDisconnecting = true
+        disconnectFailed = false
+        worker.disconnect { [weak self] success in
+            Task { @MainActor [weak self] in
+                guard let self, self.connectionGate.accepts(request) else { return }
+                self.isDisconnecting = false
+                self.disconnectFailed = !success
+                self.state = .idle
+                self.connectionDidChange()
+            }
+        }
+    }
 
+    func beginConnection(to network: WiFiNetwork) {
+        guard isActive, !state.isConnectionFlow, !isDisconnecting, hotspots.connectingID == nil else { return }
+
+        disconnectFailed = false
         pendingNetwork = network
         passwordPromptNetwork = nil
         credentialIssue = nil
@@ -604,6 +658,7 @@ final class WiFiNetworkController: ObservableObject {
         case let .success(payload):
             details = payload.details
             networks = payload.networks
+            knownSSIDs = payload.knownSSIDs
             if payload.networks.isEmpty,
                lastNameAccess == .denied || lastNameAccess == .restricted {
                 state = .permissionDenied
