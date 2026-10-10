@@ -7,6 +7,18 @@
     <description>Independent Glance releases.</description>
     <language>en</language>
     <item>
+      <title>Version 1.0.4 （English + 中文， 中文在下方）</title>
+      <pubDate>Sat, 10 Oct 2026 08:52:42 +0000</pubDate>
+      <sparkle:version>13</sparkle:version>
+      <sparkle:shortVersionString>1.0.4</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Version: 1.0.4</li></ul><h2>English</h2><ul><li>Fix the audio output menu disappearing after selecting an output with unavailable volume controls.</li><li>Keep audio output devices in a stable order so another device can be selected.</li><li>Downloads are ad-hoc signed and are not Apple-notarized.</li></ul><h2>中文</h2><ul><li>修复选择不支持音量控制的输出设备后，音频输出列表消失的问题。</li><li>保持音频输出设备排序稳定，便于切换到其他设备。</li><li>下载包采用 Ad-hoc 签名，未通过 Apple 公证。</li></ul>]]></description>
+      <enclosure url="https://github.com/EEvan00/Glance/releases/download/v1.0.4/Glance-1.0.4.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="0z1XbWcjDRkAFt6C1IFvgPtmaruP0+q1CNA6WJQ/ilkfOh64hjCOcKdr7R8GMltadUXdjnKrvdJPEMDieg2YAA=="
+                 length="4864693" />
+    </item>
+    <item>
       <title>Version 1.0.3 （English + 中文， 中文在下方）</title>
       <pubDate>Sat, 10 Oct 2026 05:35:36 +0000</pubDate>
       <sparkle:version>12</sparkle:version>
