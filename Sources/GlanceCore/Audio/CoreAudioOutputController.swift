@@ -30,9 +30,6 @@ final class CoreAudioOutputController: AudioOutputControlling, BluetoothDeviceVo
                 )
             }
             .sorted { lhs, rhs in
-                if lhs.isCurrent != rhs.isCurrent {
-                    return lhs.isCurrent
-                }
                 return (lhs.name ?? "").localizedStandardCompare(rhs.name ?? "") == .orderedAscending
             }
     }
