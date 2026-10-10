@@ -7,6 +7,18 @@
     <description>Independent Glance releases.</description>
     <language>en</language>
     <item>
+      <title>Version 1.0.5 （English + 中文， 中文在下方）</title>
+      <pubDate>Sat, 10 Oct 2026 09:21:44 +0000</pubDate>
+      <sparkle:version>14</sparkle:version>
+      <sparkle:shortVersionString>1.0.5</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Version: 1.0.5</li></ul><h2>English</h2><ul><li>Add Vietnamese language support, bringing the available languages to 13.</li><li>Downloads are ad-hoc signed and are not Apple-notarized.</li></ul><h2>中文</h2><ul><li>新增越南语支持，可用语言增加至 13 种。</li><li>下载包使用 Ad-hoc 签名，未经 Apple 公证。</li></ul>]]></description>
+      <enclosure url="https://github.com/EEvan00/Glance/releases/download/v1.0.5/Glance-1.0.5.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="FEPzDMFj7JcGgSFkbVO23BZOk9tAqkGZfYeyAI4ZI0JhY4UILOIwsHgjuO/+c9D/H3qq2iPpjPRSkc+XcKIZCQ=="
+                 length="4876417" />
+    </item>
+    <item>
       <title>Version 1.0.4 （English + 中文， 中文在下方）</title>
       <pubDate>Sat, 10 Oct 2026 08:52:42 +0000</pubDate>
       <sparkle:version>13</sparkle:version>
