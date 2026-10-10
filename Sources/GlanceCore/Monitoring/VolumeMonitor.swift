@@ -771,21 +771,22 @@ final class VolumeMonitor: VolumeMonitoring, VolumeControlling {
         guard lifecycle != .stopped else { return }
 
         eventMonitor.reconcile()
+        // Enumerating outputs is independent of the selected device's volume capability.
+        let devices: [AudioOutputDevice]
+        if !detailsVisible {
+            cachedOutputDevices = []
+            outputDevicesCacheValid = true
+            devices = []
+        } else if includeOutputDevices || !outputDevicesCacheValid {
+            cachedOutputDevices = outputController?.outputDevices() ?? []
+            outputDevicesCacheValid = true
+            devices = cachedOutputDevices
+        } else {
+            devices = cachedOutputDevices
+        }
+
         let status: VolumeStatus
         if let reading = reader.read() {
-            let devices: [AudioOutputDevice]
-            if !detailsVisible {
-                cachedOutputDevices = []
-                outputDevicesCacheValid = true
-                devices = []
-            } else if includeOutputDevices || !outputDevicesCacheValid {
-                cachedOutputDevices = outputController?.outputDevices() ?? []
-                outputDevicesCacheValid = true
-                devices = cachedOutputDevices
-            } else {
-                devices = cachedOutputDevices
-            }
-
             status = VolumeStatus(
                 scalar: reading.scalar,
                 isMuted: reading.isMuted,
@@ -793,7 +794,12 @@ final class VolumeMonitor: VolumeMonitoring, VolumeControlling {
                 outputDevices: devices
             )
         } else {
-            status = .placeholder
+            status = VolumeStatus(
+                scalar: nil,
+                isMuted: false,
+                deviceName: devices.first(where: { $0.isCurrent })?.name,
+                outputDevices: devices
+            )
         }
         continuation.yield(status)
     }

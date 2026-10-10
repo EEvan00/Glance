@@ -62,6 +62,32 @@ final class VolumeMonitorTests: XCTestCase {
         monitor.stop()
     }
 
+    func testUnavailableVolumeKeepsOutputDevicesAfterSwitching() async {
+        let reader = FakeVolumeReader(result: makeReading(scalar: 0.25))
+        let devices = [
+            AudioOutputDevice(id: 42, name: "Speakers", isCurrent: false),
+            AudioOutputDevice(id: 43, name: "Virtual Output", isCurrent: true)
+        ]
+        let monitor = VolumeMonitor(reader: reader, eventMonitor: FakeVolumeEventMonitor(),
+            outputController: FakeAudioOutputController(devices: devices))
+        monitor.setDetailsVisible(true)
+        monitor.start()
+        defer { monitor.stop() }
+        var iterator = monitor.updates.makeAsyncIterator()
+        _ = await iterator.next()
+        reader.result = nil
+        monitor.refresh()
+        let unavailable = await iterator.next()
+        XCTAssertNil(unavailable?.scalar)
+        XCTAssertEqual(unavailable?.outputDevices, devices)
+        XCTAssertEqual(unavailable?.deviceName, "Virtual Output")
+        reader.result = makeReading(scalar: 0.5)
+        monitor.refresh()
+        let recovered = await iterator.next()
+        XCTAssertEqual(recovered?.scalar, 0.5)
+        XCTAssertEqual(recovered?.outputDevices, devices)
+    }
+
     func testDetailsAreLazyAndLevelRefreshesReuseCachedDevices() async {
         let reader = FakeVolumeReader(result: makeReading(scalar: 0.25))
         let eventMonitor = FakeVolumeEventMonitor()
