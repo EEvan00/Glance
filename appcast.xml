@@ -7,6 +7,18 @@
     <description>Independent Glance releases.</description>
     <language>en</language>
     <item>
+      <title>Version 1.0.3 （English + 中文， 中文在下方）</title>
+      <pubDate>Sat, 10 Oct 2026 05:35:36 +0000</pubDate>
+      <sparkle:version>12</sparkle:version>
+      <sparkle:shortVersionString>1.0.3</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Version: 1.0.3</li></ul><h2>English</h2><ul><li>Reorganize Wi-Fi into Personal Hotspot, Known Networks and collapsible Other Networks; retain connection details and show signal strength.</li><li>Use circular Bluetooth device icons and connect or disconnect directly from device rows.</li><li>Add circular connection progress indicators, click-to-cancel and target switching while connecting.</li><li>Prioritize the current Bluetooth audio output in the main popup; default automatic text shrinking to off.</li><li>Refine hover feedback, clickable submenu titles and display preset controls.</li><li>Fix MagSafe helper installation launch and cancellation handling.</li><li>Downloads are ad-hoc signed and are not Apple-notarized.</li></ul><h2>中文</h2><ul><li>Wi-Fi 按个人热点、已知网络与可折叠的其他网络分组，保留连接详情并显示信号强弱。</li><li>蓝牙采用圆形设备图标，直接点击设备行连接或断开。</li><li>添加圆形连接进度图标，支持再次点击取消，以及连接过程中改选目标。</li><li>主弹窗优先显示当前蓝牙音频输出设备，文字自动缩小默认关闭。</li><li>优化悬停反馈、二级菜单标题返回及显示模式列表操作。</li><li>修复 MagSafe 辅助程序安装向导启动和取消处理。</li><li>下载包采用 Ad-hoc 签名，未通过 Apple 公证。</li></ul>]]></description>
+      <enclosure url="https://github.com/EEvan00/Glance/releases/download/v1.0.3/Glance-1.0.3.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="g7OJCqjHTCnbIrL1Nj6l3PNZ4iVwvwIjCvuXPghnedLbtw2dRu3XLM3Ug9jF362NDdSp1e3qk0AEwW8zonf4Aw=="
+                 length="4863597" />
+    </item>
+    <item>
       <title>Version 1.0.2 （English + 中文， 中文在下方）</title>
       <pubDate>Wed, 07 Oct 2026 11:50:22 +0000</pubDate>
       <sparkle:version>11</sparkle:version>
