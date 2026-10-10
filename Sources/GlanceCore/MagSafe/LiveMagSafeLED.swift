@@ -199,6 +199,18 @@ struct SystemMagSafeLEDHelperManager: MagSafeLEDHelperManaging {
     }
 
     @MainActor
+    private static func unregisterService(_ service: SMAppService) async throws {
+        // Invoke the callback API on the main actor. Swift 6.1's imported async
+        // variant sends the non-Sendable service across an isolation boundary.
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            service.unregister { error in
+                if let error { continuation.resume(throwing: error) }
+                else { continuation.resume() }
+            }
+        }
+    }
+
+    @MainActor
     static func unregisterForPackage(
         status: () -> SMAppService.Status,
         unregister: () async throws -> Void
@@ -219,7 +231,7 @@ struct SystemMagSafeLEDHelperManager: MagSafeLEDHelperManaging {
                 let existingService = service
                 try await Self.unregisterForPackage(
                     status: { existingService.status },
-                    unregister: { try await existingService.unregister() }
+                    unregister: { try await Self.unregisterService(existingService) }
                 )
             }
             try await LegacyMagSafeHelperManager().install()
@@ -230,7 +242,7 @@ struct SystemMagSafeLEDHelperManager: MagSafeLEDHelperManaging {
 
     func uninstall() async throws {
         if LegacyMagSafeHelperManager.hasInstalledFiles { try await LegacyMagSafeHelperManager().uninstall() }
-        if service.status == .enabled || service.status == .requiresApproval { try await service.unregister() }
+        if service.status == .enabled || service.status == .requiresApproval { try await Self.unregisterService(service) }
     }
 
     func openSystemSettings() {
