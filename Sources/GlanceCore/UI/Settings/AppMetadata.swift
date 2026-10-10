@@ -34,6 +34,7 @@ enum AppMetadata {
     static let authorName = "EEvan00"
     static let authorURL = repositoryURL
     static let upstreamURL = URL(string: "https://github.com/lingyired/status-trio")!
+    static let donateURL = URL(string: "https://glance.gadels.com/donate")!
     static let repositoryIsAvailable = true
 
     static var versionDisplayString: String {
