@@ -1,0 +1,431 @@
+/* Glance modifications by EEvan00, 2026. Original project notices: NOTICE. */
+"menu.version" = "Glance %@";
+"menu.settings" = "Cài đặt…";
+"menu.quit" = "Thoát Glance";
+"menu.checkForUpdates" = "Kiểm tra bản cập nhật…";
+"settings.title" = "Cài đặt";
+"settings.language" = "Ngôn ngữ";
+"settings.language.followSystem" = "Theo hệ thống";
+"settings.language.description" = "Thay đổi có hiệu lực ngay.";
+"settings.launchAtLogin" = "Khởi chạy khi đăng nhập";
+"settings.launchAtLogin.description" = "Tự động khởi chạy Glance khi bạn đăng nhập.";
+"settings.launchAtLogin.requiresApproval" = "Đang chờ phê duyệt. Cho phép Glance trong Cài đặt hệ thống › Cài đặt chung › Mục đăng nhập.";
+"settings.launchAtLogin.openLoginItems" = "Mở Mục đăng nhập…";
+"settings.launchAtLogin.failure" = "Không thể cập nhật mục đăng nhập. Quản lý trong Cài đặt hệ thống › Cài đặt chung › Mục đăng nhập.";
+"settings.iconSize" = "Kích thước biểu tượng";
+"settings.iconSize.accessibilityValue" = "%d điểm";
+"settings.iconSize.description" = "Điều chỉnh kích thước biểu tượng trên thanh menu từ 16–36 pt.";
+"settings.tab.basics" = "Cơ bản";
+"settings.tab.menuBar" = "Thanh menu";
+"settings.tab.audio" = "Âm thanh";
+"settings.tab.battery" = "Pin";
+"settings.tab.about" = "Giới thiệu";
+"settings.menuBar.title" = "Biểu tượng thanh menu";
+"settings.menuBar.connectionIcons" = "Kiểu biểu tượng kết nối";
+"settings.menuBar.connectionIcons.description" = "Khi bật, trạng thái đã chọn dùng biểu tượng sóng Wi-Fi tiêu chuẩn thay cho dấu hiệu riêng.";
+"settings.menuBar.wifiIconForEthernet" = "Dùng biểu tượng Wi-Fi cho Ethernet";
+"settings.menuBar.wifiIconForHotspot" = "Dùng biểu tượng Wi-Fi cho Điểm truy cập cá nhân";
+"settings.menuBar.wifiIconForTemporaryConnection" = "Dùng biểu tượng Wi-Fi cho kết nối tạm thời";
+"settings.menuBar.wifiIconForInternetSharing" = "Dùng biểu tượng Wi-Fi cho chia sẻ Internet";
+"settings.audio.maximumVisible" = "Số thiết bị đầu ra hiển thị tối đa";
+"settings.audio.maximumVisibleDescription" = "Số thiết bị đầu ra xuất hiện trước nút Mở rộng.";
+"settings.audio.showAll" = "Luôn hiển thị mọi thiết bị đầu ra";
+"settings.audio.showAllDescription" = "Bỏ qua giới hạn và hiển thị tất cả thiết bị đầu ra khả dụng.";
+"settings.audio.orderTitle" = "Thứ tự thiết bị đầu ra";
+"settings.audio.orderDescription" = "Kéo thiết bị để thay đổi thứ tự trong bảng âm lượng. Thiết bị mới xuất hiện ở cuối.";
+"settings.audio.orderEmpty" = "Không có thiết bị đầu ra khả dụng.";
+"settings.about.version" = "Phiên bản %@";
+"settings.about.description" = "Bảng điều khiển nhỏ gọn trên thanh menu macOS cho hệ thống, nội dung đang phát, thời tiết và mức sử dụng Codex.";
+"settings.about.project" = "Trang web";
+"settings.about.repository" = "GitHub";
+"settings.about.author" = "Tác giả";
+"settings.about.authorRole" = "Người tạo và duy trì";
+"settings.about.website" = "Trang web";
+"settings.about.copyright" = "Các sửa đổi Glance do EEvan00 duy trì. Dựa trên Status Trio, © 2026 lingyired.";
+"settings.battery.title" = "Hiển thị pin";
+"settings.battery.showPercentage" = "Hiển thị phần trăm pin";
+"settings.battery.showChargingIndicator" = "Hiển thị tia sét khi sạc hoặc cắm nguồn";
+"settings.battery.chargingDescription" = "Khi bật, phần trăm được thay bằng tia sét khi đang sạc hoặc cắm nguồn.";
+"settings.battery.symbolScale" = "Kích thước phần trăm/tia sét";
+"settings.battery.symbolScaleAccessibility" = "Kích thước phần trăm pin và tia sét";
+"settings.battery.symbolScaleDescription" = "Phần trăm và tia sét dùng chung kích thước này.";
+"settings.battery.statusColors" = "Đổi màu cung theo trạng thái pin";
+"settings.battery.statusColorsDescription" = "Pin yếu có màu đỏ, Chế độ nguồn điện thấp có màu vàng, đang sạc hoặc cắm nguồn có màu xanh lá.";
+"settings.battery.criticalThreshold" = "Ngưỡng pin yếu";
+"settings.battery.criticalThresholdDescription" = "Mức pin dưới ngưỡng này được coi là pin yếu và hiển thị màu đỏ.";
+"settings.updates.title" = "Cập nhật";
+"settings.updates.automatic" = "Tự động kiểm tra bản cập nhật";
+"settings.updates.check" = "Kiểm tra bản cập nhật…";
+"battery.title" = "Pin · %d%%";
+"battery.state.notPresent" = "Không có pin";
+"battery.state.charged" = "Đã sạc đầy";
+"battery.state.calculatingTimeToFull" = "Đang tính thời gian sạc đầy";
+"battery.timeToFull.minutes" = "Khoảng %d phút đến khi đầy";
+"battery.timeToFull.hours" = "Khoảng %d giờ đến khi đầy";
+"battery.timeToFull.hoursMinutes" = "Khoảng %d giờ %d phút đến khi đầy";
+"battery.state.lowPowerMode" = "Chế độ nguồn điện thấp";
+"battery.state.connectedToPower" = "Đã cắm nguồn";
+"battery.state.onBattery" = "Đang dùng pin";
+"battery.action.openSettings" = "Mở Cài đặt pin…";
+"battery.accessibility.value" = "Pin %d%%";
+"common.parenthetical" = "%@ (%@)";
+"common.labelValue" = "%@, %@";
+"wifi.title" = "Wi-Fi";
+"network.title" = "Mạng";
+"wifi.value.bars" = "%d vạch";
+"wifi.value.notAssociated" = "Chưa kết nối";
+"wifi.value.off" = "Tắt";
+"wifi.value.noInternet" = "Không có Internet";
+"wifi.value.hotspot" = "Điểm truy cập iPhone";
+"wifi.value.temporary" = "Tạm thời";
+"wifi.value.shared" = "Đang chia sẻ";
+"wifi.value.unavailable" = "Không khả dụng";
+"wifi.subtitle.connected" = "Đã kết nối";
+"wifi.subtitle.notAssociated" = "Wi-Fi đang bật nhưng chưa kết nối";
+"wifi.subtitle.off" = "Wi-Fi đã tắt hoặc không khả dụng";
+"wifi.subtitle.noInternet" = "Kiểm tra khả năng truy cập mạng thất bại";
+"wifi.subtitle.hotspot" = "Đang dùng điểm truy cập iPhone";
+"wifi.subtitle.temporary" = "Kết nối Wi-Fi tạm thời";
+"wifi.subtitle.shared" = "Đang chia sẻ Internet";
+"wifi.subtitle.unavailable" = "Không thể đọc trạng thái mạng";
+"wifi.action.requestNameAccess" = "Cho phép vị trí để hiển thị tên Wi-Fi";
+"wifi.action.openLocationSettings" = "Cho phép vị trí trong Cài đặt…";
+"wifi.action.openSettings" = "Mở Cài đặt Wi-Fi…";
+"wifi.accessibility.withSSID" = "Wi-Fi %@, %@";
+"ethernet.accessibility.connected" = "Ethernet đã kết nối";
+"volume.title" = "Âm lượng · %d%%";
+"volume.titleUnavailable" = "Âm lượng · —";
+"volume.muted" = "Đã tắt tiếng";
+"volume.unmuted" = "Bật tiếng";
+"volume.value" = "%d%% · %d vạch";
+"volume.noDefaultDevice" = "Không có thiết bị đầu ra mặc định";
+"volume.output.title" = "Đầu ra";
+"volume.output.empty" = "Không có thiết bị đầu ra khả dụng";
+"volume.output.current" = "Thiết bị đầu ra hiện tại";
+"volume.output.switchTo" = "Chuyển sang %@";
+"volume.output.unknownDevice" = "Thiết bị đầu ra không xác định";
+"volume.output.expand" = "Mở rộng";
+"volume.output.collapse" = "Thu gọn";
+"volume.action.openSettings" = "Mở Cài đặt âm thanh…";
+"volume.accessibility.label" = "Âm lượng";
+"accessibility.status" = "%@, %@, %@";
+"accessibility.battery" = "Pin %d%%";
+"accessibility.volume" = "Âm lượng %@";
+"settings.refreshInterval" = "Khoảng thời gian làm mới trạng thái";
+"settings.refreshInterval.description" = "Tần suất Glance kiểm tra thay đổi. Cập nhật nhanh hơn sử dụng nhiều CPU hơn.";
+"settings.refreshInterval.value" = "%d giây";
+"settings.popup.order" = "Thứ tự bảng bật lên";
+"settings.popup.order.description" = "Kéo các mục để thay đổi thứ tự trong bảng bật lên.";
+"settings.popup.order.battery" = "Pin";
+"settings.popup.order.volume" = "Âm lượng";
+
+"common.back" = "Quay lại";
+"common.cancel" = "Hủy";
+"wifi.power" = "Wi-Fi";
+"wifi.refresh" = "Làm mới mạng";
+"wifi.currentNetwork" = "Mạng hiện tại";
+"wifi.otherNetworks" = "Mạng khác";
+"wifi.scanning" = "Đang quét mạng…";
+"wifi.noNetworks" = "Không tìm thấy mạng ở gần.";
+"wifi.panel.off" = "Wi-Fi đã tắt.";
+"wifi.noInterface" = "Không có giao diện Wi-Fi khả dụng.";
+"wifi.permissionDenied" = "Cần quyền truy cập vị trí để đọc tên Wi-Fi và kết quả quét. Mở Cài đặt vị trí.";
+"wifi.scanFailed" = "Không thể quét mạng Wi-Fi.";
+"wifi.connectionFailed" = "Không thể kết nối mạng này. Kiểm tra mạng rồi thử lại, hoặc dùng Cài đặt Wi-Fi.";
+"wifi.connectionTimedOut" = "Đã hết thời gian chờ kết nối mạng này.";
+"wifi.networkUnavailable" = "Mạng này không còn khả dụng.";
+"wifi.enterpriseUnsupported" = "Wi-Fi doanh nghiệp cần dùng cài đặt Wi-Fi của hệ thống.";
+"wifi.connected" = "Đã kết nối";
+"wifi.notConnected" = "Chưa kết nối";
+"wifi.hiddenNetwork" = "Mạng ẩn";
+"wifi.joinNetwork" = "Kết nối mạng Wi-Fi";
+"wifi.password" = "Mật khẩu";
+"wifi.rememberPassword" = "Ghi nhớ mật khẩu trong Chuỗi khóa";
+"wifi.passwordKeychainNote" = "Mật khẩu chỉ được lưu trong Chuỗi khóa, không lưu trong cài đặt ứng dụng.";
+"wifi.join" = "Kết nối";
+"wifi.details.show" = "Hiện chi tiết";
+"wifi.details.hide" = "Ẩn chi tiết";
+"wifi.details.more" = "Thêm chi tiết";
+"wifi.details.less" = "Bớt chi tiết";
+"wifi.detail.ssid" = "SSID";
+"wifi.detail.bssid" = "BSSID";
+"wifi.detail.band" = "Băng tần";
+"wifi.detail.channel" = "Kênh";
+"wifi.detail.channelWidth" = "Độ rộng kênh";
+"wifi.detail.rssi" = "RSSI";
+"wifi.detail.noise" = "Nhiễu";
+"wifi.detail.snr" = "Tỷ lệ tín hiệu trên nhiễu";
+"wifi.detail.phy" = "Chế độ PHY";
+"wifi.detail.txRate" = "Tốc độ truyền liên kết";
+"wifi.detail.security" = "Bảo mật";
+"wifi.detail.countryCode" = "Mã quốc gia";
+"wifi.detail.interface" = "Giao diện Wi-Fi";
+"wifi.detail.ipv4" = "IPv4";
+"wifi.detail.ipv6" = "IPv6";
+"wifi.detail.router" = "Bộ định tuyến";
+"wifi.detail.dns" = "DNS";
+"wifi.unavailableValue" = "Không khả dụng";
+"wifi.security.open" = "Mở";
+"wifi.security.enterprise" = "Doanh nghiệp";
+"bluetooth.title" = "Bluetooth";
+"bluetooth.action.openSettings" = "Mở Cài đặt Bluetooth…";
+"bluetooth.refresh" = "Làm mới thiết bị";
+"bluetooth.off" = "Bluetooth đã tắt.";
+"bluetooth.unavailable" = "Bluetooth không khả dụng.";
+"bluetooth.readFailed" = "Không thể đọc các thiết bị Bluetooth đã ghép đôi.";
+"bluetooth.noConnectedDevices" = "Chưa kết nối";
+"bluetooth.noDevices" = "Không tìm thấy thiết bị đã ghép đôi.";
+"bluetooth.connected" = "Đã kết nối";
+"bluetooth.notConnected" = "Chưa kết nối";
+"bluetooth.pairedDeviceLimit" = "Hiển thị thiết bị đã ghép đôi do macOS cung cấp. Một số thiết bị chỉ dùng BLE có thể không xuất hiện.";
+
+"wifi.credentialsChecking" = "Đang kiểm tra thông tin đăng nhập đã lưu…";
+"wifi.credentialAccessCancelled" = "Đã hủy truy cập thông tin đăng nhập đã lưu.";
+"wifi.credentialAccessDenied" = "Truy cập thông tin đăng nhập đã lưu bị từ chối.";
+"wifi.credentialStoreLocked" = "Chuỗi khóa bị khóa hoặc không khả dụng.";
+"wifi.credentialReadFailed" = "Không thể đọc thông tin đăng nhập đã lưu.";
+"wifi.credentialEnterPassword" = "Nhập mật khẩu";
+"wifi.passwordSaveFailed" = "Đã kết nối nhưng không thể lưu mật khẩu.";
+
+"bluetooth.initializing" = "Đang khởi tạo Bluetooth…";
+"bluetooth.authorizationNotDetermined" = "Quyền Bluetooth chưa được quyết định.";
+"bluetooth.authorizationDenied" = "Quyền Bluetooth bị từ chối. Mở Cài đặt Bluetooth.";
+"bluetooth.authorizationRestricted" = "Quyền Bluetooth bị hạn chế.";
+
+"wifi.personalHotspot" = "Điểm truy cập cá nhân";
+"battery.action.openDetails" = "Mở điều khiển pin";
+"magsafe.title" = "MagSafe";
+"magsafe.light" = "Đèn báo";
+"magsafe.followsSystem" = "Theo macOS";
+"magsafe.off" = "Tắt";
+"magsafe.unsupported" = "Máy Mac này không hỗ trợ điều khiển đèn báo MagSafe.";
+"magsafe.installHelper" = "Bật điều khiển MagSafe…";
+"magsafe.installExplanation" = "Bật trình trợ giúp sẽ mở Trình cài đặt và yêu cầu mật khẩu quản trị viên. Sau khi cập nhật ứng dụng, hãy cài lại trình trợ giúp nếu được nhắc. Trước khi xóa Glance, bật lại đèn rồi chọn Cài đặt → Giới thiệu → Gỡ cài đặt. Chuyển ứng dụng vào Thùng rác vẫn giữ trình trợ giúp và có thể khiến đèn tiếp tục tắt. Nếu đã xóa ứng dụng, dùng gói gỡ trình trợ giúp riêng trên glance.gadels.com.";
+"magsafe.uninstallHelper" = "Gỡ trình trợ giúp MagSafe";
+"magsafe.error.install" = "Không thể cài đặt trình trợ giúp MagSafe.";
+"magsafe.error.uninstall" = "Không thể gỡ trình trợ giúp MagSafe.";
+"magsafe.error.write" = "Không thể áp dụng cài đặt đèn báo MagSafe.";
+"magsafe.privateAPIWarning" = "Dùng điều khiển SMC riêng phụ thuộc vào firmware. Chỉ thay đổi đèn, không thay đổi việc sạc.";
+
+/* Compact controls and usage */
+"brightness.title" = "Độ sáng";
+"codex.remaining" = "Còn %d%%";
+"codex.reset" = "Đặt lại sau %@";
+"codex.resetFull" = "Đặt lại %@";
+"codex.updated" = "Đã cập nhật %@";
+"codex.loading" = "Đang tải…";
+"codex.unavailable" = "Không khả dụng";
+"codex.cached" = "Đã lưu tạm · không thể làm mới";
+"codex.fiveHours" = "5 giờ";
+"codex.weekly" = "Hàng tuần";
+"codex.windowMinutes" = "%d phút";
+"media.previous" = "Trước";
+"media.pause" = "Tạm dừng";
+"media.next" = "Tiếp";
+"media.commandFailed" = "Không thể điều khiển trình phát này.";
+
+"volume.output.hint" = "Nhấp để tắt tiếng; nhấp chuột phải để chọn đầu ra";
+
+"codex.refreshNow" = "Làm mới ngay";
+"display.title" = "Màn hình";
+"display.settings" = "Cài đặt màn hình…";
+"display.darkMode" = "Chế độ tối";
+"display.nightShift" = "Night Shift";
+"display.trueTone" = "True Tone";
+"display.on" = "Bật";
+"display.off" = "Tắt";
+"display.unavailable" = "Không khả dụng";
+"display.actionFailed" = "Không thể thay đổi cài đặt màn hình.";
+
+"sound.title" = "Âm thanh";
+"sound.settings" = "Cài đặt âm thanh…";
+
+"media.progress" = "Vị trí phát";
+
+"menu.compactQuit" = "Thoát";
+
+"menu.compactSettings" = "Cài đặt…";
+
+"media.play" = "Phát";
+
+"weather.unavailable" = "Thời tiết không khả dụng";
+"weather.clear" = "Trời quang";
+"weather.partlyCloudy" = "Có mây rải rác";
+"weather.cloudy" = "Nhiều mây";
+"weather.fog" = "Sương mù";
+"weather.rain" = "Mưa";
+"weather.snow" = "Tuyết";
+"weather.thunderstorm" = "Dông";
+"weather.unknown" = "Điều kiện không xác định";
+"settings.clockFormat" = "Định dạng giờ";
+"settings.clock12" = "12 giờ";
+"settings.clock24" = "24 giờ";
+"settings.weatherShortcut" = "Thời tiết";
+"settings.weatherShortcutDescription" = "Dùng Apple Weather qua các phím tắt đi kèm. Lưu tạm trong 15 phút; yêu cầu dừng khi đóng bảng bật lên.";
+"settings.weatherOpenShortcut" = "Mở phím tắt thời tiết…";
+
+"weather.title" = "Thời tiết";
+"weather.temperature" = "Nhiệt độ";
+"weather.condition" = "Điều kiện";
+"weather.source" = "Nguồn";
+"weather.updated" = "Đã cập nhật %@";
+"weather.loading" = "Đang tải thời tiết…";
+"weather.openApp" = "Mở Thời tiết…";
+
+"weather.low" = "Thấp";
+"weather.high" = "Cao";
+"weather.hourly" = "Dự báo theo giờ";
+"weather.forecastUnavailable" = "Dự báo không khả dụng";
+
+"weather.currentLocation" = "Vị trí hiện tại";
+
+"settings.weatherAddCurrent" = "Thêm thời tiết hiện tại…";
+
+"settings.weatherAddForecast" = "Thêm dự báo…";
+
+"settings.weatherInstallHelp" = "Các phím tắt được đi kèm. Thêm cả hai và xác nhận quyền hệ thống một lần. Dự báo chi tiết chỉ tải khi mở menu thời tiết.";
+
+"settings.audio.scrollVolume" = "Cuộn để điều chỉnh âm lượng";
+"settings.audio.scrollVolumeDescription" = "Cuộn lên hoặc xuống trong bảng bật lên để điều chỉnh âm lượng. Danh sách và dự báo thời tiết vẫn cuộn bình thường.";
+
+"settings.about.upstream" = "Dựa trên Status Trio";
+
+"weather.uvIndex" = "Chỉ số UV";
+"weather.sunrise" = "Bình minh";
+"weather.sunset" = "Hoàng hôn";
+"weather.refresh" = "Làm mới ngay";
+"weather.rainChance" = "Khả năng có mưa";
+
+"battery.state.paused" = "Đã tạm dừng";
+"battery.chargeToFull" = "Sạc đầy ngay";
+"battery.chargeToFull.explanation" = "Tạm thời tiếp tục sạc. Sạc pin được tối ưu hóa vẫn được bật.";
+"battery.chargeToFull.unavailable" = "macOS hiện không cho phép ghi đè việc sạc.";
+"battery.chargeToFull.accepted" = "Đã gửi yêu cầu đến macOS. Đang chờ tiếp tục sạc.";
+"battery.chargeToFull.failed" = "Không thể tiếp tục sạc. Thử lại hoặc dùng menu pin của macOS.";
+
+"settings.popupUtility" = "Mô-đun bảng bật lên";
+"settings.popupUtility.description" = "Chọn Hiệu năng, mức sử dụng Codex hoặc Claude. Chỉ đọc dịch vụ đã chọn.";
+"utility.codex" = "Mức sử dụng Codex";
+"utility.claude" = "Mức sử dụng Claude";
+"claude.unavailable" = "Không có dữ liệu sử dụng Claude";
+"claude.connect" = "Kết nối Claude Code";
+"claude.connectHelp" = "Kết nối dòng trạng thái Claude Code hiện có. Glance giữ nguyên đầu ra và đọc giới hạn 5 giờ và hàng tuần trên máy sau phản hồi tiếp theo. Không dùng token API.";
+"claude.setupFailed" = "Cài đặt và chạy Claude Code trước, rồi thử kết nối lại.";
+"shortcut.manageRemove" = "Xóa trong Phím tắt…";
+"shortcut.removeHelp" = "Trong Phím tắt, quay về Tất cả phím tắt, chọn mục rồi nhấn ⌘⌫ để xóa. Thêm hoặc cập nhật phím tắt thời tiết từ menu con Thời tiết.";
+"shortcut.discoveryFailed" = "Không thể kiểm tra phím tắt. Nhấp làm mới để thử lại.";
+
+"performance.title" = "Hiệu năng";
+"performance.summary" = "CPU %@ · Bộ nhớ %@";
+"performance.cpu" = "Mức sử dụng CPU";
+"performance.memory" = "Bộ nhớ đã dùng";
+"performance.pressure" = "Áp lực bộ nhớ";
+"performance.pressure.normal" = "Bình thường";
+"performance.pressure.warning" = "Cảnh báo";
+"performance.pressure.critical" = "Nghiêm trọng";
+"performance.memoryHelp" = "Mức sử dụng gồm bộ nhớ ứng dụng, bộ nhớ có dây và bộ nhớ nén, không gồm bộ nhớ đệm có thể thu hồi.";
+"performance.unavailable" = "Hiệu năng không khả dụng";
+"performance.openActivityMonitor" = "Mở Giám sát hoạt động…";
+"performance.cpuShort" = "CPU %@";
+"performance.memoryShort" = "RAM %@";
+
+"timer.title" = "Hẹn giờ";
+"timer.finished" = "Hết giờ";
+"timer.paused" = "Đã tạm dừng";
+"timer.pause" = "Tạm dừng";
+"timer.resume" = "Tiếp tục";
+"timer.done" = "Xong";
+"timer.cancel" = "Hủy";
+"timer.minutes" = "%d phút";
+"timer.custom" = "Thời lượng tùy chỉnh";
+"timer.minuteUnit" = "phút";
+"timer.start" = "Bắt đầu";
+"footer.openCalendar" = "Mở Lịch…";
+"footer.openClock" = "Mở Đồng hồ…";
+"timer.notificationBody" = "Đếm ngược đã hoàn tất.";
+"timer.notificationHelp" = "Thông báo không khả dụng. Thanh menu vẫn nhấp nháy khi hết giờ.";
+"timer.openNotifications" = "Mở Cài đặt thông báo…";
+
+"compact.battery" = "Pin";
+"compact.unavailable" = "Không khả dụng";
+"compact.charged" = "Đầy";
+"compact.charging" = "Đang sạc";
+"compact.lowPower" = "Nguồn điện thấp";
+"compact.power" = "Nguồn: Điện";
+"compact.onBattery" = "Nguồn: Pin";
+"compact.connected" = "Đã kết nối";
+"compact.disconnected" = "Đã ngắt kết nối";
+"compact.off" = "Tắt";
+"compact.noInternet" = "Mất Internet";
+"compact.hotspot" = "Điểm truy cập";
+"compact.temporary" = "Tạm thời";
+"compact.shared" = "Đang chia sẻ";
+"compact.loading" = "Đang tải";
+"compact.noAccess" = "Không có quyền";
+"compact.cached" = "Đã lưu tạm";
+"compact.noData" = "Không có dữ liệu";
+"compact.screenshot" = "Ảnh màn hình";
+"settings.clockSeconds" = "Hiển thị giây";
+
+"settings.screenshotMode" = "Chế độ chụp màn hình";
+"settings.screenshotDestination" = "Lưu ảnh màn hình vào";
+"settings.screenshotToolbar" = "Thanh công cụ chụp màn hình hệ thống";
+"settings.screenshotRegion" = "Chọn một vùng";
+"settings.screenshotDesktop" = "Màn hình nền (tệp PNG)";
+"settings.screenshotClipboard" = "Bảng nhớ tạm";
+"screenshot.failed" = "Không thể khởi chạy công cụ chụp màn hình. Vui lòng thử lại.";
+
+"bluetooth.connect" = "Kết nối";
+"bluetooth.disconnect" = "Ngắt kết nối";
+"bluetooth.connectionFailed" = "Không thể thay đổi kết nối. Thử lại hoặc dùng Cài đặt Bluetooth.";
+"bluetooth.deviceSettings" = "Mở cài đặt AirPods…";
+
+"settings.cardTextAutoShrink" = "Tự động thu nhỏ chữ trong thẻ khi thiếu chỗ";
+
+"settings.screenshotSystemHelp" = "Mở ứng dụng Ảnh màn hình của macOS. Chọn vùng, cửa sổ hoặc màn hình, rồi dùng Tùy chọn để lưu vào Bảng nhớ tạm hoặc tệp.";
+
+"quick.FirstSlot" = "Phím tắt bên trái";
+"quick.SecondSlot" = "Phím tắt bên phải";
+"quick.Calculator" = "Máy tính";
+"quick.Notes" = "Ghi chú";
+"quick.Reminders" = "Lời nhắc";
+"quick.Shortcut" = "Phím tắt";
+"quick.Application" = "Ứng dụng tùy chỉnh";
+"quick.ChooseApplication" = "Chọn ứng dụng…";
+"quick.ChooseShortcut" = "Chọn phím tắt";
+
+"settings.UtilityFirstRow" = "Dải trên";
+"settings.UtilitySecondRow" = "Dải dưới";
+"settings.UtilityCardDescription" = "Chọn nội dung hiển thị trong thẻ. Bật các dải bổ sung bên dưới để hiển thị đồng thời mô-đun khác.";
+
+"weather.drizzle" = "Mưa phùn";
+
+"weather.wind" = "Có gió";
+
+"weather.summary" = "%@ · UV %@ · %@ Mưa";
+
+"settings.temperatureUnit" = "Đơn vị nhiệt độ";
+
+"shortcut.update" = "Cập nhật phím tắt…";
+"shortcut.updateHelp" = "Khi nhập, chọn Thay thế để cập nhật phím tắt hiện có. Giữ nguyên tên gốc. Lời nhắc biến mất sau khi phiên bản mới chạy thành công.";
+
+"settings.utilityStripPosition" = "Các dải nằm giữa trình phát và các nút phím tắt.";
+
+"shortcut.addWeather" = "Thêm phím tắt thời tiết…";
+"shortcut.continueSetup" = "Tiếp tục thiết lập…";
+"shortcut.sequentialInstallHelp" = "Nhập phím tắt trong cửa sổ hệ thống, rồi quay lại đây để tiếp tục. Mỗi phím tắt cần được xác nhận riêng.";
+
+"settings.uninstall" = "Gỡ cài đặt Glance…";
+"settings.uninstall.title" = "Gỡ cài đặt Glance?";
+"settings.uninstall.confirm" = "Gỡ cài đặt";
+"settings.uninstall.message" = "Gỡ trình trợ giúp MagSafe, mục đăng nhập và tích hợp Claude, chuyển Glance vào Thùng rác rồi thoát. Cài đặt đã lưu và phím tắt hệ thống được giữ lại.";
+"settings.uninstall.error" = "Không thể gỡ cài đặt Glance";
+"settings.uninstall.shortcuts" = "Các phím tắt thời tiết được giữ lại. Bạn có thể xóa Glance Weather và Glance Weather Forecast trong ứng dụng Phím tắt.";
+
+"wifi.knownNetworks" = "Mạng đã biết";
+"wifi.disconnectFailed" = "Không thể ngắt kết nối mạng. Thử lại.";
+
+"compact.on" = "Bật";
+"bluetooth.devices" = "Thiết bị";
+
+"settings.about.donate" = "Ủng hộ";

@@ -1,0 +1,3 @@
+"NSLocationWhenInUseUsageDescription" = "Chỉ dùng khi bạn mở chi tiết Wi-Fi để đọc tên mạng, kết quả quét và thông tin kết nối.";
+"NSBluetoothAlwaysUsageDescription" = "Chỉ dùng khi bạn mở chi tiết Bluetooth để hiển thị trạng thái kết nối của thiết bị đã ghép đôi.";
+"NSLocationUsageDescription" = "Chỉ dùng khi bạn mở chi tiết Wi-Fi để đọc tên mạng, kết quả quét và thông tin kết nối.";

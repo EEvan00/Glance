@@ -3,8 +3,8 @@ import XCTest
 @testable import GlanceCore
 
 final class AppLanguageTests: XCTestCase {
-    func testSupportsTwelveLanguages() {
-        XCTAssertEqual(AppLanguage.allCases.count, 12)
+    func testSupportsThirteenLanguages() {
+        XCTAssertEqual(AppLanguage.allCases.count, 13)
     }
 
     func testResolvesChineseScriptAndRegionVariants() {
@@ -27,6 +27,14 @@ final class AppLanguageTests: XCTestCase {
             .french
         )
         XCTAssertEqual(AppLanguage.resolved(preferredLanguages: ["yue-Hant"]), .english)
+    }
+
+    func testResolvesVietnameseLanguageVariants() {
+        for identifier in ["vi", "vi-VN", "vi_VN"] {
+            XCTAssertEqual(AppLanguage.resolved(preferredLanguages: [identifier, "en"]), .vietnamese)
+        }
+        XCTAssertEqual(AppLanguage.vietnamese.nativeName, "Tiếng Việt")
+        XCTAssertEqual(AppLanguage.vietnamese.layoutDirection, .leftToRight)
     }
 
     func testArabicUsesRightToLeftLayout() {
