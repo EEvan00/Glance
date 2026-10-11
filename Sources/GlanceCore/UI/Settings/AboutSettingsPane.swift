@@ -53,8 +53,11 @@ struct AboutSettingsPane: View {
                 Link(destination: AppMetadata.authorURL) {
                     Label(AppMetadata.authorName, systemImage: "person.crop.circle")
                 }
+                Link(destination: AppMetadata.donateURL) {
+                    Label(localization.string(.settingsAboutDonate), systemImage: "heart.fill")
+                }
                 Link(destination: AppMetadata.upstreamURL) {
-                    Label(localization.string(.settingsAboutUpstream), systemImage: "heart")
+                    Label(localization.string(.settingsAboutUpstream), systemImage: "arrow.triangle.branch")
                 }
             }.buttonStyle(.bordered).controlSize(.small)
 

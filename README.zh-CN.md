@@ -37,7 +37,7 @@ Status Trio 是一个原生 macOS 菜单栏（menubar）应用，将 Wi-Fi、电
 - **音量一目了然**：显示输出音量和静音状态，并可从弹层快速控制。
 - **原生 macOS 交互**：左键打开状态弹层，右键显示标准菜单。
 - **高效状态更新**：事件驱动监控，并提供低频轮询兜底。
-- **十二种语言**：跟随系统语言或手动选择，修改后立即生效。
+- **十三种语言**：跟随系统语言或手动选择，修改后立即生效。
 - **登录时启动**：可选开机登录启动，并在 macOS 需要批准时提供引导。
 
 ## 系统要求
@@ -101,7 +101,7 @@ open "/Applications/Status Trio.app"
 
 ## 支持的语言
 
-Status Trio 默认跟随 macOS 首选语言，支持 English、简体中文、繁体中文、日本語、한국어、Español、Français、Deutsch、Italiano、Português (Brasil)、Русский 和 العربية。
+Status Trio 默认跟随 macOS 首选语言，支持 English、简体中文、繁体中文、日本語、한국어、Español、Français、Deutsch、Italiano、Português (Brasil)、Русский、العربية 和 Tiếng Việt。
 
 ## 隐私
 

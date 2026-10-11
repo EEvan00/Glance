@@ -177,8 +177,8 @@ else
     /usr/libexec/PlistBuddy -c "Delete :SUPublicEDKey" "$CONTENTS/Info.plist" 2>/dev/null || true
 fi
 INFO_PLIST_COUNT="$(find "$ROOT/Sources/GlanceCore/Resources" -name 'InfoPlist.strings' -type f | wc -l | tr -d ' ')"
-if [[ "$INFO_PLIST_COUNT" -ne 12 ]]; then
-    echo "Error: expected 12 localized InfoPlist.strings files, found $INFO_PLIST_COUNT." >&2
+if [[ "$INFO_PLIST_COUNT" -ne 13 ]]; then
+    echo "Error: expected 13 localized InfoPlist.strings files, found $INFO_PLIST_COUNT." >&2
     exit 1
 fi
 

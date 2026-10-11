@@ -14,6 +14,7 @@ enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
     case brazilianPortuguese = "pt-BR"
     case russian = "ru"
     case arabic = "ar"
+    case vietnamese = "vi"
 
     var id: String { rawValue }
 
@@ -43,6 +44,8 @@ enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
             "Русский"
         case .arabic:
             "العربية"
+        case .vietnamese:
+            "Tiếng Việt"
         }
     }
 
