@@ -64,6 +64,10 @@ struct WeatherDetailsView: View {
             if settings.weatherSource == .shortcuts {
                 WeatherShortcutInstallButtons(localization: localization)
             }
+            if settings.weatherSource == .nativeWeather,
+               let attribution = forecast.attribution ?? controller.attribution {
+                WeatherAttributionView(attribution: attribution)
+            }
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 8) {
                     Menu {
