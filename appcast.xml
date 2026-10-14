@@ -6,19 +6,6 @@
     <link>https://github.com/EEvan00/Glance</link>
     <description>Independent Glance releases.</description>
     <language>en</language>
-    
-    <item>
-      <title>Version 2.0.0 （English + 中文， 中文在下方）</title>
-      <pubDate>Wed, 14 Oct 2026 10:17:06 +0000</pubDate>
-      <sparkle:version>17</sparkle:version>
-      <sparkle:shortVersionString>2.0.0</sparkle:shortVersionString>
-      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-      <description><![CDATA[<ul><li>Version: 2.0.0</li></ul><h2>English</h2><ul><li>Restore the approved compact layout: remove the standalone Apple Weather rows from the summary and weather details.</li><li>Fix a background Service Management callback crash that interrupted uninstall before moving Glance to Trash.</li><li>This corrected 2.0.0 uses build 17 and replaces withdrawn build 16. Includes the customizable eight-slot footer, native weather, and MagSafe safety/reinstall improvements.</li><li>Universal Apple Silicon and Intel build, Developer ID signed and notarized by Apple.</li></ul><h2>中文</h2><ul><li>恢复已确认的紧凑界面：移除摘要页及天气详情里的独立 Apple Weather 来源行。</li><li>修复辅助服务后台回调导致的卸载崩溃，卸载可完整执行到移入废纸篓并退出。</li><li>本次为 2.0.0 的修正版 Build 17，替代已撤回的 Build 16；包含八格底部自定义模块、原生天气和 MagSafe 安全恢复与重装改进。</li><li>支持 Apple Silicon 和 Intel，使用 Developer ID 签名及 Apple 公证。</li></ul>]]></description>
-      <enclosure url="https://github.com/EEvan00/Glance/releases/download/v2.0.0/Glance-2.0.0.dmg"
-                 type="application/octet-stream"
-                 sparkle:edSignature="fEtkNpOAMxDGisuYI7Kwve6YA5FftVyGhsm98Z9CkMRmEoiJa4xjICahMbNHDxD2taDgDTL4H0UD92LMqWIrAg=="
-                 length="5606938" />
-    </item>
     <item>
       <title>Version 1.0.5 （English + 中文， 中文在下方）</title>
       <pubDate>Sat, 10 Oct 2026 09:21:44 +0000</pubDate>
