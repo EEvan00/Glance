@@ -429,3 +429,94 @@
 "bluetooth.devices" = "デバイス";
 
 "settings.about.donate" = "寄付する";
+
+// Footer module editor
+"footer.modulesTitle" = "下部モジュール";
+"footer.modulesHelp" = "最大8枠のモジュールを選んで並べます。変更はすぐに保存されます。";
+"footer.usage" = "%d / 8 枠";
+"footer.library" = "モジュール一覧";
+"footer.search" = "モジュールを検索";
+"footer.size" = "サイズ";
+"footer.oneSlot" = "1枠";
+"footer.twoSlots" = "2枠";
+"footer.add" = "追加";
+"footer.remove" = "削除";
+"footer.moveLeft" = "左へ移動";
+"footer.moveRight" = "右へ移動";
+"footer.clear" = "すべて削除";
+"footer.restore" = "初期設定に戻す";
+"footer.undo" = "取り消す";
+"footer.name" = "名前";
+"footer.target" = "対象";
+"footer.choose" = "選択…";
+"footer.empty" = "モジュールがありません";
+"footer.full" = "空きがありません。他のモジュールを削除するか小さくしてください。";
+"footer.drop" = "ここにモジュールをドロップ";
+"footer.fixed" = "固定ボタン";
+"footer.selectModule" = "設定するモジュールを選択してください。";
+"footer.information" = "情報";
+"footer.tools" = "ツール";
+"footer.custom" = "カスタム項目";
+"footer.actionFailed" = "操作を完了できませんでした。";
+"footer.invalidTarget" = "有効な対象を選択してください。";
+"footer.permissionRequired" = "この操作には権限が必要です。";
+"footer.unavailable" = "利用できません";
+"footer.enabled" = "有効";
+"footer.disabled" = "無効";
+"footer.date" = "日付";
+"footer.clock" = "時計";
+"footer.website" = "ウェブサイト";
+"footer.file" = "ファイル";
+"footer.folder" = "フォルダ";
+"footer.downloads" = "ダウンロード";
+"footer.lockScreen" = "画面をロック";
+"footer.showDesktop" = "デスクトップを表示";
+"footer.keepAwake" = "スリープを防止";
+
+"footer.actionInvalidWebsite" = "有効なHTTPまたはHTTPSのウェブアドレスを入力してください。";
+"footer.actionInvalidApplication" = "既存のアプリケーションを選択してください。";
+"footer.actionInvalidFile" = "既存のファイルを選択してください。";
+"footer.actionInvalidFolder" = "既存のフォルダを選択してください。";
+"footer.actionInvalidShortcut" = "ショートカット名を入力してください。";
+"footer.actionOpenFailed" = "システムがこの対象を開けませんでした。";
+"footer.actionKeepAwakeFailed" = "スリープ防止状態を変更できませんでした。";
+"footer.actionSystemUnavailable" = "このMacではこのシステム操作を利用できません。";
+
+// Footer module descriptions
+"footer.description.weather" = "気温を表示して天気パネルを開きます。";
+"footer.description.date" = "今日の日付を表示してカレンダーを開きます。";
+"footer.description.clock" = "現在の時刻を表示して時計を開きます。";
+"footer.description.timer" = "カウントダウンの進行状況を表示してタイマーを開きます。";
+"footer.description.screenshot" = "スクリーンショット設定に従って画面を撮影します。";
+"footer.description.calculator" = "計算機を開きます。";
+"footer.description.notes" = "メモを開きます。";
+"footer.description.reminders" = "リマインダーを開きます。";
+"footer.description.application" = "選択したアプリケーションを開きます。";
+"footer.description.shortcut" = "選択したショートカットを実行します。";
+"footer.description.website" = "選択したウェブサイトをブラウザで開きます。";
+"footer.description.file" = "選択したファイルを既定のアプリで開きます。";
+"footer.description.folder" = "選択したフォルダをFinderで開きます。";
+"footer.description.downloads" = "ダウンロードフォルダをFinderで開きます。";
+"footer.description.lockScreen" = "このMacの画面をロックします。";
+"footer.description.showDesktop" = "デスクトップを表示します。";
+"footer.keepAwakeHelp" = "有効な間はアイドル状態によるシステムのスリープを防ぎます。画面はスリープする場合があります。";
+"footer.description.battery" = "バッテリー残量を表示してバッテリーパネルを開きます。";
+"footer.description.performance" = "CPU使用率を表示してパフォーマンスパネルを開きます。";
+"footer.description.output" = "出力装置を表示して音声出力コントロールを開きます。";
+"footer.description.wiFi" = "Wi-Fiの状態を表示してWi-Fiパネルを開きます。";
+"footer.description.bluetooth" = "Bluetoothの状態を表示してBluetoothパネルを開きます。";
+"footer.description.codex" = "Codexの使用量を表示して使用量パネルを開きます。";
+"footer.description.claude" = "Claudeの使用量を表示して使用量パネルを開きます。";
+
+// Apple Weather source and guidance
+"weather.source.native" = "Appleの天気";
+"weather.source.shortcuts" = "ショートカット";
+"weather.nativeHelp" = "設定されたGlance天気サービスを通じて現在地のAppleの天気を取得します。天気を表示するときに位置情報へのアクセスを求めます。";
+"weather.native.notConfigured" = "このバージョンではAppleの天気が設定されていません。ショートカットを使うか、Appleの天気が設定されたバージョンをインストールしてください。";
+"weather.native.locationDenied" = "位置情報へのアクセスが拒否されました。システム設定 → プライバシーとセキュリティ → 位置情報サービスでGlanceを許可するか、ショートカットを使ってください。";
+"weather.native.locationUnavailable" = "現在地を取得できませんでした。位置情報サービスを有効にして再試行するか、ショートカットを使ってください。";
+"weather.native.serviceUnavailable" = "Appleの天気を読み込めませんでした。後で再試行するか、ショートカットを使ってください。";
+"weather.useShortcuts" = "ショートカットを使う";
+"weather.openLocationSettings" = "位置情報の設定を開く";
+"weather.attribution" = "Appleの天気";
+"weather.legal" = "天気データの提供元";

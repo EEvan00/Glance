@@ -3,6 +3,7 @@
 set -euo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT/scripts/notarization-ticket.sh"
 CONFIG_PATH="$ROOT/release.json"
 
 read_config() {
@@ -38,9 +39,11 @@ fi
 UNIVERSAL_BUILD="${UNIVERSAL_BUILD:-1}"
 OUTPUT_DIR="${OUTPUT_DIR:-$ROOT/dist}"
 RELEASE_TARGET="${RELEASE_TARGET:-$(git rev-parse HEAD)}"
-CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY:--}"
+CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY--}"
 KEYCHAIN_PATH="${KEYCHAIN_PATH:-}"
 NOTARY_PROFILE="${NOTARY_PROFILE:-}"
+NOTARY_ARGS=(--keychain-profile "$NOTARY_PROFILE")
+if [[ -n "$KEYCHAIN_PATH" ]]; then NOTARY_ARGS+=(--keychain "$KEYCHAIN_PATH"); fi
 SPARKLE_PRIVATE_KEY="${SPARKLE_PRIVATE_KEY:-}"
 SPARKLE_PUBLIC_KEY="${SPARKLE_PUBLIC_KEY:-}"
 SU_FEED_URL="${SU_FEED_URL:-}"
@@ -57,7 +60,7 @@ if [[ "$PUBLISH" == "true" && "$PUBLISH_APPCAST" != "true" ]]; then
     echo "Error: public Glance downloads require a signed Sparkle update feed." >&2
     exit 2
 fi
-if [[ -n "$NOTARY_PROFILE" && "$CODE_SIGN_IDENTITY" == "-" ]]; then echo "Error: NOTARY_PROFILE requires Developer ID signing." >&2; exit 2; fi
+source "$ROOT/scripts/validate-signing-configuration.sh"
 if ! git rev-parse --verify "$RELEASE_TARGET^{commit}" >/dev/null 2>&1; then echo "Error: RELEASE_TARGET is not a checkout commit." >&2; exit 2; fi
 RELEASE_TARGET="$(git rev-parse "$RELEASE_TARGET^{commit}")"
 
@@ -102,7 +105,18 @@ fi
 
 mkdir -p "$OUTPUT_DIR"
 echo "Building $APP_NAME $VERSION ($BUILD) for $RELEASE_REPO..."
-env -u GH_TOKEN -u SPARKLE_PRIVATE_KEY APP_VERSION="$VERSION" FORK_REVISION="$FORK_REVISION" BUILD_NUMBER="$BUILD" SU_FEED_URL="$SU_FEED_URL" SPARKLE_PUBLIC_KEY="$SPARKLE_PUBLIC_KEY" AUTOMATIC_UPDATES_ENABLED="$UPDATE_MODE" UNIVERSAL_BUILD="$UNIVERSAL_BUILD" BUNDLE_ID="$BUNDLE_ID" APP_NAME="$APP_NAME" CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY" KEYCHAIN_PATH="$KEYCHAIN_PATH" bash "$ROOT/scripts/build-app.sh" release no-open
+env -u GH_TOKEN -u SPARKLE_PRIVATE_KEY APP_VERSION="$VERSION" FORK_REVISION="$FORK_REVISION" BUILD_NUMBER="$BUILD" SU_FEED_URL="$SU_FEED_URL" SPARKLE_PUBLIC_KEY="$SPARKLE_PUBLIC_KEY" AUTOMATIC_UPDATES_ENABLED="$UPDATE_MODE" UNIVERSAL_BUILD="$UNIVERSAL_BUILD" BUNDLE_ID="$BUNDLE_ID" APP_NAME="$APP_NAME" CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY" KEYCHAIN_PATH="$KEYCHAIN_PATH" INSTALLER_SIGN_IDENTITY="${INSTALLER_SIGN_IDENTITY:-}" NOTARY_PROFILE="$NOTARY_PROFILE" bash "$ROOT/scripts/build-app.sh" release no-open
+
+if [[ -n "$NOTARY_PROFILE" ]]; then
+    # Notarize and staple the app itself so it remains usable after leaving the
+    # mounted DMG. The migration package was already stapled before app signing.
+    ditto -c -k --keepParent "$ROOT/dist/Glance.app" "$TEMP_ROOT/Glance-notarization.zip"
+    xcrun notarytool submit "$TEMP_ROOT/Glance-notarization.zip" "${NOTARY_ARGS[@]}" --wait
+    stapler_with_retry staple "$ROOT/dist/Glance.app"
+    stapler_with_retry validate "$ROOT/dist/Glance.app"
+    codesign --verify --deep --strict --verbose=2 "$ROOT/dist/Glance.app"
+    spctl --assess --type execute --verbose=2 "$ROOT/dist/Glance.app"
+fi
 
 HELPER_UNINSTALL_PATH="$OUTPUT_DIR/Glance-MagSafe-Helper-Uninstall.pkg"
 cp "$ROOT/dist/Glance.app/Contents/Resources/GlanceHelperUninstall.pkg" "$HELPER_UNINSTALL_PATH"
@@ -139,10 +153,17 @@ if [[ ! -f "$MOUNT_POINT/.DS_Store" || ! -f "$MOUNT_POINT/.background/install.pn
     exit 1
 fi
 hdiutil detach -quiet "$MOUNT_POINT"
+if [[ "$CODE_SIGN_IDENTITY" != "-" ]]; then
+    DMG_SIGNING_ARGS=(--force --sign "$CODE_SIGN_IDENTITY" --timestamp)
+    if [[ -n "$KEYCHAIN_PATH" ]]; then DMG_SIGNING_ARGS+=(--keychain "$KEYCHAIN_PATH"); fi
+    codesign "${DMG_SIGNING_ARGS[@]}" "$DMG_PATH"
+    codesign --verify --strict --verbose=2 "$DMG_PATH"
+fi
 if [[ -n "$NOTARY_PROFILE" ]]; then
-    xcrun notarytool submit "$DMG_PATH" --keychain-profile "$NOTARY_PROFILE" --wait
-    xcrun stapler staple "$DMG_PATH"
-    xcrun stapler validate "$DMG_PATH"
+    xcrun notarytool submit "$DMG_PATH" "${NOTARY_ARGS[@]}" --wait
+    stapler_with_retry staple "$DMG_PATH"
+    stapler_with_retry validate "$DMG_PATH"
+    spctl --assess --type open --context context:primary-signature --verbose=2 "$DMG_PATH"
 fi
 
 ED_SIGNATURE=""

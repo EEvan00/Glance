@@ -13,6 +13,8 @@ struct SettingsDetailView: View {
             BasicsSettingsPane(store: store, localization: localization)
         case .menuBar:
             MenuBarSettingsPane(store: store)
+        case .footerModules:
+            FooterModulesSettingsPane(store: store, snapshot: statusStore.snapshot)
         case .audio:
             AudioSettingsPane(store: store, statusStore: statusStore)
         case .battery:

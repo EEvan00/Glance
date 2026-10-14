@@ -4,6 +4,109 @@ import XCTest
 
 @MainActor
 final class MagSafeLEDControllerTests: XCTestCase {
+    func testNormalQuitRestoresSystemAndDoesNotRenewOrForgetOffPreference() async {
+        let suite = makeSuite()
+        defer { clear(suite) }
+        suite.defaults.set(false, forKey: MagSafeLEDController.defaultsKey)
+        let writer = RecordingMagSafeCommandWriter()
+        let controller = makeController(defaults: suite.defaults, writer: writer)
+        await controller.prepareForTermination()
+        await controller.maintenanceTick()
+        XCTAssertEqual(writer.modes, [.system])
+        XCTAssertFalse(suite.defaults.bool(forKey: MagSafeLEDController.defaultsKey))
+    }
+
+    func testHistoricalRegistrationMigratesWithoutANewPreferenceKey() async {
+        let suite = makeSuite()
+        defer { clear(suite) }
+        let manager = RecordingMagSafeHelperManager(status: .notRegistered)
+        manager.hasPreviouslyEnabledRegistration = true
+        let controller = MagSafeLEDController(
+            defaults: suite.defaults, hardwareProbe: SupportedMagSafeProbe(), helperManager: manager,
+            commandWriter: RecordingMagSafeCommandWriter()
+        )
+        await controller.maintenanceTick()
+        XCTAssertEqual(manager.recoveryCount, 1)
+        XCTAssertEqual(controller.availability, .ready)
+    }
+
+    func testUninstallSuspendsRenewalAndAutomaticRecovery() async {
+        let suite = makeSuite()
+        defer { clear(suite); MagSafeLEDController.isUninstalling = false }
+        suite.defaults.set(false, forKey: MagSafeLEDController.defaultsKey)
+        let writer = RecordingMagSafeCommandWriter()
+        let controller = makeController(defaults: suite.defaults, writer: writer)
+        MagSafeLEDController.isUninstalling = true
+        await controller.maintenanceTick()
+        controller.reapplyIfNeeded()
+        controller.setLightEnabled(false)
+        XCTAssertTrue(writer.modes.isEmpty)
+    }
+
+    func testTrashStopsRenewingRestoresAndRetiresServiceWithoutChangingPreference() async {
+        let suite = makeSuite()
+        defer { clear(suite) }
+        suite.defaults.set(false, forKey: MagSafeLEDController.defaultsKey)
+        let manager = RecordingMagSafeHelperManager(status: .enabled)
+        let writer = RecordingMagSafeCommandWriter()
+        let controller = MagSafeLEDController(
+            defaults: suite.defaults, hardwareProbe: SupportedMagSafeProbe(), helperManager: manager,
+            commandWriter: writer, isApplicationPresent: { false }
+        )
+        await controller.maintenanceTick()
+        await controller.maintenanceTick()
+        controller.setLightEnabled(false)
+        controller.reapplyIfNeeded()
+        XCTAssertEqual(writer.modes, [.system])
+        XCTAssertEqual(manager.retireCount, 1)
+        XCTAssertEqual(manager.recoveryCount, 0)
+        XCTAssertFalse(suite.defaults.bool(forKey: MagSafeLEDController.defaultsKey))
+    }
+
+    func testFreshInstallDoesNotAutomaticallyRegisterAPrivilegedService() async {
+        let suite = makeSuite()
+        defer { clear(suite) }
+        let manager = RecordingMagSafeHelperManager(status: .notRegistered)
+        let controller = MagSafeLEDController(
+            defaults: suite.defaults, hardwareProbe: SupportedMagSafeProbe(), helperManager: manager,
+            commandWriter: RecordingMagSafeCommandWriter()
+        )
+        await controller.maintenanceTick()
+        XCTAssertEqual(manager.recoveryCount, 0)
+        XCTAssertEqual(manager.installCount, 0)
+    }
+
+    func testReinstallRecoversPreviouslyEnabledServiceAndRestoresPreference() async {
+        let suite = makeSuite()
+        defer { clear(suite) }
+        suite.defaults.set(true, forKey: MagSafeLEDController.helperEnabledKey)
+        suite.defaults.set(false, forKey: MagSafeLEDController.defaultsKey)
+        let manager = RecordingMagSafeHelperManager(status: .notRegistered)
+        let writer = RecordingMagSafeCommandWriter()
+        let controller = MagSafeLEDController(
+            defaults: suite.defaults, hardwareProbe: SupportedMagSafeProbe(), helperManager: manager,
+            commandWriter: writer
+        )
+        await controller.maintenanceTick()
+        XCTAssertEqual(manager.recoveryCount, 1)
+        XCTAssertEqual(writer.modes, [.off])
+        XCTAssertEqual(controller.availability, .ready)
+        XCTAssertNil(controller.error)
+    }
+
+    func testBrokenRegisteredHelperGetsOneAutomaticRecoveryAttempt() async {
+        let suite = makeSuite()
+        defer { clear(suite) }
+        let manager = RecordingMagSafeHelperManager(status: .enabled)
+        let controller = MagSafeLEDController(
+            defaults: suite.defaults, hardwareProbe: SupportedMagSafeProbe(), helperManager: manager,
+            commandWriter: RecordingMagSafeCommandWriter(error: TestFailure.write)
+        )
+        for _ in 0..<4 { await controller.maintenanceTick() }
+        XCTAssertEqual(manager.recoveryCount, 1)
+        XCTAssertEqual(controller.error, .installFailed)
+    }
+
     func testXPCWriterReturnsAfterDirectSuccessfulReply() async throws {
         let transport = RecordingMagSafeXPCTransport(result: true)
         let writer = XPCMagSafeLEDCommandWriter(transport: transport)
@@ -362,11 +465,14 @@ private struct MissingMagSafeHelperManager: MagSafeLEDHelperManaging {
 
 private final class RecordingMagSafeHelperManager: MagSafeLEDHelperManaging, @unchecked Sendable {
     var status: MagSafeLEDHelperStatus
+    var hasPreviouslyEnabledRegistration = false
     var statusAfterInstall: MagSafeLEDHelperStatus?
     var installError: Error?
     var uninstallError: Error?
     private(set) var installCount = 0
     private(set) var uninstallCount = 0
+    private(set) var recoveryCount = 0
+    private(set) var retireCount = 0
 
     init(status: MagSafeLEDHelperStatus) {
         self.status = status
@@ -385,6 +491,17 @@ private final class RecordingMagSafeHelperManager: MagSafeLEDHelperManaging, @un
     }
 
     func openSystemSettings() {}
+
+    func recoverRegistration() async throws -> Bool {
+        recoveryCount += 1
+        status = .enabled
+        return true
+    }
+
+    func retireBundledRegistration() async throws {
+        retireCount += 1
+        status = .notRegistered
+    }
 }
 
 private final class RecordingMagSafeCommandWriter: MagSafeLEDCommandWriting, @unchecked Sendable {

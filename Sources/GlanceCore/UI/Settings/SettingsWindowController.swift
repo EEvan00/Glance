@@ -68,7 +68,9 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         window.contentViewController = tabController
         window.delegate = self
         window.isReleasedWhenClosed = true
-        window.isMovableByWindowBackground = true
+        // Content contains drag sources (the footer editor). Background window
+        // movement can steal those drags; the title bar still moves the window.
+        window.isMovableByWindowBackground = false
         window.titleVisibility = .visible
         window.titlebarAppearsTransparent = true
         window.toolbarStyle = .preference

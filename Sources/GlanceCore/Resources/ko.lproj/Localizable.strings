@@ -429,3 +429,94 @@
 "bluetooth.devices" = "기기";
 
 "settings.about.donate" = "후원하기";
+
+// Footer module editor
+"footer.modulesTitle" = "하단 모듈";
+"footer.modulesHelp" = "최대 8칸까지 모듈을 선택하고 정렬하세요. 변경 사항은 즉시 저장됩니다.";
+"footer.usage" = "%d / 8칸";
+"footer.library" = "모듈 라이브러리";
+"footer.search" = "모듈 검색";
+"footer.size" = "크기";
+"footer.oneSlot" = "1칸";
+"footer.twoSlots" = "2칸";
+"footer.add" = "추가";
+"footer.remove" = "제거";
+"footer.moveLeft" = "왼쪽으로 이동";
+"footer.moveRight" = "오른쪽으로 이동";
+"footer.clear" = "모두 지우기";
+"footer.restore" = "기본값 복원";
+"footer.undo" = "실행 취소";
+"footer.name" = "이름";
+"footer.target" = "대상";
+"footer.choose" = "선택…";
+"footer.empty" = "추가된 모듈 없음";
+"footer.full" = "공간이 부족합니다. 다른 모듈을 제거하거나 줄이세요.";
+"footer.drop" = "여기에 모듈 놓기";
+"footer.fixed" = "고정 버튼";
+"footer.selectModule" = "설정할 모듈을 선택하세요.";
+"footer.information" = "정보";
+"footer.tools" = "도구";
+"footer.custom" = "사용자 지정 항목";
+"footer.actionFailed" = "작업을 완료할 수 없습니다.";
+"footer.invalidTarget" = "유효한 대상을 선택하세요.";
+"footer.permissionRequired" = "이 작업을 수행하려면 권한이 필요합니다.";
+"footer.unavailable" = "사용 불가";
+"footer.enabled" = "활성화됨";
+"footer.disabled" = "비활성화됨";
+"footer.date" = "날짜";
+"footer.clock" = "시계";
+"footer.website" = "웹사이트";
+"footer.file" = "파일";
+"footer.folder" = "폴더";
+"footer.downloads" = "다운로드";
+"footer.lockScreen" = "화면 잠금";
+"footer.showDesktop" = "데스크탑 보기";
+"footer.keepAwake" = "잠자기 방지";
+
+"footer.actionInvalidWebsite" = "유효한 HTTP 또는 HTTPS 웹 주소를 입력하세요.";
+"footer.actionInvalidApplication" = "존재하는 응용 프로그램을 선택하세요.";
+"footer.actionInvalidFile" = "존재하는 파일을 선택하세요.";
+"footer.actionInvalidFolder" = "존재하는 폴더를 선택하세요.";
+"footer.actionInvalidShortcut" = "단축어 이름을 입력하세요.";
+"footer.actionOpenFailed" = "시스템에서 이 대상을 열 수 없습니다.";
+"footer.actionKeepAwakeFailed" = "잠자기 방지 상태를 변경할 수 없습니다.";
+"footer.actionSystemUnavailable" = "이 Mac에서는 이 시스템 작업을 사용할 수 없습니다.";
+
+// Footer module descriptions
+"footer.description.weather" = "온도를 표시하고 날씨 패널을 엽니다.";
+"footer.description.date" = "오늘 날짜를 표시하고 캘린더를 엽니다.";
+"footer.description.clock" = "현재 시간을 표시하고 시계를 엽니다.";
+"footer.description.timer" = "카운트다운 진행 상황을 표시하고 타이머를 엽니다.";
+"footer.description.screenshot" = "스크린샷 설정에 따라 화면을 캡처합니다.";
+"footer.description.calculator" = "계산기를 엽니다.";
+"footer.description.notes" = "메모를 엽니다.";
+"footer.description.reminders" = "미리 알림을 엽니다.";
+"footer.description.application" = "선택한 응용 프로그램을 엽니다.";
+"footer.description.shortcut" = "선택한 단축어를 실행합니다.";
+"footer.description.website" = "선택한 웹사이트를 브라우저에서 엽니다.";
+"footer.description.file" = "선택한 파일을 기본 응용 프로그램으로 엽니다.";
+"footer.description.folder" = "선택한 폴더를 Finder에서 엽니다.";
+"footer.description.downloads" = "다운로드 폴더를 Finder에서 엽니다.";
+"footer.description.lockScreen" = "이 Mac의 화면을 잠급니다.";
+"footer.description.showDesktop" = "데스크탑을 표시합니다.";
+"footer.keepAwakeHelp" = "활성화된 동안 유휴 상태로 인한 시스템 잠자기를 방지합니다. 디스플레이는 잠자기에 들어갈 수 있습니다.";
+"footer.description.battery" = "배터리 잔량을 표시하고 배터리 패널을 엽니다.";
+"footer.description.performance" = "CPU 사용률을 표시하고 성능 패널을 엽니다.";
+"footer.description.output" = "출력 기기를 표시하고 오디오 출력 제어를 엽니다.";
+"footer.description.wiFi" = "Wi-Fi 상태를 표시하고 Wi-Fi 패널을 엽니다.";
+"footer.description.bluetooth" = "Bluetooth 상태를 표시하고 Bluetooth 패널을 엽니다.";
+"footer.description.codex" = "Codex 사용량을 표시하고 사용량 패널을 엽니다.";
+"footer.description.claude" = "Claude 사용량을 표시하고 사용량 패널을 엽니다.";
+
+// Apple Weather source and guidance
+"weather.source.native" = "Apple 날씨";
+"weather.source.shortcuts" = "단축어";
+"weather.nativeHelp" = "설정된 Glance 날씨 서비스를 통해 현재 위치의 Apple 날씨를 가져옵니다. 날씨가 표시될 때 위치 접근 권한을 요청합니다.";
+"weather.native.notConfigured" = "이 버전에서는 Apple 날씨가 설정되지 않았습니다. 단축어를 사용하거나 Apple 날씨가 설정된 버전을 설치하세요.";
+"weather.native.locationDenied" = "위치 접근이 거부되었습니다. 시스템 설정 → 개인정보 보호 및 보안 → 위치 서비스에서 Glance를 허용하거나 단축어를 사용하세요.";
+"weather.native.locationUnavailable" = "현재 위치를 확인할 수 없습니다. 위치 서비스를 켜고 다시 시도하거나 단축어를 사용하세요.";
+"weather.native.serviceUnavailable" = "Apple 날씨를 불러올 수 없습니다. 나중에 다시 시도하거나 단축어를 사용하세요.";
+"weather.useShortcuts" = "단축어 사용";
+"weather.openLocationSettings" = "위치 설정 열기";
+"weather.attribution" = "Apple 날씨";
+"weather.legal" = "날씨 데이터 출처";

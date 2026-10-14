@@ -429,3 +429,94 @@
 "bluetooth.devices" = "设备";
 
 "settings.about.donate" = "支持一下";
+
+// Footer module editor
+"footer.modulesTitle" = "底部模块";
+"footer.modulesHelp" = "选择并排列模块，最多占用 8 格。修改立即保存。";
+"footer.usage" = "%d / 8 格";
+"footer.library" = "模块库";
+"footer.search" = "搜索模块";
+"footer.size" = "尺寸";
+"footer.oneSlot" = "1 格";
+"footer.twoSlots" = "2 格";
+"footer.add" = "添加";
+"footer.remove" = "移除";
+"footer.moveLeft" = "向左移动";
+"footer.moveRight" = "向右移动";
+"footer.clear" = "清空";
+"footer.restore" = "恢复默认";
+"footer.undo" = "撤销";
+"footer.name" = "名称";
+"footer.target" = "目标";
+"footer.choose" = "选择…";
+"footer.empty" = "尚未添加模块";
+"footer.full" = "空间不足。请移除或缩小其他模块。";
+"footer.drop" = "将模块拖放到此处";
+"footer.fixed" = "固定按钮";
+"footer.selectModule" = "选择一个模块进行配置。";
+"footer.information" = "信息";
+"footer.tools" = "工具";
+"footer.custom" = "自定义入口";
+"footer.actionFailed" = "无法完成此操作。";
+"footer.invalidTarget" = "请选择有效的目标。";
+"footer.permissionRequired" = "执行此操作需要权限。";
+"footer.unavailable" = "不可用";
+"footer.enabled" = "已开启";
+"footer.disabled" = "已关闭";
+"footer.date" = "日期";
+"footer.clock" = "时钟";
+"footer.website" = "网页";
+"footer.file" = "文件";
+"footer.folder" = "文件夹";
+"footer.downloads" = "下载";
+"footer.lockScreen" = "锁屏";
+"footer.showDesktop" = "显示桌面";
+"footer.keepAwake" = "保持唤醒";
+
+"footer.actionInvalidWebsite" = "请输入有效的 HTTP 或 HTTPS 网页地址。";
+"footer.actionInvalidApplication" = "请选择现有的应用程序。";
+"footer.actionInvalidFile" = "请选择现有的文件。";
+"footer.actionInvalidFolder" = "请选择现有的文件夹。";
+"footer.actionInvalidShortcut" = "请输入快捷指令名称。";
+"footer.actionOpenFailed" = "系统无法打开此目标。";
+"footer.actionKeepAwakeFailed" = "无法更改保持唤醒状态。";
+"footer.actionSystemUnavailable" = "此 Mac 无法执行该系统操作。";
+
+// Footer module descriptions
+"footer.description.weather" = "显示温度并打开天气面板。";
+"footer.description.date" = "显示今天的日期并打开日历。";
+"footer.description.clock" = "显示当前时间并打开时钟。";
+"footer.description.timer" = "显示倒计时进度并打开倒计时。";
+"footer.description.screenshot" = "按截图设置截取屏幕。";
+"footer.description.calculator" = "打开计算器。";
+"footer.description.notes" = "打开备忘录。";
+"footer.description.reminders" = "打开提醒事项。";
+"footer.description.application" = "打开所选应用程序。";
+"footer.description.shortcut" = "运行所选快捷指令。";
+"footer.description.website" = "在浏览器中打开所选网页。";
+"footer.description.file" = "使用默认应用打开所选文件。";
+"footer.description.folder" = "在 Finder 中打开所选文件夹。";
+"footer.description.downloads" = "在 Finder 中打开下载文件夹。";
+"footer.description.lockScreen" = "锁定此 Mac 的屏幕。";
+"footer.description.showDesktop" = "显示桌面。";
+"footer.keepAwakeHelp" = "开启时防止系统因闲置进入睡眠，显示器仍可休眠。";
+"footer.description.battery" = "显示电量并打开电池面板。";
+"footer.description.performance" = "显示 CPU 使用率并打开性能面板。";
+"footer.description.output" = "显示输出设备并打开音频输出控制。";
+"footer.description.wiFi" = "显示 Wi-Fi 状态并打开 Wi-Fi 面板。";
+"footer.description.bluetooth" = "显示蓝牙状态并打开蓝牙面板。";
+"footer.description.codex" = "显示 Codex 用量并打开用量面板。";
+"footer.description.claude" = "显示 Claude 用量并打开用量面板。";
+
+// Apple Weather source and guidance
+"weather.source.native" = "Apple 天气";
+"weather.source.shortcuts" = "快捷指令";
+"weather.nativeHelp" = "通过已配置的 Glance 天气服务获取当前位置的 Apple 天气。显示天气时才会请求定位权限。";
+"weather.native.notConfigured" = "此版本尚未配置 Apple 天气。请使用快捷指令，或安装已配置 Apple 天气的版本。";
+"weather.native.locationDenied" = "定位权限被拒绝。请在系统设置 → 隐私与安全性 → 定位服务中允许 Glance，或使用快捷指令。";
+"weather.native.locationUnavailable" = "无法确定当前位置。请开启定位服务后重试，或使用快捷指令。";
+"weather.native.serviceUnavailable" = "无法加载 Apple 天气。请稍后重试，或使用快捷指令。";
+"weather.useShortcuts" = "使用快捷指令";
+"weather.openLocationSettings" = "打开定位设置";
+"weather.attribution" = "Apple 天气";
+"weather.legal" = "天气数据来源";

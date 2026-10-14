@@ -19,11 +19,14 @@ struct WeatherDetailsView: View {
                 }
                 .buttonStyle(.plain)
                 Spacer(minLength: 4)
-                Text((forecast.snapshot?.location ?? localization.string(.weatherCurrentLocation)).uppercased())
+                Text((forecast.snapshot?.location ?? controller.snapshot?.location ?? localization.string(.weatherCurrentLocation)).uppercased())
                     .font(.caption).foregroundStyle(.primary.opacity(0.78))
                     .lineLimit(1).truncationMode(.tail)
-                    .help(forecast.snapshot?.location ?? localization.string(.weatherCurrentLocation))
+                    .help(forecast.snapshot?.location ?? controller.snapshot?.location ?? localization.string(.weatherCurrentLocation))
                 if controller.isLoading || forecast.isLoading { ProgressView().controlSize(.small) }
+            }
+            if settings.weatherSource == .nativeWeather, let issue = forecast.nativeIssue ?? controller.nativeIssue {
+                nativeIssueGuidance(issue)
             }
             if let snapshot = forecast.snapshot ?? controller.snapshot {
                 HStack(spacing: 12) {
@@ -58,36 +61,113 @@ struct WeatherDetailsView: View {
                 Text(localization.string(.weatherForecastUnavailable)).font(.caption)
                     .foregroundStyle(.primary.opacity(0.78))
             }
-            WeatherShortcutInstallButtons(localization: localization)
+            if settings.weatherSource == .shortcuts {
+                WeatherShortcutInstallButtons(localization: localization)
+            }
+            if settings.weatherSource == .nativeWeather,
+               let attribution = forecast.attribution ?? controller.attribution {
+                WeatherAttributionView(attribution: attribution)
+            }
             VStack(alignment: .leading, spacing: 0) {
-                HStack {
+                HStack(spacing: 8) {
+                    Menu {
+                        ForEach(WeatherSource.allCases) { source in
+                            Button {
+                                settings.weatherSource = source
+                            } label: {
+                                if settings.weatherSource == source {
+                                    Label(localization.string(source.labelKey), systemImage: "checkmark")
+                                } else {
+                                    Text(localization.string(source.labelKey))
+                                }
+                            }
+                        }
+                    } label: {
+                        Text(sourceMenuTitle)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .menuStyle(.borderlessButton)
+                    .fixedSize()
+                    .accessibilityLabel(localization.string(.weatherSource))
+                    Spacer(minLength: 8)
                     Text((forecast.updatedAt ?? controller.updatedAt).map {
                         localization.format(.weatherUpdated, $0.formatted(date: .omitted, time: .shortened))
                     } ?? localization.string(.weatherUnavailable))
-                        .font(.caption).foregroundStyle(.primary.opacity(0.78))
-                    Spacer()
+                        .font(.caption).foregroundStyle(.secondary)
                     Button {
-                        controller.refreshNow(shortcutName: settings.weatherShortcutName)
-                        forecast.refreshNow(shortcutName: settings.weatherForecastShortcutName)
+                        refreshWeather()
                     } label: {
-                        Image(systemName: "arrow.clockwise").frame(width: 24, height: 24).contentShape(Rectangle())
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundStyle(.secondary)
+                            .frame(width: 24, height: 24).contentShape(Rectangle())
                     }.buttonStyle(PopupHoverButtonStyle())
                         .accessibilityLabel(localization.string(.weatherRefresh))
                         .disabled(controller.isLoading || forecast.isLoading)
-                }.padding(.bottom, 8)
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.bottom, 8)
                 PopupDivider()
                 Button(localization.string(.weatherOpenApp), action: onOpenWeather)
                     .popupFooterInsets()
                     .buttonStyle(PopupHoverButtonStyle(fullWidth: true))
             }
         }
-        .onAppear { forecast.setVisible(true, shortcutName: settings.weatherForecastShortcutName) }
+        .onAppear {
+            NativeWeatherLocationSession.shared.enableAuthorizationRequest()
+            configureWeather(source: settings.weatherSource)
+            controller.setVisible(true, shortcutName: settings.weatherShortcutName)
+            forecast.setVisible(true, shortcutName: settings.weatherForecastShortcutName)
+        }
+        .onChange(of: settings.weatherSource) { _, source in
+            configureWeather(source: source)
+            controller.setVisible(true, shortcutName: settings.weatherShortcutName)
+            forecast.setVisible(true, shortcutName: settings.weatherForecastShortcutName)
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             // Verify the installed output after returning from the system importer.
-            controller.refreshNow(shortcutName: settings.weatherShortcutName)
-            forecast.refreshNow(shortcutName: settings.weatherForecastShortcutName)
+            refreshWeather()
         }
         .onDisappear { forecast.setVisible(false, shortcutName: settings.weatherForecastShortcutName) }
+    }
+
+    private func configureWeather(source: WeatherSource) {
+        controller.configure(source: source)
+        forecast.configure(source: source)
+    }
+
+    private var sourceMenuTitle: String {
+        let separator: String
+        switch localization.resolvedLanguage {
+        case .simplifiedChinese, .traditionalChinese, .japanese: separator = "："
+        default: separator = ": "
+        }
+        return localization.string(.weatherSource) + separator + localization.string(settings.weatherSource.labelKey)
+    }
+
+    private func refreshWeather() {
+        configureWeather(source: settings.weatherSource)
+        controller.refreshNow(shortcutName: settings.weatherShortcutName)
+        forecast.refreshNow(shortcutName: settings.weatherForecastShortcutName)
+    }
+
+    private func nativeIssueGuidance(_ issue: NativeWeatherIssue) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(localization.string(issue.messageKey)).font(.caption).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 6) {
+                if issue.opensLocationSettings {
+                    Button(localization.string(.weatherOpenLocationSettings)) {
+                        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices") {
+                            NSWorkspace.shared.open(url)
+                        }
+                    }
+                }
+                Button(localization.string(.weatherUseShortcuts)) { settings.weatherSource = .shortcuts }
+            }
+            .font(.caption).buttonStyle(.bordered).controlSize(.small)
+        }
     }
 
     private func temperature(_ value: Double) -> String {

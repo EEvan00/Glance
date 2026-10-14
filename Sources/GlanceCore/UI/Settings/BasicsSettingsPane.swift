@@ -75,37 +75,6 @@ struct BasicsSettingsPane: View {
 
             refreshIntervalSection
 
-            Divider()
-
-            PreferenceRow(label: .settingsClockFormat, placesControlInline: true) {
-                Picker(localization.string(.settingsClockFormat), selection: $store.uses24HourClock) {
-                    Text(localization.string(.settingsClock12)).tag(false)
-                    Text(localization.string(.settingsClock24)).tag(true)
-                }
-                .labelsHidden()
-                .frame(width: 180)
-            }
-
-            PreferenceCheckboxRow(label: .settingsClockSeconds, isOn: $store.showsClockSeconds)
-
-            Divider()
-            QuickActionSettingsView(store: store)
-
-            Divider()
-            PreferenceRow(label: .settingsWeatherShortcut) {
-                VStack(alignment: .leading, spacing: 12) {
-                    PreferenceRow(label: .settingsTemperatureUnit, placesControlInline: true) {
-                        Picker(localization.string(.settingsTemperatureUnit), selection: $store.temperatureUnit) {
-                            ForEach(TemperatureUnit.allCases) { unit in
-                                Text(unit.symbol).tag(unit)
-                            }
-                        }.labelsHidden().frame(width: 220)
-                    }
-                    WeatherShortcutInstallButtons(localization: localization, purpose: .settings)
-                }
-            }
-
-
         }
     }
 

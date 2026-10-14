@@ -84,12 +84,15 @@ private let clientRequirement: String = {
 }()
 
 private final class HelperIdleLifecycle: @unchecked Sendable {
+    private let safety: MagSafeSafetyLease
     private let lock = NSLock()
     private var activeConnections = 0
     private var activeRequests = 0
     private var generation: UInt64 = 0
     private var pendingExit: DispatchWorkItem?
     private var isExiting = false
+
+    init(safety: MagSafeSafetyLease) { self.safety = safety }
 
     func connectionBegan() -> Bool {
         lock.lock()
@@ -149,6 +152,11 @@ private final class HelperIdleLifecycle: @unchecked Sendable {
 
     private func exitIfIdle(generation expectedGeneration: UInt64) {
         lock.lock()
+        if safety.needsRestoration {
+            lock.unlock()
+            scheduleIfIdle()
+            return
+        }
         let shouldExit = activeConnections == 0
             && activeRequests == 0
             && generation == expectedGeneration
@@ -163,14 +171,16 @@ private final class MagSafeHelperListenerDelegate: NSObject, NSXPCListenerDelega
     private let lifecycle: HelperIdleLifecycle
     private let service: MagSafeLEDXPCService
 
-    init(lifecycle: HelperIdleLifecycle) {
+    init(lifecycle: HelperIdleLifecycle, safety: MagSafeSafetyLease) {
         self.lifecycle = lifecycle
         service = MagSafeLEDXPCService { command in
-            MagSafeSMC.setLEDMode(command)
+            safety.set(command)
         } requestDidBegin: {
             lifecycle.requestBegan()
         } requestDidEnd: {
             lifecycle.requestEnded()
+        } renew: {
+            safety.renew()
         }
         super.init()
     }
@@ -210,8 +220,22 @@ private final class MagSafeHelperConnectionLease: @unchecked Sendable {
     }
 }
 
-private let lifecycle = HelperIdleLifecycle()
-private let delegate = MagSafeHelperListenerDelegate(lifecycle: lifecycle)
+private let safety = MagSafeSafetyLease { command in MagSafeSMC.setLEDMode(command) }
+private let lifecycle = HelperIdleLifecycle(safety: safety)
+private let delegate = MagSafeHelperListenerDelegate(lifecycle: lifecycle, safety: safety)
+// Expiry is checked independently of client requests, including client crashes.
+private let watchdog = DispatchSource.makeTimerSource(queue: .global(qos: .utility))
+watchdog.schedule(deadline: .now() + 2, repeating: 2)
+watchdog.setEventHandler { @Sendable [safety] in
+    if safety.expireIfNeeded() {
+        NSLog("MagSafe safety lease expired; system LED control restored.")
+    }
+}
+watchdog.resume()
+signal(SIGTERM, SIG_IGN)
+private let termination = DispatchSource.makeSignalSource(signal: SIGTERM, queue: .global(qos: .utility))
+termination.setEventHandler { @Sendable [safety] in exit(safety.shutdown() ? EXIT_SUCCESS : EXIT_FAILURE) }
+termination.resume()
 private let listener = NSXPCListener(machServiceName: serviceName)
 listener.delegate = delegate
 listener.resume()

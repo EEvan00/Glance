@@ -429,3 +429,94 @@
 "bluetooth.devices" = "Thiết bị";
 
 "settings.about.donate" = "Ủng hộ";
+
+// Footer module editor
+"footer.modulesTitle" = "Mô-đun thanh dưới";
+"footer.modulesHelp" = "Chọn và sắp xếp tối đa 8 ô. Thay đổi được lưu ngay.";
+"footer.usage" = "%d / 8 ô";
+"footer.library" = "Thư viện mô-đun";
+"footer.search" = "Tìm mô-đun";
+"footer.size" = "Kích thước";
+"footer.oneSlot" = "1 ô";
+"footer.twoSlots" = "2 ô";
+"footer.add" = "Thêm";
+"footer.remove" = "Xóa";
+"footer.moveLeft" = "Di chuyển sang trái";
+"footer.moveRight" = "Di chuyển sang phải";
+"footer.clear" = "Xóa tất cả";
+"footer.restore" = "Khôi phục mặc định";
+"footer.undo" = "Hoàn tác";
+"footer.name" = "Tên";
+"footer.target" = "Đích";
+"footer.choose" = "Chọn…";
+"footer.empty" = "Chưa thêm mô-đun";
+"footer.full" = "Không còn chỗ. Hãy xóa hoặc thu nhỏ mô-đun khác.";
+"footer.drop" = "Thả mô-đun vào đây";
+"footer.fixed" = "Nút cố định";
+"footer.selectModule" = "Chọn mô-đun để cấu hình.";
+"footer.information" = "Thông tin";
+"footer.tools" = "Công cụ";
+"footer.custom" = "Mục tùy chỉnh";
+"footer.actionFailed" = "Không thể hoàn thành thao tác này.";
+"footer.invalidTarget" = "Hãy chọn đích hợp lệ.";
+"footer.permissionRequired" = "Cần có quyền để thực hiện thao tác này.";
+"footer.unavailable" = "Không khả dụng";
+"footer.enabled" = "Đã bật";
+"footer.disabled" = "Đã tắt";
+"footer.date" = "Ngày";
+"footer.clock" = "Đồng hồ";
+"footer.website" = "Trang web";
+"footer.file" = "Tệp";
+"footer.folder" = "Thư mục";
+"footer.downloads" = "Tải về";
+"footer.lockScreen" = "Khóa màn hình";
+"footer.showDesktop" = "Hiển thị màn hình nền";
+"footer.keepAwake" = "Giữ máy thức";
+
+"footer.actionInvalidWebsite" = "Nhập địa chỉ trang web HTTP hoặc HTTPS hợp lệ.";
+"footer.actionInvalidApplication" = "Chọn ứng dụng hiện có.";
+"footer.actionInvalidFile" = "Chọn tệp hiện có.";
+"footer.actionInvalidFolder" = "Chọn thư mục hiện có.";
+"footer.actionInvalidShortcut" = "Nhập tên phím tắt.";
+"footer.actionOpenFailed" = "Hệ thống không thể mở đích này.";
+"footer.actionKeepAwakeFailed" = "Không thể thay đổi trạng thái giữ máy thức.";
+"footer.actionSystemUnavailable" = "Thao tác hệ thống này không khả dụng trên máy Mac này.";
+
+// Footer module descriptions
+"footer.description.weather" = "Hiển thị nhiệt độ và mở bảng thời tiết.";
+"footer.description.date" = "Hiển thị ngày hôm nay và mở Lịch.";
+"footer.description.clock" = "Hiển thị giờ hiện tại và mở Đồng hồ.";
+"footer.description.timer" = "Hiển thị tiến trình đếm ngược và mở bộ hẹn giờ.";
+"footer.description.screenshot" = "Chụp màn hình theo cài đặt chụp màn hình.";
+"footer.description.calculator" = "Mở Máy tính.";
+"footer.description.notes" = "Mở Ghi chú.";
+"footer.description.reminders" = "Mở Lời nhắc.";
+"footer.description.application" = "Mở ứng dụng đã chọn.";
+"footer.description.shortcut" = "Chạy phím tắt đã chọn.";
+"footer.description.website" = "Mở trang web đã chọn trong trình duyệt.";
+"footer.description.file" = "Mở tệp đã chọn bằng ứng dụng mặc định.";
+"footer.description.folder" = "Mở thư mục đã chọn trong Finder.";
+"footer.description.downloads" = "Mở thư mục Tải về trong Finder.";
+"footer.description.lockScreen" = "Khóa màn hình của máy Mac này.";
+"footer.description.showDesktop" = "Hiển thị màn hình nền.";
+"footer.keepAwakeHelp" = "Khi bật, ngăn hệ thống ngủ do không hoạt động. Màn hình vẫn có thể ngủ.";
+"footer.description.battery" = "Hiển thị mức pin và mở bảng pin.";
+"footer.description.performance" = "Hiển thị mức sử dụng CPU và mở bảng hiệu năng.";
+"footer.description.output" = "Hiển thị thiết bị đầu ra và mở điều khiển đầu ra âm thanh.";
+"footer.description.wiFi" = "Hiển thị trạng thái Wi-Fi và mở bảng Wi-Fi.";
+"footer.description.bluetooth" = "Hiển thị trạng thái Bluetooth và mở bảng Bluetooth.";
+"footer.description.codex" = "Hiển thị mức sử dụng Codex và mở bảng mức sử dụng.";
+"footer.description.claude" = "Hiển thị mức sử dụng Claude và mở bảng mức sử dụng.";
+
+// Apple Weather source and guidance
+"weather.source.native" = "Thời tiết Apple";
+"weather.source.shortcuts" = "Phím tắt";
+"weather.nativeHelp" = "Lấy Thời tiết Apple cho vị trí hiện tại qua dịch vụ thời tiết Glance đã cấu hình. Quyền truy cập vị trí được yêu cầu khi hiển thị thời tiết.";
+"weather.native.notConfigured" = "Thời tiết Apple chưa được cấu hình trong bản này. Dùng Phím tắt hoặc cài bản đã cấu hình Thời tiết Apple.";
+"weather.native.locationDenied" = "Quyền truy cập vị trí bị từ chối. Cho phép Glance trong Cài đặt hệ thống → Quyền riêng tư & Bảo mật → Dịch vụ định vị, hoặc dùng Phím tắt.";
+"weather.native.locationUnavailable" = "Không thể xác định vị trí hiện tại. Bật Dịch vụ định vị và thử lại, hoặc dùng Phím tắt.";
+"weather.native.serviceUnavailable" = "Không thể tải Thời tiết Apple. Thử lại sau hoặc dùng Phím tắt.";
+"weather.useShortcuts" = "Dùng Phím tắt";
+"weather.openLocationSettings" = "Mở cài đặt vị trí";
+"weather.attribution" = "Thời tiết Apple";
+"weather.legal" = "Nguồn dữ liệu thời tiết";

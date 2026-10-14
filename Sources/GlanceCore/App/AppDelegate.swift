@@ -23,6 +23,7 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         let environment = AppEnvironment.live()
         self.environment = environment
+        environment.magSafeLED.startMonitoring()
         environment.store.start()
         // Show the bundled setup once; importing and permissions remain system-confirmed.
         let defaults = UserDefaults.standard
@@ -32,7 +33,18 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    public func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard let environment, !MagSafeLEDController.isUninstalling else { return .terminateNow }
+        environment.store.stop()
+        Task { @MainActor in
+            await environment.magSafeLED.prepareForTermination()
+            sender.reply(toApplicationShouldTerminate: true)
+        }
+        return .terminateLater
+    }
+
     public func applicationWillTerminate(_ notification: Notification) {
+        environment?.magSafeLED.stopMonitoring()
         environment?.store.stop()
     }
 }

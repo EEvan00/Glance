@@ -1,0 +1,8 @@
+{
+  "currentWeather": {
+    "metadata": { "attributionURL": "https://developer.apple.com/weatherkit/data-source-attribution/", "readTime": "2026-10-13T04:00:00Z", "expireTime": "2026-10-13T04:15:00Z", "latitude": -33.87, "longitude": 151.21 },
+    "asOf": "2026-10-13T04:00:00Z", "temperature": 22.5, "conditionCode": "MostlyClear", "daylight": true, "uvIndex": 4
+  },
+  "forecastHourly": { "hours": [{ "forecastStart": "2026-10-13T04:00:00Z", "temperature": 22.5, "conditionCode": "MostlyClear", "daylight": true, "precipitationChance": 0.15 }] },
+  "forecastDaily": { "days": [{ "forecastStart": "2026-10-13T00:00:00Z", "temperatureMin": 16, "temperatureMax": 25, "sunrise": "2026-10-12T19:15:00Z", "sunset": "2026-10-13T08:10:00Z" }] }
+}

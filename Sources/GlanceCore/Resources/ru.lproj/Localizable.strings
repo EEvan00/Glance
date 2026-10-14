@@ -429,3 +429,94 @@
 "bluetooth.devices" = "Устройства";
 
 "settings.about.donate" = "Поддержать";
+
+// Footer module editor
+"footer.modulesTitle" = "Модули нижней панели";
+"footer.modulesHelp" = "Выберите и расположите модули в пределах 8 ячеек. Изменения сохраняются сразу.";
+"footer.usage" = "%d / 8 ячеек";
+"footer.library" = "Библиотека модулей";
+"footer.search" = "Поиск модулей";
+"footer.size" = "Размер";
+"footer.oneSlot" = "1 ячейка";
+"footer.twoSlots" = "2 ячейки";
+"footer.add" = "Добавить";
+"footer.remove" = "Удалить";
+"footer.moveLeft" = "Сдвинуть влево";
+"footer.moveRight" = "Сдвинуть вправо";
+"footer.clear" = "Очистить";
+"footer.restore" = "Восстановить по умолчанию";
+"footer.undo" = "Отменить";
+"footer.name" = "Название";
+"footer.target" = "Цель";
+"footer.choose" = "Выбрать…";
+"footer.empty" = "Модули не добавлены";
+"footer.full" = "Нет свободного места. Удалите или уменьшите другой модуль.";
+"footer.drop" = "Перетащите модуль сюда";
+"footer.fixed" = "Закреплённая кнопка";
+"footer.selectModule" = "Выберите модуль для настройки.";
+"footer.information" = "Информация";
+"footer.tools" = "Инструменты";
+"footer.custom" = "Свои элементы";
+"footer.actionFailed" = "Не удалось выполнить действие.";
+"footer.invalidTarget" = "Выберите допустимую цель.";
+"footer.permissionRequired" = "Для этого действия требуется разрешение.";
+"footer.unavailable" = "Недоступно";
+"footer.enabled" = "Включено";
+"footer.disabled" = "Выключено";
+"footer.date" = "Дата";
+"footer.clock" = "Часы";
+"footer.website" = "Веб-сайт";
+"footer.file" = "Файл";
+"footer.folder" = "Папка";
+"footer.downloads" = "Загрузки";
+"footer.lockScreen" = "Заблокировать экран";
+"footer.showDesktop" = "Показать рабочий стол";
+"footer.keepAwake" = "Не переходить в сон";
+
+"footer.actionInvalidWebsite" = "Введите допустимый веб-адрес HTTP или HTTPS.";
+"footer.actionInvalidApplication" = "Выберите существующее приложение.";
+"footer.actionInvalidFile" = "Выберите существующий файл.";
+"footer.actionInvalidFolder" = "Выберите существующую папку.";
+"footer.actionInvalidShortcut" = "Введите название быстрой команды.";
+"footer.actionOpenFailed" = "Система не смогла открыть эту цель.";
+"footer.actionKeepAwakeFailed" = "Не удалось изменить режим предотвращения сна.";
+"footer.actionSystemUnavailable" = "Это системное действие недоступно на данном Mac.";
+
+// Footer module descriptions
+"footer.description.weather" = "Показывает температуру и открывает панель погоды.";
+"footer.description.date" = "Показывает сегодняшнюю дату и открывает Календарь.";
+"footer.description.clock" = "Показывает текущее время и открывает Часы.";
+"footer.description.timer" = "Показывает ход обратного отсчёта и открывает таймер.";
+"footer.description.screenshot" = "Делает снимок экрана согласно настройкам снимков.";
+"footer.description.calculator" = "Открывает Калькулятор.";
+"footer.description.notes" = "Открывает Заметки.";
+"footer.description.reminders" = "Открывает Напоминания.";
+"footer.description.application" = "Открывает выбранное приложение.";
+"footer.description.shortcut" = "Запускает выбранную быструю команду.";
+"footer.description.website" = "Открывает выбранный сайт в браузере.";
+"footer.description.file" = "Открывает выбранный файл в приложении по умолчанию.";
+"footer.description.folder" = "Открывает выбранную папку в Finder.";
+"footer.description.downloads" = "Открывает папку Загрузки в Finder.";
+"footer.description.lockScreen" = "Блокирует экран этого Mac.";
+"footer.description.showDesktop" = "Показывает рабочий стол.";
+"footer.keepAwakeHelp" = "Во включённом состоянии предотвращает сон системы при бездействии. Экран по-прежнему может переходить в сон.";
+"footer.description.battery" = "Показывает заряд батареи и открывает панель батареи.";
+"footer.description.performance" = "Показывает загрузку CPU и открывает панель производительности.";
+"footer.description.output" = "Показывает устройство вывода и открывает управление аудиовыходом.";
+"footer.description.wiFi" = "Показывает состояние Wi-Fi и открывает панель Wi-Fi.";
+"footer.description.bluetooth" = "Показывает состояние Bluetooth и открывает панель Bluetooth.";
+"footer.description.codex" = "Показывает использование Codex и открывает его панель использования.";
+"footer.description.claude" = "Показывает использование Claude и открывает его панель использования.";
+
+// Apple Weather source and guidance
+"weather.source.native" = "Погода Apple";
+"weather.source.shortcuts" = "Быстрые команды";
+"weather.nativeHelp" = "Получает Погоду Apple для вашей геопозиции через настроенный погодный сервис Glance. Доступ к геопозиции запрашивается при отображении погоды.";
+"weather.native.notConfigured" = "Погода Apple не настроена в этой версии. Используйте Быстрые команды или установите версию с настроенной Погодой Apple.";
+"weather.native.locationDenied" = "Доступ к геопозиции запрещён. Разрешите Glance в Системные настройки → Конфиденциальность и безопасность → Службы геолокации или используйте Быстрые команды.";
+"weather.native.locationUnavailable" = "Не удалось определить геопозицию. Включите службы геолокации и повторите попытку или используйте Быстрые команды.";
+"weather.native.serviceUnavailable" = "Не удалось загрузить Погоду Apple. Повторите позже или используйте Быстрые команды.";
+"weather.useShortcuts" = "Использовать Быстрые команды";
+"weather.openLocationSettings" = "Открыть настройки геолокации";
+"weather.attribution" = "Погода Apple";
+"weather.legal" = "Источники погодных данных";

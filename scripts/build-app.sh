@@ -74,6 +74,24 @@ if [[ "$AUTOMATIC_UPDATES_ENABLED" == "1" && ( -z "$SU_FEED_URL" || -z "$SPARKLE
     exit 2
 fi
 
+SIGNING_IDENTITY="${CODE_SIGN_IDENTITY:-}"
+# Local updates must preserve a certificate-backed identity for SMAppService.
+# CI and explicit release signing continue to use their configured identity.
+if [[ "${CODE_SIGN_IDENTITY+x}" != x && "${CI:-false}" != "true" ]]; then
+    LOCAL_DEVELOPMENT_IDENTITIES=()
+    while IFS= read -r identity; do
+        [[ -n "$identity" ]] && LOCAL_DEVELOPMENT_IDENTITIES+=("$identity")
+    done < <(security find-identity -v -p codesigning 2>/dev/null \
+        | sed -nE 's/^[[:space:]]*[0-9]+\) ([A-Fa-f0-9]{40}) "Apple Development:.*$/\1/p')
+    if [[ "${#LOCAL_DEVELOPMENT_IDENTITIES[@]}" -eq 1 ]]; then
+        SIGNING_IDENTITY="${LOCAL_DEVELOPMENT_IDENTITIES[0]}"
+    fi
+fi
+if [[ "${CODE_SIGN_IDENTITY+x}" != x ]]; then
+    CODE_SIGN_IDENTITY="${SIGNING_IDENTITY:--}"
+fi
+source "$ROOT/scripts/validate-signing-configuration.sh"
+
 cd "$ROOT"
 
 SWIFT_BUILD_ARGS=(build -c "$CONFIGURATION")
@@ -154,6 +172,12 @@ cp "$ROOT/Support/Info.plist" "$CONTENTS/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $BUNDLE_ID" "$CONTENTS/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName $APP_NAME" "$CONTENTS/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleName $APP_NAME" "$CONTENTS/Info.plist"
+# Only a public backend endpoint is embedded. WeatherKit private keys belong on
+# the server and never enter the app bundle, entitlements, or GitHub artifacts.
+/usr/libexec/PlistBuddy -c "Delete :GlanceWeatherServiceURL" "$CONTENTS/Info.plist" 2>/dev/null || true
+if [[ -n "${WEATHER_SERVICE_URL:-}" ]]; then
+    /usr/libexec/PlistBuddy -c "Add :GlanceWeatherServiceURL string $WEATHER_SERVICE_URL" "$CONTENTS/Info.plist"
+fi
 
 if [[ -n "$APP_VERSION" ]]; then
     /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $APP_VERSION" "$CONTENTS/Info.plist"
@@ -218,20 +242,6 @@ if [[ "${SDK_VERSION%%.*}" -ge 26 ]]; then
     restore_deployment_target "$CONTENTS/Resources/GlanceMagSafeHelper"
 fi
 
-SIGNING_IDENTITY="${CODE_SIGN_IDENTITY:-}"
-# Local updates must preserve a certificate-backed identity for SMAppService.
-# CI and explicit release signing continue to use their configured identity.
-if [[ -z "$SIGNING_IDENTITY" && "${CI:-false}" != "true" ]]; then
-    LOCAL_DEVELOPMENT_IDENTITIES=()
-    while IFS= read -r identity; do
-        [[ -n "$identity" ]] && LOCAL_DEVELOPMENT_IDENTITIES+=("$identity")
-    done < <(security find-identity -v -p codesigning 2>/dev/null \
-        | sed -nE 's/^[[:space:]]*[0-9]+\) ([A-Fa-f0-9]{40}) "Apple Development:.*$/\1/p')
-    if [[ "${#LOCAL_DEVELOPMENT_IDENTITIES[@]}" -eq 1 ]]; then
-        SIGNING_IDENTITY="${LOCAL_DEVELOPMENT_IDENTITIES[0]}"
-    fi
-fi
-SIGNING_IDENTITY="${SIGNING_IDENTITY:--}"
 SIGNING_ARGS=(--force --deep --sign "$SIGNING_IDENTITY")
 if [[ "$SIGNING_IDENTITY" != "-" ]]; then
     SIGNING_ARGS+=(--options runtime --timestamp)
@@ -246,10 +256,33 @@ codesign "${SIGNING_ARGS[@]}" "$CONTENTS/Frameworks/Sparkle.framework"
 # requirement. A standalone SwiftPM executable otherwise gets a UUID-derived
 # identifier that changes across builds and does not match the container.
 codesign "${SIGNING_ARGS[@]}" --identifier "$BUNDLE_ID" "$CONTENTS/Resources/GlanceMagSafeHelper"
+# BTM can retain the previous signing team's launch constraint even after
+# unregister/register. Give certificate-backed teams distinct, stable labels;
+# the compatibility Mach endpoint remains unchanged. Read the signed binary:
+# an Apple Development certificate's display name is not its TeamIdentifier.
+MAGSAFE_SIGNING_TEAM=-
+if [[ "$SIGNING_IDENTITY" != "-" ]]; then
+    MAGSAFE_SIGNING_TEAM="$(codesign -dv --verbose=4 "$CONTENTS/Resources/GlanceMagSafeHelper" 2>&1 | sed -n 's/^TeamIdentifier=//p')"
+fi
+MAGSAFE_HELPER_LABEL="$(bash "$ROOT/scripts/magsafe-service-label.sh" "$BUNDLE_ID" "$MAGSAFE_SIGNING_TEAM")"
+if [[ "$SIGNING_IDENTITY" != "-" ]]; then
+    # Keep a signed descriptor for unregistering the historical unscoped label.
+    # It is never registered by the new application.
+    cp "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.magsafe-helper.plist" \
+        "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.legacy-magsafe-helper.plist"
+fi
+/usr/libexec/PlistBuddy -c "Set :Label $MAGSAFE_HELPER_LABEL" \
+    "$CONTENTS/Library/LaunchDaemons/io.github.EEvan00.Glance.magsafe-helper.plist"
 # Hardened Runtime requires this entitlement before macOS can show the
 # location permission prompt used by the existing Wi-Fi authorization flow.
 plutil -lint "$ROOT/Support/Glance.entitlements"
-bash "$ROOT/scripts/build-helper-packages.sh" "$APP_DIR"
+if [[ "$SIGNING_IDENTITY" == "-" ]]; then
+    HELPER_STRATEGY=legacyPackage
+else
+    HELPER_STRATEGY=bundledService
+fi
+/usr/libexec/PlistBuddy -c "Set :GlanceMagSafeHelperStrategy $HELPER_STRATEGY" "$CONTENTS/Info.plist"
+bash "$ROOT/scripts/build-helper-packages.sh" "$APP_DIR" "$HELPER_STRATEGY"
 codesign "${SIGNING_ARGS[@]}" --entitlements "$ROOT/Support/Glance.entitlements" "$APP_DIR"
 codesign --verify --deep --strict --verbose=2 "$APP_DIR"
 

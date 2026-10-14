@@ -2,6 +2,17 @@ import XCTest
 @testable import GlanceCore
 
 final class UninstallCoordinatorTests: XCTestCase {
+    @MainActor func testFailedUninstallReleasesTheRenewalGate() async {
+        enum Failure: Error { case denied }
+        var gateStates: [Bool] = []
+        let coordinator = UninstallCoordinator(
+            removeHelper: { throw Failure.denied }, removeLoginItem: {},
+            moveApplicationToTrash: {}, quit: {}, setUninstalling: { gateStates.append($0) }
+        )
+        do { try await coordinator.uninstall(); XCTFail("Expected failure") }
+        catch { XCTAssertEqual(gateStates, [true, false]) }
+    }
+
     @MainActor func testUninstallRemovesServicesBeforeTrashAndQuitsLast() async throws {
         var events: [String] = []
         let coordinator = UninstallCoordinator(
