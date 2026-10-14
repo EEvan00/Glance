@@ -429,3 +429,94 @@
 "bluetooth.devices" = "الأجهزة";
 
 "settings.about.donate" = "تبرّع";
+
+// Footer module editor
+"footer.modulesTitle" = "وحدات الشريط السفلي";
+"footer.modulesHelp" = "اختر الوحدات ورتّبها ضمن 8 خانات. تُحفظ التغييرات فورًا.";
+"footer.usage" = "%d / 8 خانات";
+"footer.library" = "مكتبة الوحدات";
+"footer.search" = "البحث عن وحدات";
+"footer.size" = "الحجم";
+"footer.oneSlot" = "خانة واحدة";
+"footer.twoSlots" = "خانتان";
+"footer.add" = "إضافة";
+"footer.remove" = "إزالة";
+"footer.moveLeft" = "نقل لليسار";
+"footer.moveRight" = "نقل لليمين";
+"footer.clear" = "مسح الكل";
+"footer.restore" = "استعادة الافتراضي";
+"footer.undo" = "تراجع";
+"footer.name" = "الاسم";
+"footer.target" = "الهدف";
+"footer.choose" = "اختيار…";
+"footer.empty" = "لم تُضف وحدات";
+"footer.full" = "لا توجد مساحة. أزل وحدة أخرى أو صغّرها.";
+"footer.drop" = "أفلت وحدة هنا";
+"footer.fixed" = "زر ثابت";
+"footer.selectModule" = "اختر وحدة لإعدادها.";
+"footer.information" = "معلومات";
+"footer.tools" = "أدوات";
+"footer.custom" = "مداخل مخصصة";
+"footer.actionFailed" = "تعذّر إكمال هذا الإجراء.";
+"footer.invalidTarget" = "اختر هدفًا صالحًا.";
+"footer.permissionRequired" = "يلزم إذن لتنفيذ هذا الإجراء.";
+"footer.unavailable" = "غير متاح";
+"footer.enabled" = "مفعّل";
+"footer.disabled" = "معطّل";
+"footer.date" = "التاريخ";
+"footer.clock" = "الساعة";
+"footer.website" = "موقع ويب";
+"footer.file" = "ملف";
+"footer.folder" = "مجلد";
+"footer.downloads" = "التنزيلات";
+"footer.lockScreen" = "قفل الشاشة";
+"footer.showDesktop" = "إظهار سطح المكتب";
+"footer.keepAwake" = "إبقاء الجهاز مستيقظًا";
+
+"footer.actionInvalidWebsite" = "أدخل عنوان موقع HTTP أو HTTPS صالحًا.";
+"footer.actionInvalidApplication" = "اختر تطبيقًا موجودًا.";
+"footer.actionInvalidFile" = "اختر ملفًا موجودًا.";
+"footer.actionInvalidFolder" = "اختر مجلدًا موجودًا.";
+"footer.actionInvalidShortcut" = "أدخل اسم اختصار.";
+"footer.actionOpenFailed" = "تعذّر على النظام فتح هذا الهدف.";
+"footer.actionKeepAwakeFailed" = "تعذّر تغيير حالة إبقاء الجهاز مستيقظًا.";
+"footer.actionSystemUnavailable" = "إجراء النظام هذا غير متاح على هذا الـ Mac.";
+
+// Footer module descriptions
+"footer.description.weather" = "يعرض درجة الحرارة ويفتح لوحة الطقس.";
+"footer.description.date" = "يعرض تاريخ اليوم ويفتح التقويم.";
+"footer.description.clock" = "يعرض الوقت الحالي ويفتح الساعة.";
+"footer.description.timer" = "يعرض تقدم العد التنازلي ويفتح المؤقت.";
+"footer.description.screenshot" = "يلتقط الشاشة وفق إعدادات لقطات الشاشة.";
+"footer.description.calculator" = "يفتح الحاسبة.";
+"footer.description.notes" = "يفتح الملاحظات.";
+"footer.description.reminders" = "يفتح التذكيرات.";
+"footer.description.application" = "يفتح التطبيق المختار.";
+"footer.description.shortcut" = "يشغّل الاختصار المختار.";
+"footer.description.website" = "يفتح الموقع المختار في المتصفح.";
+"footer.description.file" = "يفتح الملف المختار باستخدام التطبيق الافتراضي.";
+"footer.description.folder" = "يفتح المجلد المختار في Finder.";
+"footer.description.downloads" = "يفتح مجلد التنزيلات في Finder.";
+"footer.description.lockScreen" = "يقفل شاشة هذا الـ Mac.";
+"footer.description.showDesktop" = "يُظهر سطح المكتب.";
+"footer.keepAwakeHelp" = "يمنع نوم النظام بسبب الخمول أثناء تفعيله. قد تظل الشاشة تدخل في وضع النوم.";
+"footer.description.battery" = "يعرض مستوى البطارية ويفتح لوحة البطارية.";
+"footer.description.performance" = "يعرض استخدام المعالج ويفتح لوحة الأداء.";
+"footer.description.output" = "يعرض جهاز الإخراج ويفتح عناصر التحكم في إخراج الصوت.";
+"footer.description.wiFi" = "يعرض حالة Wi-Fi ويفتح لوحة Wi-Fi.";
+"footer.description.bluetooth" = "يعرض حالة Bluetooth ويفتح لوحة Bluetooth.";
+"footer.description.codex" = "يعرض استخدام Codex ويفتح لوحة استخدامه.";
+"footer.description.claude" = "يعرض استخدام Claude ويفتح لوحة استخدامه.";
+
+// Apple Weather source and guidance
+"weather.source.native" = "طقس Apple";
+"weather.source.shortcuts" = "الاختصارات";
+"weather.nativeHelp" = "يجلب طقس Apple لموقعك الحالي عبر خدمة طقس Glance المُعدّة. يُطلب إذن الوصول إلى الموقع عند عرض الطقس.";
+"weather.native.notConfigured" = "طقس Apple غير مُعدّ في هذا الإصدار. استخدم الاختصارات أو ثبّت إصدارًا مُعدًّا لطقس Apple.";
+"weather.native.locationDenied" = "رُفض الوصول إلى الموقع. اسمح لـ Glance في إعدادات النظام → الخصوصية والأمن → خدمات الموقع، أو استخدم الاختصارات.";
+"weather.native.locationUnavailable" = "تعذّر تحديد موقعك. فعّل خدمات الموقع وأعد المحاولة، أو استخدم الاختصارات.";
+"weather.native.serviceUnavailable" = "تعذّر تحميل طقس Apple. حاول لاحقًا أو استخدم الاختصارات.";
+"weather.useShortcuts" = "استخدام الاختصارات";
+"weather.openLocationSettings" = "فتح إعدادات الموقع";
+"weather.attribution" = "طقس Apple";
+"weather.legal" = "مصادر بيانات الطقس";

@@ -308,7 +308,8 @@ struct StatusPopoverView: View {
     let openWeather: () -> Void
     let openSoundSettings: () -> Void
     let quit: () -> Void
-    var openQuickAction: (PopupQuickAction) -> Void = { _ in }
+    @ObservedObject var footerActions: FooterActionController
+    var openFooterAction: (FooterModule) -> Void = { _ in }
     @State private var panel: PopoverPanel = .summary
 
     var body: some View {
@@ -438,36 +439,10 @@ struct StatusPopoverView: View {
                 }
             }
             TimelineView(.periodic(from: FooterClockFormatting.timelineStart(showsSeconds: settings.showsClockSeconds), by: settings.showsClockSeconds ? 1 : 60)) { context in
-                HStack(spacing: CompactPopupLayout.gap) {
-                    footerButton(.compactSettings, symbol: "gearshape", action: openSettings)
-                    quickActionButton(settings.firstQuickAction)
-                    Button { panel = .weather } label: {
-                        HStack(spacing: 3) {
-                            Image(systemName: weather.snapshot?.symbol ?? "cloud").font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium))
-                            Text(weather.snapshot.map { settings.temperatureUnit.text(celsius: $0.temperature) } ?? "—").monospacedDigit()
-                        }
-                        .font(.system(size: 11))
-                        .frame(width: CompactPopupLayout.span(2), height: CompactPopupLayout.unit)
-                        .systemModuleSurface()
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(weatherHelp)
-                    .help(Text(weatherHelp))
-                    Button(action: openCalendar) {
-                        Text(FooterClockFormatting.date(context.date, locale: localization.resolvedLanguage.locale, chinese: localization.resolvedLanguage.isChinese))
-                            .font(.system(size: 11)).monospacedDigit().lineLimit(1)
-                            .frame(width: CompactPopupLayout.span(2), height: CompactPopupLayout.unit).systemModuleSurface()
-                    }.buttonStyle(.plain)
-                        .accessibilityLabel(localization.string(.footerOpenCalendar))
-                    Button(action: openClock) {
-                        Text(FooterClockFormatting.time(context.date, uses24HourClock: settings.uses24HourClock, showsSeconds: settings.showsClockSeconds))
-                            .font(.system(size: 11)).monospacedDigit().lineLimit(1)
-                            .frame(width: CompactPopupLayout.span(2), height: CompactPopupLayout.unit).systemModuleSurface()
-                    }.buttonStyle(.plain)
-                        .accessibilityLabel(localization.string(.footerOpenClock))
-                    quickActionButton(settings.secondQuickAction)
-                    footerButton(.compactQuit, symbol: "xmark.circle", action: quit)
-                }
+                FooterModulesView(layout: settings.footerLayout,
+                                  content: { footerContent($0, date: context.date) },
+                                  activate: { activateFooter($0) },
+                                  openSettings: openSettings, quit: quit)
             }
 
         }
@@ -476,6 +451,9 @@ struct StatusPopoverView: View {
     }
 
     private var weatherHelp: String {
+        if weather.source == .nativeWeather, let issue = weather.nativeIssue {
+            return localization.string(issue.messageKey)
+        }
         let condition = weather.isUnavailable
             ? localization.string(.weatherUnavailable)
             : weather.snapshot.map { localization.string($0.conditionKey) }
@@ -496,35 +474,80 @@ struct StatusPopoverView: View {
         }
     }
 
-    private func quickActionButton(_ action: PopupQuickAction) -> some View {
-        var label = localization.string(action.labelKey)
-        if action == .application, !settings.quickActionApplicationPath.isEmpty {
-            label = URL(fileURLWithPath: settings.quickActionApplicationPath).deletingPathExtension().lastPathComponent
-        } else if action == .shortcut, !settings.quickActionShortcutName.isEmpty {
-            label = settings.quickActionShortcutName
+    private func activateFooter(_ module: FooterModule) {
+        switch module.kind {
+        case .weather: panel = .weather
+        case .date: openCalendar()
+        case .clock: openClock()
+        case .timer: panel = .timer
+        case .screenshot: openScreenshot()
+        case .battery: panel = .battery
+        case .wifi: panel = .wifi(showDetails: false)
+        case .bluetooth: panel = .bluetooth
+        case .output: panel = .output
+        case .performance: panel = .performance
+        case .codex: panel = .codex
+        case .claude: panel = .claude
+        default: openFooterAction(module)
         }
-        return Button {
-            switch action {
-            case .timer: panel = .timer
-            case .screenshot: openScreenshot()
-            default: openQuickAction(action)
-            }
-        } label: {
-            Image(systemName: action == .timer && countdown.isFinished ? "timer.circle.fill" : action.symbol)
-                .font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium))
-                .frame(width: CompactPopupLayout.span(1), height: CompactPopupLayout.unit).systemModuleSurface()
-        }.buttonStyle(.plain).help(label).accessibilityLabel(label)
     }
 
-    private func footerButton(_ key: LocalizationKey, symbol: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: symbol)
-                .font(.system(size: CompactPopupLayout.moduleIconSize, weight: .medium))
-                .frame(width: CompactPopupLayout.span(1), height: CompactPopupLayout.unit)
-                .systemModuleSurface()
-        }.buttonStyle(.plain)
-            .help(localization.string(key))
-            .accessibilityLabel(localization.string(key))
+    private func footerContent(_ module: FooterModule, date: Date) -> FooterTileContent {
+        let name = module.displayName(localization: localization)
+        var result = FooterTileContent(symbol: module.kind.symbol, text: name, help: name)
+        result.kind = module.kind
+        switch module.kind {
+        case .weather:
+            result.symbol = weather.snapshot?.symbol ?? "cloud"
+            result.text = weather.snapshot.map { settings.temperatureUnit.text(celsius: $0.temperature) } ?? "—"
+            result.help = weatherHelp
+        case .date:
+            result.text = FooterClockFormatting.date(date, locale: localization.resolvedLanguage.locale, chinese: localization.resolvedLanguage.isChinese)
+            result.textOnly = true
+            result.help = FooterClockFormatting.detailedDate(date, locale: localization.resolvedLanguage.locale)
+        case .clock:
+            result.text = FooterClockFormatting.time(date, uses24HourClock: settings.uses24HourClock, showsSeconds: settings.showsClockSeconds)
+            result.textOnly = true
+            result.help = result.text
+        case .timer:
+            if countdown.isFinished { result.symbol = "timer.circle.fill"; result.isActive = true }
+            if countdown.isRunning || countdown.isPaused {
+                let seconds = Int(countdown.remaining.rounded(.up))
+                result.text = String(format: "%d:%02d", seconds / 60, seconds % 60)
+                result.textOnly = true
+            }
+        case .battery:
+            result.symbol = store.popupSnapshot.battery.isChargingPaused ? "powerplug.portrait.fill" : "battery.100"
+            result.text = store.popupSnapshot.battery.rawPercentage == nil ? "—" : "\(store.popupSnapshot.battery.percentage)%"
+        case .performance:
+            result.text = performance.snapshot?.cpuPercent.map { "\(Int($0.rounded()))%" } ?? "—"
+            let memory = performance.snapshot.map { "\(Int($0.memoryPercent.rounded()))%" } ?? "—"
+            result.help = "CPU: \(result.text)\nRAM: \(memory)"
+        case .codex:
+            result.text = codexUsage.snapshot?.preferredPopupWindow?.remainingPercent.map { "\($0)%" } ?? "—"
+        case .claude:
+            result.text = claudeUsage.snapshot?.preferredPopupWindow?.remainingPercent.map { "\($0)%" } ?? "—"
+        case .wifi:
+            result.text = compactWiFiSubtitle
+            result.wifi = store.popupSnapshot.wifi
+        case .bluetooth:
+            result.text = bluetoothSummary
+            result.symbol = store.bluetoothDevices.availability == .poweredOff ? "antenna.radiowaves.left.and.right.slash" : module.kind.symbol
+            result.isActive = store.bluetoothDevices.availability == .available
+        case .output: result.text = store.liveVolume.deviceName ?? "—"
+        case .keepAwake:
+            result.isActive = footerActions.isKeepingAwake
+            result.text = localization.string(footerActions.isKeepingAwake ? .footerEnabled : .footerDisabled)
+        default: break
+        }
+        // Preserve v1 footer tooltips and accessibility labels. Only new status
+        // modules add their current value; the timer keeps its original name.
+        switch module.kind {
+        case .battery, .codex, .claude, .wifi, .bluetooth, .output, .keepAwake:
+            if result.text != name { result.help = name + ": " + result.text }
+        default: break
+        }
+        return result
     }
 
     private var compactBatterySubtitle: String {

@@ -1,3 +1,3 @@
-"NSLocationWhenInUseUsageDescription" = "Used only when you open Wi-Fi details to read network names, scan results, and connection information.";
+"NSLocationWhenInUseUsageDescription" = "用於顯示 Wi-Fi 詳細資訊，以及選擇 Apple 天氣後的當地天氣。大概位置會傳送至已設定的 Glance 天氣服務。";
 "NSBluetoothAlwaysUsageDescription" = "Used only when you open Bluetooth details to show paired-device connection status.";
-"NSLocationUsageDescription" = "Used only when you open Wi-Fi details to read network names, scan results, and connection information.";
+"NSLocationUsageDescription" = "用於顯示 Wi-Fi 詳細資訊，以及選擇 Apple 天氣後的當地天氣。大概位置會傳送至已設定的 Glance 天氣服務。";

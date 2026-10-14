@@ -3,14 +3,15 @@ import SwiftUI
 struct UsageProviderIcon: View {
     enum Provider { case codex, claude }
     let provider: Provider
+    var tint: Color = .white
 
     var body: some View {
         Group {
             switch provider {
             case .codex:
-                CodexOfficialMark().fill(.white, style: FillStyle(eoFill: true))
+                CodexOfficialMark().fill(tint, style: FillStyle(eoFill: true))
             case .claude:
-                ClaudeCodePixels().fill(.white, style: FillStyle(eoFill: true, antialiased: false))
+                ClaudeCodePixels().fill(tint, style: FillStyle(eoFill: true, antialiased: false))
                     .frame(height: 16)
             }
         }.frame(width: 18, height: 18).accessibilityHidden(true)

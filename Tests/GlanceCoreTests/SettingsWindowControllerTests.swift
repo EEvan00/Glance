@@ -25,6 +25,9 @@ final class SettingsWindowControllerTests: XCTestCase {
         XCTAssertEqual(window.title, "设置")
         XCTAssertFalse(window.styleMask.contains(.resizable))
         XCTAssertTrue(window.isVisible)
+        XCTAssertFalse(window.isMovableByWindowBackground,
+                       "Content drags must reach the footer editor instead of moving the window")
+        XCTAssertTrue(window.isMovable, "The title bar must remain draggable")
 
         localization.setPreference(.language(.german))
         XCTAssertEqual(window.title, "Einstellungen")

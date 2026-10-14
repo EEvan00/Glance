@@ -8,8 +8,11 @@ struct UninstallCoordinator {
     var removeIntegrations: () throws -> Void = {}
     let moveApplicationToTrash: () throws -> Void
     let quit: () -> Void
+    var setUninstalling: (Bool) -> Void = { _ in }
 
     func uninstall() async throws {
+        setUninstalling(true)
+        defer { setUninstalling(false) }
         try await removeHelper()
         try removeLoginItem()
         try removeIntegrations()
@@ -27,7 +30,14 @@ struct UninstallCoordinator {
             removeHelper: {
                 guard supportsCurrentApplication else { throw CocoaError(.fileWriteNoPermission) }
                 let helper = SystemMagSafeLEDHelperManager()
-                if helper.hasInstalledHelper { try await helper.uninstall() }
+                if helper.hasInstalledHelper {
+                    // An unavailable helper must not trap the user in an
+                    // uninstall loop. A running bundled helper also restores
+                    // under its sealed SIGTERM handler when unregistered.
+                    try? await XPCMagSafeLEDCommandWriter().write(.system)
+                    try await helper.uninstall()
+                }
+                UserDefaults.standard.set(false, forKey: MagSafeLEDController.helperEnabledKey)
             },
             removeLoginItem: {
                 let login = SystemLaunchAtLoginService()
@@ -40,7 +50,8 @@ struct UninstallCoordinator {
                 }
                 try FileManager.default.trashItem(at: Bundle.main.bundleURL, resultingItemURL: nil)
             },
-            quit: { NSApp.terminate(nil) }
+            quit: { NSApp.terminate(nil) },
+            setUninstalling: { MagSafeLEDController.isUninstalling = $0 }
         )
     }
 }

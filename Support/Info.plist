@@ -29,11 +29,13 @@
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSLocationUsageDescription</key>
-	<string>Used only when you open Wi-Fi details to read network names, scan results, and connection information.</string>
+	<string>Used to read nearby Wi-Fi names and connection details, and, when you select the native weather source, to send an approximate location to your configured Glance weather service.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Used only when you open Wi-Fi details to read network names, scan results, and connection information.</string>
+	<string>Used to read nearby Wi-Fi names and connection details, and, when you select the native weather source, to send an approximate location to your configured Glance weather service.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Used only when you open Bluetooth details to show paired-device connection status.</string>
+	<key>GlanceMagSafeHelperStrategy</key>
+	<string>legacyPackage</string>
 	<key>GlanceEnableSparkle</key>
 	<false/>
 	<key>NSHumanReadableCopyright</key>
