@@ -7,6 +7,18 @@
     <description>Independent Glance releases.</description>
     <language>en</language>
     <item>
+      <title>Version 2.0.0 （English + 中文， 中文在下方）</title>
+      <pubDate>Wed, 14 Oct 2026 11:57:18 +0000</pubDate>
+      <sparkle:version>18</sparkle:version>
+      <sparkle:shortVersionString>2.0.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Version: 2.0.0</li></ul><h2>English</h2><ul><li>Customize the eight-slot footer: drag to reorder modules, choose compact or wide layouts, and add status modules, system tools, apps, Shortcuts, websites, files, and folders.</li><li>Get native weather for your current location or a selected city, including forecasts, UV index, and precipitation chances.</li><li>Control the MagSafe LED with a built-in background helper, automatic restoration of system control, and improved reinstall handling.</li></ul><h2>中文</h2><ul><li>八格底栏自定义：拖动排序，选择单格或双格布局，自由组合状态模块、系统工具、应用、快捷指令、网页、文件和文件夹。</li><li>原生天气：支持当前位置或指定城市，查看天气预报、紫外线指数和降雨概率。</li><li>MagSafe 指示灯控制：内置后台辅助服务，自动安全恢复系统控制，并改善重装体验。</li></ul>]]></description>
+      <enclosure url="https://github.com/EEvan00/Glance/releases/download/v2.0.0/Glance-2.0.0.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="Eds8yeFQeCruGueXHve2dpZ9s8LkH8lzOEvZM0yt1fg7KilVbXwhbVZ3hMKtT+/f+dv4raesREhe8tW4GG/eCw=="
+                 length="5614121" />
+    </item>
+    <item>
       <title>Version 1.0.5 （English + 中文， 中文在下方）</title>
       <pubDate>Sat, 10 Oct 2026 09:21:44 +0000</pubDate>
       <sparkle:version>14</sparkle:version>
