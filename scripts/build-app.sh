@@ -103,7 +103,7 @@ swift "${SWIFT_BUILD_ARGS[@]}"
 BIN_PATH="$(swift "${SWIFT_BUILD_ARGS[@]}" --show-bin-path)"
 APP_DIR="$ROOT/dist/Glance.app"
 CONTENTS="$APP_DIR/Contents"
-ICON_SOURCE="$ROOT/Support/AppIcon.svg"
+ICON_SOURCE="$ROOT/Support/AppIcon.png"
 ICONSET_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/Glance.XXXXXX")"
 ICONSET_DIR="$ICONSET_ROOT/AppIcon.iconset"
 

@@ -53,11 +53,11 @@ Do not create a release if that preflight has not passed.
 
 - GitHub Release notes must use a top-level `# Version X.Y.Z （English + 中文， 中文在下方）` heading, followed by English notes and then Chinese notes. Provide the English text through `release_notes` and the Chinese text through `release_notes_zh`; the release workflow combines them.
 - Sparkle appcast items must use the same bilingual order: the version title includes `（English + 中文， 中文在下方）`, followed by English notes and then Chinese notes.
-- GitHub Release bodies must append the first-launch commands `xattr -dr com.apple.quarantine "/Applications/Status Trio.app"` and `open "/Applications/Status Trio.app"` after the bilingual notes. Do not include these commands in the Sparkle appcast.
+- For notarized Developer ID releases, omit the legacy quarantine-removal commands and keep release notes focused on new features. Only non-notarized distributions may append the legacy first-launch workaround; never include it in the Sparkle appcast.
 - Release announcements remain in English.
 - Release through `.github/workflows/release.yml`; do not publish manually unless the workflow is unavailable and the user explicitly asks for a manual fallback.
 - Version and build numbers must be explicit and must increase the published build number.
 - Confirm tests, DMG creation, Release upload, and appcast publication in the workflow result.
-- The current repository has no Developer ID certificate or notarization secrets. Releases are Ad-hoc signed; document this limitation rather than claiming notarization.
+- Verify signing and notarization from the current workflow and published artifact. Glance 2.0.0 is distributed with Developer ID signing and Apple notarization; credentials stay in GitHub Actions secrets. Do not claim notarization for any artifact that has not passed verification.
 
 See [Swift 6.1 CI compatibility](docs/swift-6.1-ci-compatibility.md) for the incident history and examples.

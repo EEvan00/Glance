@@ -306,6 +306,9 @@ jobs:
           } > "${APPCAST_NOTES_PATH}"
 
           cp "${APPCAST_NOTES_PATH}" "${RELEASE_BODY_PATH}"
+          # Notarized Developer ID releases launch normally through Gatekeeper.
+          # Retain the legacy workaround only for non-notarized distributions.
+          if [[ -z "${NOTARY_PROFILE:-}" ]]; then
           {
             printf '\n## First launch / 首次启动\n\n'
             printf 'If macOS blocks the first launch, run:\n\n'
@@ -319,6 +322,7 @@ jobs:
             printf 'open "/Applications/Glance.app"\n'
             printf '```\n'
           } >> "${RELEASE_BODY_PATH}"
+          fi
 
           {
             echo "RELEASE_NOTES_FILE=${NOTES_PATH}"
