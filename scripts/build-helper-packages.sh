@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/notarization-ticket.sh"
 APP="$1"
 STRATEGY="${2:-legacyPackage}"
 case "$STRATEGY" in
@@ -98,7 +99,7 @@ if [[ -n "${NOTARY_PROFILE:-}" ]]; then
     if [[ -n "${KEYCHAIN_PATH:-}" ]]; then NOTARY_ARGS+=(--keychain "$KEYCHAIN_PATH"); fi
     # Staple the inner package before the app seals its Resources directory.
     xcrun notarytool submit "$APP/Contents/Resources/GlanceHelperUninstall.pkg" "${NOTARY_ARGS[@]}" --wait
-    xcrun stapler staple "$APP/Contents/Resources/GlanceHelperUninstall.pkg"
-    xcrun stapler validate "$APP/Contents/Resources/GlanceHelperUninstall.pkg"
+    stapler_with_retry staple "$APP/Contents/Resources/GlanceHelperUninstall.pkg"
+    stapler_with_retry validate "$APP/Contents/Resources/GlanceHelperUninstall.pkg"
     spctl --assess --type install --verbose=2 "$APP/Contents/Resources/GlanceHelperUninstall.pkg"
 fi

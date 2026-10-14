@@ -3,6 +3,7 @@
 set -euo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT/scripts/notarization-ticket.sh"
 CONFIG_PATH="$ROOT/release.json"
 
 read_config() {
@@ -111,8 +112,8 @@ if [[ -n "$NOTARY_PROFILE" ]]; then
     # mounted DMG. The migration package was already stapled before app signing.
     ditto -c -k --keepParent "$ROOT/dist/Glance.app" "$TEMP_ROOT/Glance-notarization.zip"
     xcrun notarytool submit "$TEMP_ROOT/Glance-notarization.zip" "${NOTARY_ARGS[@]}" --wait
-    xcrun stapler staple "$ROOT/dist/Glance.app"
-    xcrun stapler validate "$ROOT/dist/Glance.app"
+    stapler_with_retry staple "$ROOT/dist/Glance.app"
+    stapler_with_retry validate "$ROOT/dist/Glance.app"
     codesign --verify --deep --strict --verbose=2 "$ROOT/dist/Glance.app"
     spctl --assess --type execute --verbose=2 "$ROOT/dist/Glance.app"
 fi
@@ -160,8 +161,8 @@ if [[ "$CODE_SIGN_IDENTITY" != "-" ]]; then
 fi
 if [[ -n "$NOTARY_PROFILE" ]]; then
     xcrun notarytool submit "$DMG_PATH" "${NOTARY_ARGS[@]}" --wait
-    xcrun stapler staple "$DMG_PATH"
-    xcrun stapler validate "$DMG_PATH"
+    stapler_with_retry staple "$DMG_PATH"
+    stapler_with_retry validate "$DMG_PATH"
     spctl --assess --type open --context context:primary-signature --verbose=2 "$DMG_PATH"
 fi
 

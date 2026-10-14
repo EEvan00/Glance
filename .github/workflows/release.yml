@@ -330,6 +330,7 @@ jobs:
         run: |
           python3 scripts/test-signing-configuration.py
           python3 scripts/test-magsafe-service-label.py
+          python3 scripts/test-notarization-ticket.py
 
       - name: Run tests
         timeout-minutes: 8
