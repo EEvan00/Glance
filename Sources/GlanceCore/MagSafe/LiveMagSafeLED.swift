@@ -320,8 +320,19 @@ struct SystemMagSafeLEDHelperManager: MagSafeLEDHelperManaging {
     private static func unregisterService(_ service: SMAppService) async throws {
         // Invoke the callback API on the main actor. Swift 6.1's imported async
         // variant sends the non-Sendable service across an isolation boundary.
+        try await awaitUnregistration { reply in
+            service.unregister(completionHandler: reply)
+        }
+    }
+
+    @MainActor
+    static func awaitUnregistration(
+        _ start: (@escaping @Sendable (Error?) -> Void) -> Void
+    ) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            service.unregister { error in
+            // Service Management replies on its XPC queue. Only the Sendable
+            // continuation is captured; no MainActor state is accessed here.
+            start { @Sendable error in
                 if let error { continuation.resume(throwing: error) }
                 else { continuation.resume() }
             }
