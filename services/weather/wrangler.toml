@@ -1,0 +1,24 @@
+name = "glance-weather-service"
+main = "src/worker.js"
+compatibility_date = "2026-10-13"
+workers_dev = true
+preview_urls = false
+
+# Use Workers FREE only. This file cannot select or enforce your account plan.
+# No routes/custom domains and no paid service bindings.
+[observability]
+enabled = false
+
+[vars]
+MONTHLY_UPSTREAM_LIMIT = "400000"
+DAILY_UPSTREAM_LIMIT = "15000"
+IP_REQUESTS_PER_MINUTE = "20"
+IP_REQUESTS_PER_DAY = "300"
+
+[[durable_objects.bindings]]
+name = "WEATHER_GATE"
+class_name = "WeatherGate"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["WeatherGate"]
