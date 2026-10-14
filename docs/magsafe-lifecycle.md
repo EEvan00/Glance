@@ -77,3 +77,19 @@ restoration logs; successful compilation alone does not prove LED behaviour.
   the live crash and Trash flows were exercised as above.
 - CI Swift 6.1.2 preflight remains required before merge/publication; no remote
   commit, merge, release or notarization was performed for this change.
+
+### CI and local beta validation, 2026-10-14
+
+- Non-publishing CI run https://github.com/EEvan00/Glance/actions/runs/38522343793
+  passed on Xcode 16.4 / Swift 6.1.2 at ccc50bd5fd9704beefc123789648a0ce6c92e980:
+  556 XCTest + 19 Swift Testing tests, 22 script tests, release build and DMG.
+- The subsequent local beta changes version metadata to 2.0.0, build 15. Its
+  universal Developer ID app and DMG passed strict signature verification,
+  Apple notarization/stapling, and Gatekeeper assessment. This local binary uses
+  the local Xcode toolchain; it is not the ad-hoc CI binary.
+- Distribution file: Glance-2.0.0-beta-build15.dmg. Automatic updates remain off.
+  No GitHub Release or appcast was published.
+- For fresh-install testing, the installed app was moved to Trash; current and
+  historical helper services are absent and app/helper processes are stopped.
+  App preferences/support data and resettable TCC grants were cleared. macOS BTM
+  historical records are not erased; this is not a pristine OS account.
