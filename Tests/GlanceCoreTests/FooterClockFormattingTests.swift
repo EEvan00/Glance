@@ -3,6 +3,12 @@ import XCTest
 @testable import GlanceCore
 
 final class FooterClockFormattingTests: XCTestCase {
+    func testDetailedDateIncludesYearMonthDayAndWeekdayWithoutModuleName() {
+        let date = Date(timeIntervalSince1970: 1791676800)
+        let text = FooterClockFormatting.detailedDate(date, locale: Locale(identifier: "en_US"), timeZone: TimeZone(secondsFromGMT: 0)!)
+        XCTAssertEqual(text, "Sunday, October 11, 2026")
+    }
+
     func testTwelveHourClockOmitsAmPm() {
         let zone = TimeZone(secondsFromGMT: 0)!
         XCTAssertEqual(FooterClockFormatting.time(Date(timeIntervalSince1970: 0), uses24HourClock: false, timeZone: zone), "12:00")

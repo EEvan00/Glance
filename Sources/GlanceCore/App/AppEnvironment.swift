@@ -45,10 +45,12 @@ final class AppEnvironment {
 
     static func live() -> AppEnvironment {
         let settings = SettingsStore()
+        let magSafeLocation = MagSafeApplicationLocation(url: Bundle.main.bundleURL)
         let magSafeLED = MagSafeLEDController(
             hardwareProbe: SMCMagSafeLEDHardwareProbe(),
             helperManager: SystemMagSafeLEDHelperManager(),
-            commandWriter: XPCMagSafeLEDCommandWriter()
+            commandWriter: XPCMagSafeLEDCommandWriter(),
+            isApplicationPresent: { magSafeLocation.isPresent }
         )
         let store = makeStore(
             batteryMonitor: BatteryMonitor(),

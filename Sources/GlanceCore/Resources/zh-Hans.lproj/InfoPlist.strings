@@ -1,3 +1,3 @@
-"NSLocationWhenInUseUsageDescription" = "仅在打开 Wi-Fi 详情时用于读取网络名称、扫描结果和连接信息。";
+"NSLocationWhenInUseUsageDescription" = "用于显示 Wi-Fi 详情，以及选择 Apple 天气后的本地天气。大致位置会发送至已配置的 Glance 天气服务。";
 "NSBluetoothAlwaysUsageDescription" = "仅在打开蓝牙详情时用于显示已配对设备的连接状态。";
-"NSLocationUsageDescription" = "仅在打开 Wi-Fi 详情时用于读取网络名称、扫描结果和连接信息。";
+"NSLocationUsageDescription" = "用于显示 Wi-Fi 详情，以及选择 Apple 天气后的本地天气。大致位置会发送至已配置的 Glance 天气服务。";

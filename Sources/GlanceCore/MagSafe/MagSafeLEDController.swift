@@ -33,18 +33,34 @@ protocol MagSafeLEDHardwareProbing: Sendable {
 
 protocol MagSafeLEDHelperManaging: Sendable {
     var status: MagSafeLEDHelperStatus { get }
+    var hasPreviouslyEnabledRegistration: Bool { get }
     func install() async throws
     func uninstall() async throws
     func openSystemSettings()
+    func recoverRegistration() async throws -> Bool
+    func retireBundledRegistration() async throws
+}
+
+extension MagSafeLEDHelperManaging {
+    var hasPreviouslyEnabledRegistration: Bool { false }
+    func recoverRegistration() async throws -> Bool { false }
+    func retireBundledRegistration() async throws {}
 }
 
 protocol MagSafeLEDCommandWriting: Sendable {
     func write(_ mode: MagSafeLEDMode) async throws
+    func renewOffLease() async throws
+}
+
+extension MagSafeLEDCommandWriting {
+    func renewOffLease() async throws { try await write(.off) }
 }
 
 @MainActor
 final class MagSafeLEDController: ObservableObject {
     static let defaultsKey = "magSafeLEDLightEnabled"
+    static let helperEnabledKey = "magSafeHelperPreviouslyEnabled"
+    static var isUninstalling = false
 
     @Published private(set) var isLightEnabled: Bool
     @Published private(set) var availability: MagSafeLEDAvailability
@@ -56,6 +72,11 @@ final class MagSafeLEDController: ObservableObject {
     private let hardwareProbe: any MagSafeLEDHardwareProbing
     private let helperManager: any MagSafeLEDHelperManaging
     private let commandWriter: any MagSafeLEDCommandWriting
+    private let isApplicationPresent: @Sendable () -> Bool
+    private var monitoringTask: Task<Void, Never>?
+    private var retired = false
+    private var attemptedRecovery = false
+    private var checkedConnection = false
 
     static func unavailable(defaults: UserDefaults = .standard) -> MagSafeLEDController {
         MagSafeLEDController(
@@ -70,12 +91,14 @@ final class MagSafeLEDController: ObservableObject {
         defaults: UserDefaults = .standard,
         hardwareProbe: any MagSafeLEDHardwareProbing,
         helperManager: any MagSafeLEDHelperManaging,
-        commandWriter: any MagSafeLEDCommandWriting
+        commandWriter: any MagSafeLEDCommandWriting,
+        isApplicationPresent: @escaping @Sendable () -> Bool = { true }
     ) {
         self.defaults = defaults
         self.hardwareProbe = hardwareProbe
         self.helperManager = helperManager
         self.commandWriter = commandWriter
+        self.isApplicationPresent = isApplicationPresent
         self.isLightEnabled = defaults.object(forKey: Self.defaultsKey) as? Bool ?? true
         self.availability = Self.availability(
             hardwareProbe: hardwareProbe,
@@ -83,8 +106,88 @@ final class MagSafeLEDController: ObservableObject {
         )
     }
 
+    deinit { monitoringTask?.cancel() }
+
+    func startMonitoring() {
+        guard monitoringTask == nil else { return }
+        monitoringTask = Task { @MainActor [weak self] in
+            while !Task.isCancelled {
+                await self?.maintenanceTick()
+                do { try await Task.sleep(for: .seconds(5)) }
+                catch { return }
+            }
+        }
+    }
+
+    func stopMonitoring() {
+        monitoringTask?.cancel()
+        monitoringTask = nil
+    }
+
+    func prepareForTermination() async {
+        retired = true
+        stopMonitoring()
+        if availability == .ready { try? await commandWriter.write(.system) }
+        // An already-sent off request may finish late. Without renewals its
+        // helper lease still expires; normal termination does not erase choice.
+    }
+
+    func maintenanceTick() async {
+        guard !isBusy, !retired, !Self.isUninstalling else { return }
+        isBusy = true
+        defer { isBusy = false }
+        if !isApplicationPresent() {
+            retired = true
+            // Stop renewal even if IPC/registration cleanup fails. The helper's
+            // independent lease remains the crash and deletion fallback.
+            if availability == .ready { try? await commandWriter.write(.system) }
+            try? await helperManager.retireBundledRegistration()
+            availability = .needsInstallation
+            return
+        }
+        availability = Self.availability(hardwareProbe: hardwareProbe, helperManager: helperManager)
+        if availability == .ready || helperManager.hasPreviouslyEnabledRegistration {
+            defaults.set(true, forKey: Self.helperEnabledKey)
+        }
+        if (availability == .needsInstallation || needsHelperRecovery),
+           defaults.bool(forKey: Self.helperEnabledKey), !attemptedRecovery {
+            attemptedRecovery = true
+            do {
+                if try await helperManager.recoverRegistration() {
+                    guard !Self.isUninstalling, isApplicationPresent() else {
+                        try? await helperManager.retireBundledRegistration()
+                        return
+                    }
+                    availability = Self.availability(hardwareProbe: hardwareProbe, helperManager: helperManager)
+                    if availability == .ready {
+                        try await commandWriter.write(isLightEnabled ? .system : .off)
+                        error = nil
+                        needsHelperRecovery = false
+                        checkedConnection = true
+                    } else if availability == .requiresApproval {
+                        error = nil
+                        needsHelperRecovery = false
+                    }
+                }
+            } catch {
+                availability = Self.availability(hardwareProbe: hardwareProbe, helperManager: helperManager)
+                self.error = availability == .requiresApproval ? nil : .installFailed
+            }
+            return
+        }
+        guard availability == .ready, error == nil else { return }
+        do {
+            if !isLightEnabled { try await commandWriter.renewOffLease() }
+            else if !checkedConnection { try await commandWriter.write(.system) }
+            checkedConnection = true
+        } catch {
+            needsHelperRecovery = true
+            self.error = .writeFailed
+        }
+    }
+
     func setLightEnabled(_ enabled: Bool) {
-        guard availability == .ready, !isBusy else { return }
+        guard availability == .ready, !isBusy, !retired, !Self.isUninstalling, isApplicationPresent() else { return }
         let mode: MagSafeLEDMode = enabled ? .system : .off
         isBusy = true
         Task { [weak self, commandWriter] in
@@ -106,7 +209,8 @@ final class MagSafeLEDController: ObservableObject {
     }
 
     func reapplyIfNeeded() {
-        guard availability == .ready, !isLightEnabled, !isBusy, error == nil else { return }
+        guard availability == .ready, !isLightEnabled, !isBusy, error == nil,
+              !retired, !Self.isUninstalling, isApplicationPresent() else { return }
         isBusy = true
         Task { [weak self, commandWriter] in
             do {
@@ -125,13 +229,14 @@ final class MagSafeLEDController: ObservableObject {
     }
 
     func installHelper() {
-        guard availability == .needsInstallation, !isBusy else { return }
+        guard availability == .needsInstallation, !isBusy, !retired, !Self.isUninstalling, isApplicationPresent() else { return }
         isBusy = true
         error = nil
         Task { [weak self, helperManager, commandWriter] in
             do {
                 try await helperManager.install()
                 guard let self else { return }
+                self.defaults.set(true, forKey: Self.helperEnabledKey)
                 self.availability = Self.availability(
                     hardwareProbe: self.hardwareProbe,
                     helperManager: helperManager
@@ -167,6 +272,7 @@ final class MagSafeLEDController: ObservableObject {
                 guard let self else { return }
                 try await self.commandWriter.write(.system)
                 try await helperManager.uninstall()
+                self.defaults.set(false, forKey: Self.helperEnabledKey)
                 self.isLightEnabled = true
                 self.defaults.set(true, forKey: Self.defaultsKey)
                 self.needsHelperRecovery = false
@@ -189,6 +295,7 @@ final class MagSafeLEDController: ObservableObject {
             do {
                 try await helperManager.uninstall()
                 guard let self else { return }
+                self.defaults.set(false, forKey: Self.helperEnabledKey)
                 self.error = nil
                 self.needsHelperRecovery = false
                 self.availability = .needsInstallation

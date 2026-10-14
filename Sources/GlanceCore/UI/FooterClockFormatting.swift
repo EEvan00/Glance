@@ -1,6 +1,15 @@
 import Foundation
 
 enum FooterClockFormatting {
+    static func detailedDate(_ date: Date, locale: Locale, timeZone: TimeZone = .current) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.timeZone = timeZone
+        formatter.dateStyle = .full
+        formatter.timeStyle = .none
+        return formatter.string(from: date)
+    }
+
     static func date(_ date: Date, locale: Locale, chinese: Bool, timeZone: TimeZone = .current) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")

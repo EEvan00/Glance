@@ -4,8 +4,18 @@ import Foundation
 
 @MainActor
 final class SettingsStore: ObservableObject {
+    static let footerLayoutDefaultsKey = "footerLayoutV1"
+
+    @Published var footerLayout: FooterLayout {
+        didSet {
+            if let data = try? JSONEncoder().encode(footerLayout) {
+                defaults.set(data, forKey: Self.footerLayoutDefaultsKey)
+            }
+        }
+    }
+
     static let iconSizeRange: ClosedRange<Double> = 16...36
-    static let defaultIconSize: Double = 28
+    static let defaultIconSize: Double = 24
     static let iconSizeDefaultsKey = "menuBarIconSize"
 
     static let batteryCriticalThresholdRange: ClosedRange<Double> = 0...100
@@ -272,6 +282,7 @@ final class SettingsStore: ObservableObject {
     }
     var visiblePopupUtilities: Set<PopupUtility> {
         Self.popupUtilities(card: popupUtility, first: firstUtilityRow, second: secondUtilityRow)
+            .union(footerLayout.utilities)
     }
     static func popupUtilities(card: PopupUtility, first: PopupUtilityRow, second: PopupUtilityRow) -> Set<PopupUtility> {
         Set([card, first.utility, second.utility].compactMap { $0 })
@@ -303,6 +314,11 @@ final class SettingsStore: ObservableObject {
         didSet { defaults.set(temperatureUnit.rawValue, forKey: "temperatureUnit") }
     }
 
+    static let weatherSourceDefaultsKey = "weatherSource"
+    @Published var weatherSource: WeatherSource {
+        didSet { defaults.set(weatherSource.rawValue, forKey: Self.weatherSourceDefaultsKey) }
+    }
+
     @Published var uses24HourClock: Bool {
         didSet { defaults.set(uses24HourClock, forKey: "uses24HourClock") }
     }
@@ -312,7 +328,7 @@ final class SettingsStore: ObservableObject {
 
     private let defaults: UserDefaults
 
-    init(defaults: UserDefaults = .standard) {
+    init(defaults: UserDefaults = .standard, nativeWeatherAvailable: Bool = NativeWeatherConfiguration.isAvailable) {
         self.defaults = defaults
         if defaults === UserDefaults.standard,
            Bundle.main.bundleIdentifier == "io.github.EEvan00.Glance",
@@ -339,6 +355,8 @@ final class SettingsStore: ObservableObject {
         self.screenshotDestination = defaults.string(forKey: "screenshotDestination").flatMap(ScreenshotDestination.init(rawValue:)) ?? .desktop
         self.automaticallyShrinksCardText = defaults.object(forKey: "automaticallyShrinksCardText") as? Bool ?? false
         self.temperatureUnit = defaults.string(forKey: "temperatureUnit").flatMap(TemperatureUnit.init(rawValue:)) ?? .celsius
+        self.weatherSource = defaults.string(forKey: Self.weatherSourceDefaultsKey).flatMap(WeatherSource.init(rawValue:))
+            ?? (nativeWeatherAvailable ? .nativeWeather : .shortcuts)
         self.showsClockSeconds = defaults.bool(forKey: "showsClockSeconds")
         self.uses24HourClock = defaults.object(forKey: "uses24HourClock") as? Bool ?? true
         let storedIconSize = (defaults.object(forKey: Self.iconSizeDefaultsKey) as? NSNumber)?.doubleValue
@@ -386,6 +404,31 @@ final class SettingsStore: ObservableObject {
         self.popupSectionOrder = Self.sanitizedPopupSectionOrder(
             storedPopupSectionOrder
         )
+        if let saved = defaults.object(forKey: Self.footerLayoutDefaultsKey) {
+            self.footerLayout = (saved as? Data).flatMap { try? JSONDecoder().decode(FooterLayout.self, from: $0) }
+                ?? .defaultLayout
+        } else {
+            func migrated(_ action: PopupQuickAction) -> FooterModule {
+                let kind = FooterModuleKind(rawValue: action.rawValue) ?? .timer
+                let target: String
+                switch action {
+                case .application: target = defaults.string(forKey: "quickActionApplicationPath") ?? ""
+                case .shortcut: target = defaults.string(forKey: "quickActionShortcutName") ?? ""
+                default: target = ""
+                }
+                return FooterModule(kind: kind, target: target)
+            }
+            let legacySecond = second == first ? (first == .screenshot ? PopupQuickAction.timer : .screenshot) : second
+            self.footerLayout = FooterLayout(modules: [
+                migrated(first), FooterModule(kind: .weather, width: 2),
+                FooterModule(kind: .date, width: 2), FooterModule(kind: .clock, width: 2),
+                migrated(legacySecond)
+            ])
+        }
+        // Property observers do not run during initialization; persist migration and repairs explicitly.
+        if let data = try? JSONEncoder().encode(footerLayout) {
+            defaults.set(data, forKey: Self.footerLayoutDefaultsKey)
+        }
     }
 
     static func clampedIconSize(_ value: Double) -> Double {

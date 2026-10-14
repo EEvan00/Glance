@@ -6,6 +6,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
     }
     case basics
     case menuBar
+    case footerModules
     case audio
     case battery
     case updates
@@ -17,6 +18,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         switch self {
         case .basics: .settingsTabBasics
         case .menuBar: .settingsTabMenuBar
+        case .footerModules: .footerModulesTitle
         case .audio: .settingsTabAudio
         case .battery: .settingsTabBattery
         case .updates: .settingsUpdatesTitle
@@ -28,6 +30,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         switch self {
         case .basics: "gearshape"
         case .menuBar: "menubar.rectangle"
+        case .footerModules: "square.grid.3x1.below.line.grid.1x2"
         case .audio: "hifispeaker"
         case .battery: "battery.100percent"
         case .updates: "arrow.triangle.2.circlepath"
@@ -39,6 +42,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         switch self {
         case .basics: .blue
         case .menuBar: .indigo
+        case .footerModules: .purple
         case .audio: .cyan
         case .battery: .green
         case .updates: .orange

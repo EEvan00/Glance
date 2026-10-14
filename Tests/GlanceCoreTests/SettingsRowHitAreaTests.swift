@@ -58,7 +58,8 @@ final class SettingsRowHitAreaTests: XCTestCase {
             openScreenshot: {},
             openWeather: {},
             openSoundSettings: {},
-            quit: {}
+            quit: {},
+            footerActions: FooterActionController(localization: localization)
         )
         .environmentObject(localization)
 

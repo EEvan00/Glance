@@ -429,3 +429,94 @@
 "bluetooth.devices" = "Dispositivos";
 
 "settings.about.donate" = "Donar";
+
+// Footer module editor
+"footer.modulesTitle" = "Módulos inferiores";
+"footer.modulesHelp" = "Elige y organiza hasta 8 espacios. Los cambios se guardan al instante.";
+"footer.usage" = "%d / 8 espacios";
+"footer.library" = "Biblioteca de módulos";
+"footer.search" = "Buscar módulos";
+"footer.size" = "Tamaño";
+"footer.oneSlot" = "1 espacio";
+"footer.twoSlots" = "2 espacios";
+"footer.add" = "Añadir";
+"footer.remove" = "Eliminar";
+"footer.moveLeft" = "Mover a la izquierda";
+"footer.moveRight" = "Mover a la derecha";
+"footer.clear" = "Vaciar";
+"footer.restore" = "Restaurar valores predeterminados";
+"footer.undo" = "Deshacer";
+"footer.name" = "Nombre";
+"footer.target" = "Destino";
+"footer.choose" = "Elegir…";
+"footer.empty" = "No hay módulos añadidos";
+"footer.full" = "No queda espacio. Elimina o reduce otro módulo.";
+"footer.drop" = "Suelta un módulo aquí";
+"footer.fixed" = "Botón fijo";
+"footer.selectModule" = "Selecciona un módulo para configurarlo.";
+"footer.information" = "Información";
+"footer.tools" = "Herramientas";
+"footer.custom" = "Entradas personalizadas";
+"footer.actionFailed" = "No se pudo completar esta acción.";
+"footer.invalidTarget" = "Elige un destino válido.";
+"footer.permissionRequired" = "Se necesita permiso para realizar esta acción.";
+"footer.unavailable" = "No disponible";
+"footer.enabled" = "Activado";
+"footer.disabled" = "Desactivado";
+"footer.date" = "Fecha";
+"footer.clock" = "Reloj";
+"footer.website" = "Sitio web";
+"footer.file" = "Archivo";
+"footer.folder" = "Carpeta";
+"footer.downloads" = "Descargas";
+"footer.lockScreen" = "Bloquear pantalla";
+"footer.showDesktop" = "Mostrar escritorio";
+"footer.keepAwake" = "Mantener despierto";
+
+"footer.actionInvalidWebsite" = "Introduce una dirección web HTTP o HTTPS válida.";
+"footer.actionInvalidApplication" = "Elige una aplicación existente.";
+"footer.actionInvalidFile" = "Elige un archivo existente.";
+"footer.actionInvalidFolder" = "Elige una carpeta existente.";
+"footer.actionInvalidShortcut" = "Introduce el nombre de un atajo.";
+"footer.actionOpenFailed" = "El sistema no pudo abrir este destino.";
+"footer.actionKeepAwakeFailed" = "No se pudo cambiar el estado de vigilia.";
+"footer.actionSystemUnavailable" = "Esta acción del sistema no está disponible en este Mac.";
+
+// Footer module descriptions
+"footer.description.weather" = "Mostrar la temperatura y abrir el panel del tiempo.";
+"footer.description.date" = "Mostrar la fecha de hoy y abrir Calendario.";
+"footer.description.clock" = "Mostrar la hora actual y abrir Reloj.";
+"footer.description.timer" = "Mostrar el progreso de la cuenta atrás y abrir el temporizador.";
+"footer.description.screenshot" = "Capturar la pantalla según los ajustes de captura.";
+"footer.description.calculator" = "Abrir Calculadora.";
+"footer.description.notes" = "Abrir Notas.";
+"footer.description.reminders" = "Abrir Recordatorios.";
+"footer.description.application" = "Abrir la aplicación elegida.";
+"footer.description.shortcut" = "Ejecutar el atajo elegido.";
+"footer.description.website" = "Abrir el sitio elegido en el navegador.";
+"footer.description.file" = "Abrir el archivo elegido con su aplicación predeterminada.";
+"footer.description.folder" = "Abrir la carpeta elegida en Finder.";
+"footer.description.downloads" = "Abrir la carpeta Descargas en Finder.";
+"footer.description.lockScreen" = "Bloquear la pantalla de este Mac.";
+"footer.description.showDesktop" = "Mostrar el escritorio.";
+"footer.keepAwakeHelp" = "Evita el reposo del sistema por inactividad mientras está activado. La pantalla puede entrar en reposo.";
+"footer.description.battery" = "Mostrar el nivel de batería y abrir su panel.";
+"footer.description.performance" = "Mostrar el uso de CPU y abrir el panel de rendimiento.";
+"footer.description.output" = "Mostrar el dispositivo de salida y abrir los controles de salida de audio.";
+"footer.description.wiFi" = "Mostrar el estado de Wi-Fi y abrir su panel.";
+"footer.description.bluetooth" = "Mostrar el estado de Bluetooth y abrir su panel.";
+"footer.description.codex" = "Mostrar el uso de Codex y abrir su panel de uso.";
+"footer.description.claude" = "Mostrar el uso de Claude y abrir su panel de uso.";
+
+// Apple Weather source and guidance
+"weather.source.native" = "Tiempo de Apple";
+"weather.source.shortcuts" = "Atajos";
+"weather.nativeHelp" = "Obtiene Tiempo de Apple para tu ubicación mediante el servicio meteorológico de Glance configurado. Se solicita acceso a la ubicación al mostrar el tiempo.";
+"weather.native.notConfigured" = "Tiempo de Apple no está configurado en esta versión. Usa Atajos o instala una versión configurada para Tiempo de Apple.";
+"weather.native.locationDenied" = "Acceso a la ubicación denegado. Permite Glance en Ajustes del Sistema → Privacidad y seguridad → Localización, o usa Atajos.";
+"weather.native.locationUnavailable" = "No se pudo determinar tu ubicación. Activa Localización y vuelve a intentarlo, o usa Atajos.";
+"weather.native.serviceUnavailable" = "No se pudo cargar Tiempo de Apple. Inténtalo más tarde o usa Atajos.";
+"weather.useShortcuts" = "Usar Atajos";
+"weather.openLocationSettings" = "Abrir ajustes de ubicación";
+"weather.attribution" = "Tiempo de Apple";
+"weather.legal" = "Fuentes de datos meteorológicos";

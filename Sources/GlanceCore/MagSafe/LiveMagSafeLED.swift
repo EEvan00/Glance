@@ -22,6 +22,11 @@ struct SMCMagSafeLEDHardwareProbe: MagSafeLEDHardwareProbing {
 
 protocol MagSafeLEDXPCTransporting: Sendable {
     func setLEDMode(rawValue: UInt8) async throws -> Bool
+    func renewOffLease() async throws -> Bool
+}
+
+extension MagSafeLEDXPCTransporting {
+    func renewOffLease() async throws -> Bool { false }
 }
 
 struct XPCMagSafeLEDCommandWriter: MagSafeLEDCommandWriting {
@@ -37,6 +42,10 @@ struct XPCMagSafeLEDCommandWriter: MagSafeLEDCommandWriting {
             throw MagSafeLEDCommandError.rejected
         }
     }
+
+    func renewOffLease() async throws {
+        if try await !transport.renewOffLease() { try await write(.off) }
+    }
 }
 
 private final class SystemMagSafeLEDXPCTransport: MagSafeLEDXPCTransporting, @unchecked Sendable {
@@ -51,6 +60,14 @@ private final class SystemMagSafeLEDXPCTransport: MagSafeLEDXPCTransporting, @un
     }
 
     func setLEDMode(rawValue: UInt8) async throws -> Bool {
+        try await request(rawValue: rawValue)
+    }
+
+    func renewOffLease() async throws -> Bool {
+        try await request(rawValue: nil)
+    }
+
+    private func request(rawValue: UInt8?) async throws -> Bool {
         let coordinator = MagSafeLEDXPCRequestCoordinator()
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
@@ -79,8 +96,14 @@ private final class SystemMagSafeLEDXPCTransport: MagSafeLEDXPCTransporting, @un
                         request.finish(.failure(MagSafeLEDCommandError.invalidProxy))
                         return
                     }
-                    proxy.setLEDMode(rawValue) { succeeded in
-                        request.finish(.success(succeeded))
+                    if let rawValue {
+                        proxy.setLEDMode(rawValue) { succeeded in
+                            request.finish(.success(succeeded))
+                        }
+                    } else {
+                        proxy.renewOffLease { succeeded in
+                            request.finish(.success(succeeded))
+                        }
                     }
                 }
             }
@@ -173,29 +196,124 @@ private enum MagSafeLEDCommandError: Error {
     case connectionInvalidated
 }
 
+enum MagSafeHelperStrategy: String, Sendable {
+    case legacyPackage
+    case bundledService
+    case unavailable
+
+    init(configuration: String?) {
+        // SwiftPM/unpackaged builds retain the ad-hoc default. A malformed explicit
+        // value fails closed instead of selecting an unexpected installer.
+        self = configuration.map { Self(rawValue: $0) ?? .unavailable } ?? .legacyPackage
+    }
+}
+
 struct SystemMagSafeLEDHelperManager: MagSafeLEDHelperManaging {
     static let plistName = "io.github.EEvan00.Glance.magsafe-helper.plist"
+    static let legacyPlistName = "io.github.EEvan00.Glance.legacy-magsafe-helper.plist"
 
     private var service: SMAppService {
         SMAppService.daemon(plistName: Self.plistName)
     }
 
     var hasInstalledHelper: Bool {
-        LegacyMagSafeHelperManager.hasInstalledFiles || service.status != .notRegistered && service.status != .notFound
+        let oldStatus = SMAppService.daemon(plistName: Self.legacyPlistName).status
+        return LegacyMagSafeHelperManager.hasInstalledFiles
+            || service.status == .enabled || service.status == .requiresApproval
+            || oldStatus == .enabled || oldStatus == .requiresApproval
+    }
+
+    private var strategy: MagSafeHelperStrategy {
+        MagSafeHelperStrategy(configuration: Bundle.main.object(forInfoDictionaryKey: "GlanceMagSafeHelperStrategy") as? String)
+    }
+
+    var hasPreviouslyEnabledRegistration: Bool {
+        guard strategy == .bundledService else { return false }
+        return service.status == .enabled || SMAppService.daemon(plistName: Self.legacyPlistName).status == .enabled
+    }
+
+    @MainActor
+    private func unregisterOldBundledService() async throws {
+        let path = Bundle.main.bundleURL
+            .appendingPathComponent("Contents/Library/LaunchDaemons/\(Self.legacyPlistName)").path
+        guard FileManager.default.fileExists(atPath: path) else { return }
+        let old = SMAppService.daemon(plistName: Self.legacyPlistName)
+        if old.status == .enabled || old.status == .requiresApproval {
+            try await Self.unregisterService(old)
+        }
+    }
+
+    @MainActor
+    func recoverRegistration() async throws -> Bool {
+        // Never open Installer or silently migrate privileged legacy files.
+        guard strategy == .bundledService, !LegacyMagSafeHelperManager.hasInstalledFiles else { return false }
+        try await unregisterOldBundledService()
+        let current = service
+        try await Self.unregisterForPackage(
+            status: { current.status },
+            unregister: { try await Self.unregisterService(current) }
+        )
+        try current.register()
+        return true
+    }
+
+    @MainActor
+    func retireBundledRegistration() async throws {
+        guard strategy == .bundledService else { return }
+        let current = service
+        if current.status == .enabled || current.status == .requiresApproval {
+            try await Self.unregisterService(current)
+        }
+        try await unregisterOldBundledService()
     }
 
     var status: MagSafeLEDHelperStatus {
-        if LegacyMagSafeHelperManager.hasInstalledFiles {
-            return LegacyMagSafeHelperManager().isCurrent ? .enabled : .notRegistered
+        Self.helperStatus(
+            strategy: strategy,
+            legacyInstalled: LegacyMagSafeHelperManager.hasInstalledFiles,
+            legacyCurrent: LegacyMagSafeHelperManager().isCurrent,
+            serviceStatus: service.status
+        )
+    }
+
+    static func helperStatus(
+        strategy: MagSafeHelperStrategy,
+        legacyInstalled: Bool,
+        legacyCurrent: Bool,
+        serviceStatus: SMAppService.Status
+    ) -> MagSafeLEDHelperStatus {
+        switch strategy {
+        case .legacyPackage:
+            return legacyInstalled && legacyCurrent ? .enabled : .notRegistered
+        case .unavailable:
+            return .notRegistered
+        case .bundledService:
+            // Even a valid old helper must be migrated explicitly. Reporting it
+            // as enabled would prevent the UI from offering the authorized install.
+            guard !legacyInstalled else { return .notRegistered }
+            return switch serviceStatus {
+            case .enabled: .enabled
+            case .requiresApproval: .requiresApproval
+            case .notRegistered, .notFound: .notRegistered
+            @unknown default: .notRegistered
+            }
         }
-        // Public ad-hoc releases use the independent installer, not SMAppService.
-        if Bundle.main.url(forResource: "GlanceHelperInstall", withExtension: "pkg") != nil { return .notRegistered }
-        return switch service.status {
-        case .enabled: .enabled
-        case .requiresApproval: .requiresApproval
-        case .notRegistered, .notFound: .notRegistered
-        @unknown default: .notRegistered
+    }
+
+    @MainActor
+    static func installBundled(
+        hasLegacyFiles: () -> Bool,
+        uninstallLegacy: () async throws -> Void,
+        register: () throws -> Void
+    ) async throws {
+        if hasLegacyFiles() {
+            // Installer owns administrator authorization, including cancellation.
+            // Never register a conflicting Mach service after a failed removal.
+            try await uninstallLegacy()
+            guard !hasLegacyFiles() else { throw CocoaError(.fileWriteUnknown) }
         }
+        try Task.checkCancellation()
+        try register()
     }
 
     @MainActor
@@ -226,7 +344,8 @@ struct SystemMagSafeLEDHelperManager: MagSafeLEDHelperManaging {
 
     @MainActor
     func install() async throws {
-        if Bundle.main.url(forResource: "GlanceHelperInstall", withExtension: "pkg") != nil {
+        switch strategy {
+        case .legacyPackage:
             if service.status == .enabled || service.status == .requiresApproval {
                 let existingService = service
                 try await Self.unregisterForPackage(
@@ -235,14 +354,27 @@ struct SystemMagSafeLEDHelperManager: MagSafeLEDHelperManaging {
                 )
             }
             try await LegacyMagSafeHelperManager().install()
-        } else {
-            try service.register()
+        case .bundledService:
+            try await unregisterOldBundledService()
+            let bundledService = service
+            try await Self.installBundled(
+                hasLegacyFiles: { LegacyMagSafeHelperManager.hasInstalledFiles },
+                uninstallLegacy: { try await LegacyMagSafeHelperManager().uninstall() },
+                register: {
+                    if bundledService.status != .enabled && bundledService.status != .requiresApproval {
+                        try bundledService.register()
+                    }
+                }
+            )
+        case .unavailable:
+            throw CocoaError(.featureUnsupported)
         }
     }
 
     func uninstall() async throws {
         if LegacyMagSafeHelperManager.hasInstalledFiles { try await LegacyMagSafeHelperManager().uninstall() }
         if service.status == .enabled || service.status == .requiresApproval { try await Self.unregisterService(service) }
+        try await unregisterOldBundledService()
     }
 
     func openSystemSettings() {

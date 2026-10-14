@@ -36,6 +36,10 @@ final class StatusBarController: NSObject {
     private let nowPlaying = NowPlayingController()
     private let brightness = BrightnessController()
     private let screenshot = ScreenshotController()
+    private let footerActions: FooterActionController
+    private var footerErrorCancellable: AnyCancellable?
+    private var footerLayoutCancellable: AnyCancellable?
+    private var weatherSourceCancellable: AnyCancellable?
     private let store: SystemStatusStore
     private let settings: SettingsStore
     private let magSafeLED: MagSafeLEDController
@@ -67,6 +71,7 @@ final class StatusBarController: NSObject {
         openSettings: @escaping () -> Void,
         quitAction: @escaping () -> Void
     ) {
+        self.footerActions = FooterActionController(localization: localization)
         self.store = store
         self.settings = settings
         self.magSafeLED = magSafeLED
@@ -100,6 +105,8 @@ final class StatusBarController: NSObject {
             self?.renderLatestSnapshot()
         }
         configureButton()
+        weather.configure(source: settings.weatherSource)
+        weatherForecast.configure(source: settings.weatherSource)
         configurePopover()
         observeAppearanceChanges()
         scheduleInitialRender()
@@ -116,10 +123,31 @@ final class StatusBarController: NSObject {
             }
 
         utilityCancellable = Publishers.CombineLatest3(settings.$popupUtility, settings.$firstUtilityRow, settings.$secondUtilityRow)
-            .map { card, first, second in SettingsStore.popupUtilities(card: card, first: first, second: second) }
+            .combineLatest(settings.$footerLayout)
+            .map { values, layout in
+                SettingsStore.popupUtilities(card: values.0, first: values.1, second: values.2).union(layout.utilities)
+            }
             .removeDuplicates()
-            .sink { [weak self] utilities in
-                self?.updateUtilityVisibility(utilities)
+            .sink { [weak self] utilities in self?.updateUtilityVisibility(utilities) }
+        footerLayoutCancellable = settings.$footerLayout.sink { [weak self] layout in
+            self?.footerActions.reconcile(layout: layout)
+            guard let self else { return }
+            self.weather.setVisible(self.popover.isShown && layout.modules.contains(where: { $0.kind == .weather }),
+                                    shortcutName: self.settings.weatherShortcutName)
+        }
+        weatherSourceCancellable = settings.$weatherSource.removeDuplicates().sink { [weak self] source in
+            guard let self else { return }
+            self.weather.configure(source: source)
+            self.weatherForecast.configure(source: source)
+        }
+        footerErrorCancellable = footerActions.$errorMessage.compactMap { $0 }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] message in
+                guard let self else { return }
+                let alert = NSAlert()
+                alert.messageText = self.localization.string(.footerActionFailed)
+                alert.informativeText = message
+                alert.runModal()
             }
 
         iconSizeCancellable = settings.$iconSize
@@ -320,8 +348,16 @@ final class StatusBarController: NSObject {
                     NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Weather.app"))
                 },
                 openSoundSettings: handleOpenSoundSettings,
-                quit: quitAction,
-                openQuickAction: { [weak self] action in self?.handleQuickAction(action) }
+                quit: { [weak self] in
+                    self?.footerActions.stop()
+                    self?.quitAction()
+                },
+                footerActions: footerActions,
+                openFooterAction: { [weak self] module in
+                    guard let self else { return }
+                    if module.kind != .keepAwake { self.popover.performClose(nil) }
+                    self.footerActions.perform(module)
+                }
             )
         }
         let hostingController = NSHostingController(
@@ -345,33 +381,6 @@ final class StatusBarController: NSObject {
         claudeUsage.setVisible(visible && utilities.contains(.claude))
     }
 
-    private func handleQuickAction(_ action: PopupQuickAction) {
-        popover.performClose(nil)
-        guard let url = action.launchURL(applicationPath: settings.quickActionApplicationPath,
-                                         shortcutName: settings.quickActionShortcutName) else {
-            handleOpenSettings()
-            return
-        }
-        if action == .shortcut {
-            guard NSWorkspace.shared.open(url) else { handleOpenSettings(); return }
-        } else {
-            guard FileManager.default.fileExists(atPath: url.path), url.pathExtension == "app" else {
-                handleOpenSettings()
-                return
-            }
-            NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration()) { _, error in
-                if error != nil {
-                    Task { @MainActor in
-                        let alert = NSAlert()
-                        alert.messageText = url.deletingPathExtension().lastPathComponent
-                        alert.informativeText = error?.localizedDescription ?? ""
-                        alert.runModal()
-                    }
-                }
-            }
-        }
-    }
-
     private func togglePopover() {
         guard let button = statusItem.button else { return }
         if popover.isShown {
@@ -380,7 +389,10 @@ final class StatusBarController: NSObject {
             store.setPopoverVisible(true)
             brightness.refresh()
             updateUtilityVisibility(settings.visiblePopupUtilities, isVisible: true)
-            weather.setVisible(true, shortcutName: settings.weatherShortcutName)
+            weather.configure(source: settings.weatherSource)
+            weatherForecast.configure(source: settings.weatherSource)
+            weather.setVisible(settings.footerLayout.modules.contains(where: { $0.kind == .weather }),
+                               shortcutName: settings.weatherShortcutName)
             nowPlaying.setVisible(true)
             installPopoverContentIfNeeded()
             popover.show(

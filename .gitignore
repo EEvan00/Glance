@@ -8,3 +8,16 @@ backups/
 
 .build/
 dist/
+
+# Publishing and service credentials stay outside Git.
+*.p8
+*.p12
+*.pfx
+*.key
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+.wrangler/
+node_modules/

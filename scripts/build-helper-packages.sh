@@ -1,11 +1,21 @@
 #!/bin/bash
 set -euo pipefail
 APP="$1"
+STRATEGY="${2:-legacyPackage}"
+case "$STRATEGY" in
+    legacyPackage|bundledService) ;;
+    *) echo "Error: helper strategy must be legacyPackage or bundledService." >&2; exit 2 ;;
+esac
+if [[ -n "${NOTARY_PROFILE:-}" && -z "${INSTALLER_SIGN_IDENTITY:-}" ]]; then
+    echo "Error: notarizing the migration package requires INSTALLER_SIGN_IDENTITY." >&2
+    exit 2
+fi
 TEMP="$(mktemp -d)"
 trap 'rm -rf "$TEMP"' EXIT
 LABEL=io.github.EEvan00.Glance.MagSafeLEDHelper
 ROOT="$TEMP/root"
 mkdir -p "$ROOT/Library/PrivilegedHelperTools" "$ROOT/Library/LaunchDaemons" "$ROOT/Library/Application Support/GlanceHelper" "$TEMP/install" "$TEMP/uninstall" "$TEMP/empty"
+if [[ "$STRATEGY" == "legacyPackage" ]]; then
 cp "$APP/Contents/Resources/GlanceMagSafeHelper" "$ROOT/Library/PrivilegedHelperTools/$LABEL"
 /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Contents/Info.plist" > "$ROOT/Library/Application Support/GlanceHelper/expected-build"
 cat > "$ROOT/Library/LaunchDaemons/$LABEL.plist" <<'PLIST'
@@ -47,6 +57,7 @@ build="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Contents/Info
 /bin/launchctl bootstrap system "/Library/LaunchDaemons/$label.plist"
 /usr/bin/touch "$config/ready"
 SCRIPT
+fi
 cat > "$TEMP/uninstall/postinstall" <<'SCRIPT'
 #!/bin/bash
 set -eu
@@ -60,7 +71,34 @@ fi
 /bin/rm -rf '/Library/Application Support/GlanceHelper'
 /usr/sbin/pkgutil --forget io.github.EEvan00.Glance.HelperInstall >/dev/null 2>&1 || true
 SCRIPT
-chmod 755 "$TEMP/install/preinstall" "$TEMP/install/postinstall" "$TEMP/uninstall/postinstall"
+chmod 755 "$TEMP/uninstall/postinstall"
+if [[ "$STRATEGY" == "legacyPackage" ]]; then
+    chmod 755 "$TEMP/install/preinstall" "$TEMP/install/postinstall"
+fi
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Contents/Info.plist")"
-pkgbuild --root "$ROOT" --scripts "$TEMP/install" --identifier io.github.EEvan00.Glance.HelperInstall --version "$VERSION" --install-location / "$APP/Contents/Resources/GlanceHelperInstall.pkg"
-pkgbuild --root "$TEMP/empty" --scripts "$TEMP/uninstall" --identifier io.github.EEvan00.Glance.HelperUninstall --version "$VERSION" --install-location / "$APP/Contents/Resources/GlanceHelperUninstall.pkg"
+PACKAGE_SIGNING_ARGS=()
+if [[ -n "${INSTALLER_SIGN_IDENTITY:-}" ]]; then
+    PACKAGE_SIGNING_ARGS+=(--sign "$INSTALLER_SIGN_IDENTITY" --timestamp)
+    if [[ -n "${KEYCHAIN_PATH:-}" ]]; then PACKAGE_SIGNING_ARGS+=(--keychain "$KEYCHAIN_PATH"); fi
+fi
+if [[ "$STRATEGY" == "legacyPackage" ]]; then
+pkgbuild ${PACKAGE_SIGNING_ARGS[@]+"${PACKAGE_SIGNING_ARGS[@]}"} --root "$ROOT" --scripts "$TEMP/install" --identifier io.github.EEvan00.Glance.HelperInstall --version "$VERSION" --install-location / "$APP/Contents/Resources/GlanceHelperInstall.pkg"
+else
+    # Migration retains the existing authorized removal flow, with no legacy
+    # installer payload or executable in the certificate-signed distribution.
+    rm -f "$APP/Contents/Resources/GlanceHelperInstall.pkg"
+fi
+pkgbuild ${PACKAGE_SIGNING_ARGS[@]+"${PACKAGE_SIGNING_ARGS[@]}"} --root "$TEMP/empty" --scripts "$TEMP/uninstall" --identifier io.github.EEvan00.Glance.HelperUninstall --version "$VERSION" --install-location / "$APP/Contents/Resources/GlanceHelperUninstall.pkg"
+
+if [[ -n "${INSTALLER_SIGN_IDENTITY:-}" ]]; then
+    pkgutil --check-signature "$APP/Contents/Resources/GlanceHelperUninstall.pkg"
+fi
+if [[ -n "${NOTARY_PROFILE:-}" ]]; then
+    NOTARY_ARGS=(--keychain-profile "$NOTARY_PROFILE")
+    if [[ -n "${KEYCHAIN_PATH:-}" ]]; then NOTARY_ARGS+=(--keychain "$KEYCHAIN_PATH"); fi
+    # Staple the inner package before the app seals its Resources directory.
+    xcrun notarytool submit "$APP/Contents/Resources/GlanceHelperUninstall.pkg" "${NOTARY_ARGS[@]}" --wait
+    xcrun stapler staple "$APP/Contents/Resources/GlanceHelperUninstall.pkg"
+    xcrun stapler validate "$APP/Contents/Resources/GlanceHelperUninstall.pkg"
+    spctl --assess --type install --verbose=2 "$APP/Contents/Resources/GlanceHelperUninstall.pkg"
+fi

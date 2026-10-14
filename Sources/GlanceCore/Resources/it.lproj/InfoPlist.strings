@@ -1,3 +1,3 @@
-"NSLocationWhenInUseUsageDescription" = "Used only when you open Wi-Fi details to read network names, scan results, and connection information.";
+"NSLocationWhenInUseUsageDescription" = "Usato per i dettagli Wi-Fi e, quando è selezionato Meteo Apple, per il meteo locale. La posizione approssimativa viene inviata al servizio meteo Glance configurato.";
 "NSBluetoothAlwaysUsageDescription" = "Used only when you open Bluetooth details to show paired-device connection status.";
-"NSLocationUsageDescription" = "Used only when you open Wi-Fi details to read network names, scan results, and connection information.";
+"NSLocationUsageDescription" = "Usato per i dettagli Wi-Fi e, quando è selezionato Meteo Apple, per il meteo locale. La posizione approssimativa viene inviata al servizio meteo Glance configurato.";

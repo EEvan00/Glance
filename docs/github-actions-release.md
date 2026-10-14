@@ -55,6 +55,12 @@ open "/Applications/Status Trio.app"
 
 然后使用 `publish_appcast=true`。工作流会验证两项配置、签名 DMG、写入 appcast，并将对应 feed/public key 写入该构建的 app。缺少任何一项时工作流会失败；不得使用上游私钥、公钥或 appcast。
 
-## 可选 Developer ID 和公证
+## Developer ID、公证和不发布预检
 
-如有凭据，可配置 `DEVELOPER_ID_CERTIFICATE_P12`、`DEVELOPER_ID_CERTIFICATE_PASSWORD`、`APPSTORE_CONNECT_API_KEY_ID`、`APPSTORE_CONNECT_API_ISSUER_ID` 与 `APPSTORE_CONNECT_API_PRIVATE_KEY`。没有这些凭据时，发布仍可完成，但必须标为 Ad-hoc 签名且未公证。
+完整凭据、Installer 证书、MagSafe 迁移、公证顺序和天气服务 URL 配置见
+[Apple Developer setup](apple-developer-setup.md)。用户已报告会员激活；当前仅确认本机有一个有效 Apple Development identity，尚无 Developer ID identity。本次仅准备代码，没有修改账户、凭据或仓库 secrets。
+
+`publish=false` 时默认 `signed_validation=false`，保持 Ad-hoc 预检；即使仓库已有
+Apple secrets，也不会导入证书或运行公证。会员和真实凭据准备好后可显式设置
+`signed_validation=true`，在不创建 GitHub Release、tag 或 appcast 的情况下验证
+Developer ID Application + Installer 签名以及 Apple 公证。缺少配置会失败，不会回退。
