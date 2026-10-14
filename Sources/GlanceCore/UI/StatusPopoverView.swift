@@ -444,12 +444,6 @@ struct StatusPopoverView: View {
                                   activate: { activateFooter($0) },
                                   openSettings: openSettings, quit: quit)
             }
-            if settings.footerLayout.modules.contains(where: { $0.kind == .weather }),
-               weather.source == .nativeWeather, weather.snapshot != nil,
-               let attribution = weather.attribution {
-                WeatherAttributionView(attribution: attribution)
-                    .padding(.horizontal, CompactPopupLayout.contentInset)
-            }
         }
         .onChange(of: settings.popupUtility) { _, _ in panel = .summary }
         .onAppear { store.bluetoothDevices.activateIfAuthorized() }
