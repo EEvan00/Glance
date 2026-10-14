@@ -1,5 +1,13 @@
 # Status Trio Agent Rules
 
+## Product Decisions and Release Changes
+
+- Before review or release, read `docs/product-decisions.md` and the latest explicit user decisions. Review suggestions must not override a confirmed requirement.
+- The user explicitly removed standalone Apple Weather attribution rows from summary and weather details. Do not reconnect them merely because the attribution component has no call sites. If an external requirement appears to conflict, explain the conflict and agree on a solution before changing the approved UI.
+- After the user tests a candidate, separately identify any newly introduced visible behavior before publication. Passing tests, signing, and notarization do not establish product approval.
+- Verify user-tested candidate, source revision, version/build, published artifact, and live update feed separately. Lifecycle changes require real install/uninstall validation in addition to mocked tests.
+- See `docs/incidents/2026-10-14-glance-2.0.0.md` for the incident and corrective actions.
+
 ## Highest Priority: Match the CI Toolchain
 
 The release workflow is the acceptance environment:
