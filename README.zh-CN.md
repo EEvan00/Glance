@@ -5,7 +5,7 @@
 # Status Trio
 
 <p align="center">
-  <img src="Support/AppIcon.svg" width="112" alt="Status Trio 应用图标">
+  <img src="Support/AppIcon.png" width="112" alt="Glance 应用图标">
 </p>
 
 <p align="center"><strong>三个系统状态，一个原生 macOS 菜单栏图标。</strong></p>

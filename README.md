@@ -1,7 +1,7 @@
 <!-- Glance product documentation, modified by EEvan00 in 2026. Original notices retained in NOTICE. -->
 # Glance · 一瞥
 
-<img src="Support/AppIcon.svg" width="112" alt="Glance app icon">
+<img src="Support/AppIcon.png" width="112" alt="Glance app icon">
 
 A compact native macOS menu bar control panel, maintained by **EEvan00**. Glance brings battery, Wi-Fi, Bluetooth, brightness, volume, playback, Codex usage, weather, date and time into one small popup.
 
