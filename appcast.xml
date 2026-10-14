@@ -6,18 +6,7 @@
     <link>https://github.com/EEvan00/Glance</link>
     <description>Independent Glance releases.</description>
     <language>en</language>
-    <item>
-      <title>Version 2.0.0 （English + 中文， 中文在下方）</title>
-      <pubDate>Wed, 14 Oct 2026 07:58:41 +0000</pubDate>
-      <sparkle:version>16</sparkle:version>
-      <sparkle:shortVersionString>2.0.0</sparkle:shortVersionString>
-      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-      <description><![CDATA[<ul><li>Version: 2.0.0</li></ul><h2>English</h2><ul><li>Customize the eight-slot footer with rearrangeable modules and per-module preferences.</li><li>Add native weather presentation backed by Apple&#39;s weather data, with attribution and a Shortcuts fallback.</li><li>Improve MagSafe helper registration across upgrades and reinstalls, including recovery from historical registrations.</li><li>Restore system LED control after quit, a crash, or moving Glance to Trash, with a safety timeout in the helper.</li><li>Distribute universal Apple Silicon and Intel builds with Developer ID signing and Apple notarization.</li></ul><h2>中文</h2><ul><li>支持自定义八格底部栏，可调整模块顺序及各模块偏好。</li><li>新增基于 Apple 天气数据的原生天气展示，包含数据来源标识，并保留快捷指令备用方式。</li><li>改善 MagSafe 辅助程序在升级与重装时的注册，自动处理历史注册冲突。</li><li>退出、崩溃或将 Glance 移入废纸篓后恢复系统灯光控制，并由辅助程序提供超时保护。</li><li>提供支持 Apple Silicon 和 Intel 的通用构建，使用 Developer ID 签名及 Apple 公证。</li></ul>]]></description>
-      <enclosure url="https://github.com/EEvan00/Glance/releases/download/v2.0.0/Glance-2.0.0.dmg"
-                 type="application/octet-stream"
-                 sparkle:edSignature="lQ5rWVv5Z2I5L9EsypDhE5IhEnnMBIhjc3CWWNIpFqk7DgrMAdsHhNBphyBoova+bnzkAtTwh1CqHx0FSuULBA=="
-                 length="5626037" />
-    </item>
+    
     <item>
       <title>Version 1.0.5 （English + 中文， 中文在下方）</title>
       <pubDate>Sat, 10 Oct 2026 09:21:44 +0000</pubDate>
