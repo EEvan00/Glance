@@ -7,6 +7,18 @@
     <description>Independent Glance releases.</description>
     <language>en</language>
     <item>
+      <title>Version 2.0.1 （English + 中文， 中文在下方）</title>
+      <pubDate>Thu, 15 Oct 2026 05:54:18 +0000</pubDate>
+      <sparkle:version>19</sparkle:version>
+      <sparkle:shortVersionString>2.0.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Version: 2.0.1</li></ul><h2>English</h2><ul><li>Fix settings tab labels staying in the previous language after switching the app language.</li><li>Remove the no-space-available message from footer module settings.</li></ul><h2>中文</h2><ul><li>修复切换应用语言后，设置标签仍显示旧语言的问题。</li><li>移除底部模块设置中的空间不足提示。</li></ul>]]></description>
+      <enclosure url="https://github.com/EEvan00/Glance/releases/download/v2.0.1/Glance-2.0.1.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="aiIF2CbIy77ETDu7qQJ0SUEzJ4qCpXUbvMgExM+ztgwZ292PMSM0/tHI0cKiNhM7jlq48qKlVtgPmdgay2KrBg=="
+                 length="5618674" />
+    </item>
+    <item>
       <title>Version 2.0.0 （English + 中文， 中文在下方）</title>
       <pubDate>Wed, 14 Oct 2026 11:57:18 +0000</pubDate>
       <sparkle:version>18</sparkle:version>
