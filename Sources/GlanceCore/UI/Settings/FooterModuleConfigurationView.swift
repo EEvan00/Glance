@@ -67,9 +67,6 @@ struct FooterModuleConfigurationView: View {
                     .disabled(width > module.width && remainingSlots == 0)
                 }
             }
-            if remainingSlots == 0 && module.width == 1 {
-                Text(localization.string(.footerFull)).font(.caption).foregroundStyle(.secondary)
-            }
             if module.kind == .clock || module.kind == .weather {
                 Divider()
                 FooterModulePreferencesView(kind: module.kind, store: store)

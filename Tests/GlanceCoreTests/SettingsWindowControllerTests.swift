@@ -29,6 +29,20 @@ final class SettingsWindowControllerTests: XCTestCase {
                        "Content drags must reach the footer editor instead of moving the window")
         XCTAssertTrue(window.isMovable, "The title bar must remain draggable")
 
+        localization.setPreference(.language(.english))
+        let tabs = try XCTUnwrap(window.contentViewController as? NSTabViewController)
+        let toolbar = try XCTUnwrap(window.toolbar)
+        for (tab, item) in zip(SettingsTab.visibleCases, tabs.tabViewItems) {
+            let expected = localization.string(tab.titleKey, language: .english)
+            XCTAssertEqual(item.label, expected)
+            let toolbarItem = try XCTUnwrap(toolbar.items.first {
+                $0.itemIdentifier.rawValue == tab.rawValue
+            }, "Missing toolbar item for \(tab.rawValue); identifiers: \(toolbar.items.map { $0.itemIdentifier.rawValue })")
+            XCTAssertEqual(toolbarItem.label, expected)
+            XCTAssertEqual(toolbarItem.paletteLabel, expected)
+            XCTAssertEqual(toolbarItem.toolTip, expected)
+        }
+
         localization.setPreference(.language(.german))
         XCTAssertEqual(window.title, "Einstellungen")
 

@@ -53,14 +53,34 @@ final class SettingsTabViewController: NSTabViewController {
     }
 
     func applyLocalization(_ language: AppLanguage) {
+        var changedIdentifiers: [NSToolbarItem.Identifier] = []
         for tab in SettingsTab.visibleCases {
             guard let item = tabViewItems.first(where: {
                 ($0.identifier as? String) == tab.rawValue
             }) else {
                 continue
             }
-            item.label = localization.string(tab.titleKey, language: language)
-            item.toolTip = item.label
+            let label = localization.string(tab.titleKey, language: language)
+            if item.label != label {
+                changedIdentifiers.append(NSToolbarItem.Identifier(tab.rawValue))
+            }
+            item.label = label
+            item.toolTip = label
+        }
+
+        // AppKit can retain the toolbar's rendered title after the tab item's
+        // bound label changes. Recreate only changed items so the visible text
+        // picks up the language too, without replacing panes or their state.
+        if let toolbar = view.window?.toolbar {
+            let selectedIdentifier = toolbar.selectedItemIdentifier
+            for identifier in changedIdentifiers {
+                guard let index = toolbar.items.firstIndex(where: {
+                    $0.itemIdentifier == identifier
+                }) else { continue }
+                toolbar.removeItem(at: index)
+                toolbar.insertItem(withItemIdentifier: identifier, at: index)
+            }
+            toolbar.selectedItemIdentifier = selectedIdentifier
         }
 
         view.needsLayout = true
