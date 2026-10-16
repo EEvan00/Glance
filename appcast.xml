@@ -7,6 +7,18 @@
     <description>Independent Glance releases.</description>
     <language>en</language>
     <item>
+      <title>Version 2.0.2 （English + 中文， 中文在下方）</title>
+      <pubDate>Fri, 16 Oct 2026 04:39:48 +0000</pubDate>
+      <sparkle:version>24</sparkle:version>
+      <sparkle:shortVersionString>2.0.2</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Version: 2.0.2</li></ul><h2>English</h2><ul><li>Distinguish disabled Location Services, permission timeouts, and location failures, with retries for unanswered permission requests.</li><li>Use one Glance Weather shortcut for current conditions and the hourly forecast, with an update path for existing installations.</li><li>Improve light-mode contrast for Codex and Claude icons, progress tracks, and module borders while retaining white progress fills.</li><li>Keep enabled display controls blue with white icons in both appearances, and add consistent shadows to progress bars in detail views.</li><li>Keep the weather update time on one line, omitting the update prefix when space is limited.</li></ul><h2>中文</h2><ul><li>区分定位服务关闭、等待授权超时和定位失败，并支持重试未完成的授权请求。</li><li>将当前天气和小时预报合并为一个 Glance Weather 快捷指令，保留已有快捷指令的更新入口。</li><li>改善浅色模式下 Codex、Claude 图标、进度条轨道和模块边框的对比度，保留白色进度填充。</li><li>显示设置开启时，在深浅模式下均保持蓝底白色图标，并为二级菜单进度条补齐统一的底部阴影。</li><li>天气刷新时间保持单行，空间不足时省略更新前缀。</li></ul>]]></description>
+      <enclosure url="https://github.com/EEvan00/Glance/releases/download/v2.0.2/Glance-2.0.2.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="1Nuy3UQBkhoPa0cfm5GW784+5QCbaznBkzubLdo3nMcTyH345x+rBK6hNH2Bx34nXc4Rixbu6M/psP84uXKwBA=="
+                 length="5604790" />
+    </item>
+    <item>
       <title>Version 2.0.1 （English + 中文， 中文在下方）</title>
       <pubDate>Thu, 15 Oct 2026 05:54:18 +0000</pubDate>
       <sparkle:version>19</sparkle:version>
