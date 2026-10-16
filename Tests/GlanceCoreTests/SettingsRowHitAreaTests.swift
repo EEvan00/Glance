@@ -43,7 +43,6 @@ final class SettingsRowHitAreaTests: XCTestCase {
             claudeUsage: ClaudeUsageController(),
             codexUsage: CodexUsageController(),
             weather: WeatherController(),
-            weatherForecast: WeatherController(),
             nowPlaying: NowPlayingController(),
             brightness: BrightnessController(),
             requestWiFiNameAccess: {},

@@ -413,7 +413,7 @@
 
 "shortcut.addWeather" = "Añadir atajos del tiempo…";
 "shortcut.continueSetup" = "Continuar configuración…";
-"shortcut.sequentialInstallHelp" = "Confirma la importación en la ventana del sistema y vuelve aquí para continuar. Cada atajo requiere confirmación por separado.";
+"shortcut.sequentialInstallHelp" = "Importa Glance Weather en la ventana del sistema. Un solo atajo proporciona el tiempo actual y la previsión por horas.";
 
 "settings.uninstall" = "Desinstalar Glance…";
 "settings.uninstall.title" = "¿Desinstalar Glance?";
@@ -514,9 +514,11 @@
 "weather.nativeHelp" = "Obtiene Tiempo de Apple para tu ubicación mediante el servicio meteorológico de Glance configurado. Se solicita acceso a la ubicación al mostrar el tiempo.";
 "weather.native.notConfigured" = "Tiempo de Apple no está configurado en esta versión. Usa Atajos o instala una versión configurada para Tiempo de Apple.";
 "weather.native.locationDenied" = "Acceso a la ubicación denegado. Permite Glance en Ajustes del Sistema → Privacidad y seguridad → Localización, o usa Atajos.";
-"weather.native.locationUnavailable" = "No se pudo determinar tu ubicación. Activa Localización y vuelve a intentarlo, o usa Atajos.";
+"weather.native.locationUnavailable" = "No se pudo determinar tu ubicación. Actualiza el tiempo o usa Atajos.";
 "weather.native.serviceUnavailable" = "No se pudo cargar Tiempo de Apple. Inténtalo más tarde o usa Atajos.";
 "weather.useShortcuts" = "Usar Atajos";
 "weather.openLocationSettings" = "Abrir ajustes de ubicación";
 "weather.attribution" = "Tiempo de Apple";
 "weather.legal" = "Fuentes de datos meteorológicos";
+"weather.native.locationServicesDisabled" = "Los servicios de localización están desactivados. Actívalos en Ajustes del Sistema → Privacidad y seguridad → Localización y vuelve a intentarlo.";
+"weather.native.authorizationTimedOut" = "Se agotó el tiempo de espera del permiso de ubicación. Responde al diálogo del sistema y actualiza el tiempo.";

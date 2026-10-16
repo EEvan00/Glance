@@ -172,6 +172,8 @@ enum LocalizationKey: String, CaseIterable, Hashable, Sendable {
     case weatherNativeHelp = "weather.nativeHelp"
     case weatherNativeNotConfigured = "weather.native.notConfigured"
     case weatherNativeLocationDenied = "weather.native.locationDenied"
+    case weatherNativeLocationServicesDisabled = "weather.native.locationServicesDisabled"
+    case weatherNativeAuthorizationTimedOut = "weather.native.authorizationTimedOut"
     case weatherNativeLocationUnavailable = "weather.native.locationUnavailable"
     case weatherNativeServiceUnavailable = "weather.native.serviceUnavailable"
     case weatherUseShortcuts = "weather.useShortcuts"

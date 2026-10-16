@@ -24,25 +24,26 @@ final class WeatherShortcutUpdateTests: XCTestCase {
             versions.record(name: name, version: nil)
             XCTAssertTrue(versions.needsUpdate(name: name, bundledVersion: 1))
             XCTAssertTrue(versions.pendingVerification.contains(name))
-            versions.record(name: name, version: 1)
+            versions.record(name: name, version: BundledWeatherShortcut.current.version)
             XCTAssertFalse(versions.needsUpdate(name: name, bundledVersion: 1))
             let restored = WeatherShortcutVersions(defaults: defaults)
             XCTAssertFalse(restored.needsUpdate(name: name, bundledVersion: 1))
-            XCTAssertTrue(restored.needsUpdate(name: name, bundledVersion: 2))
+            XCTAssertTrue(restored.needsUpdate(name: name, bundledVersion: 3))
             XCTAssertFalse(restored.needsUpdate(name: name, bundledVersion: 0))
         }
     }
 
-    func testCurrentAndForecastUpdatesAreIndependent() {
+    func testLegacyMainShortcutOffersUnifiedWeatherUpdate() {
         withStore { versions, _ in
-            let current = BundledWeatherShortcut.current.rawValue
-            let forecast = BundledWeatherShortcut.forecast.rawValue
-            versions.record(name: current, version: 1)
-            versions.record(name: forecast, version: nil)
-            XCTAssertFalse(versions.needsUpdate(name: current, bundledVersion: 1))
-            XCTAssertTrue(versions.needsUpdate(name: forecast, bundledVersion: 1))
-            versions.record(name: "Unrelated shortcut", version: 1)
-            XCTAssertNil(versions.observed["Unrelated shortcut"])
+            let current = BundledWeatherShortcut.current
+            versions.record(name: current.rawValue, version: 1)
+            XCTAssertTrue(versions.needsUpdate(name: current.rawValue, bundledVersion: current.version))
+            versions.requestVerification(name: current.rawValue)
+            versions.record(name: current.rawValue, version: current.version)
+            XCTAssertFalse(versions.needsUpdate(name: current.rawValue, bundledVersion: current.version))
+            XCTAssertFalse(versions.pendingVerification.contains(current.rawValue))
+            versions.record(name: "Glance Weather Forecast", version: 1)
+            XCTAssertNil(versions.observed["Glance Weather Forecast"])
         }
     }
 
@@ -103,10 +104,10 @@ final class WeatherShortcutUpdateTests: XCTestCase {
         XCTAssertTrue(versions.needsUpdate(name: shortcut, bundledVersion: 1))
         XCTAssertTrue(versions.pendingVerification.contains(shortcut))
         controller.setVisible(false, shortcutName: shortcut)
-        try script("19°C\nClear\nGLANCE_VERSION\n1")
+        try script("19°C\nClear\nGLANCE_VERSION\n2")
         controller.setVisible(true, shortcutName: shortcut)
         for _ in 0..<250 where controller.isLoading { try await Task.sleep(for: .milliseconds(20)) }
-        XCTAssertEqual(controller.snapshot?.shortcutVersion, 1)
+        XCTAssertEqual(controller.snapshot?.shortcutVersion, 2)
         XCTAssertFalse(versions.needsUpdate(name: shortcut, bundledVersion: 1))
         XCTAssertFalse(versions.pendingVerification.contains(shortcut))
         controller.setVisible(false, shortcutName: shortcut)

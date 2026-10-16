@@ -2,7 +2,6 @@ import SwiftUI
 
 struct WeatherDetailsView: View {
     @ObservedObject var controller: WeatherController
-    @ObservedObject var forecast: WeatherController
     @ObservedObject var settings: SettingsStore
     @EnvironmentObject private var localization: Localization
     let onBack: () -> Void
@@ -19,16 +18,16 @@ struct WeatherDetailsView: View {
                 }
                 .buttonStyle(.plain)
                 Spacer(minLength: 4)
-                Text((forecast.snapshot?.location ?? controller.snapshot?.location ?? localization.string(.weatherCurrentLocation)).uppercased())
+                Text((controller.snapshot?.location ?? localization.string(.weatherCurrentLocation)).uppercased())
                     .font(.caption).foregroundStyle(.primary.opacity(0.78))
                     .lineLimit(1).truncationMode(.tail)
-                    .help(forecast.snapshot?.location ?? controller.snapshot?.location ?? localization.string(.weatherCurrentLocation))
-                if controller.isLoading || forecast.isLoading { ProgressView().controlSize(.small) }
+                    .help(controller.snapshot?.location ?? localization.string(.weatherCurrentLocation))
+                if controller.isLoading { ProgressView().controlSize(.small) }
             }
-            if settings.weatherSource == .nativeWeather, let issue = forecast.nativeIssue ?? controller.nativeIssue {
+            if settings.weatherSource == .nativeWeather, let issue = controller.nativeIssue {
                 nativeIssueGuidance(issue)
             }
-            if let snapshot = forecast.snapshot ?? controller.snapshot {
+            if let snapshot = controller.snapshot {
                 HStack(spacing: 12) {
                     Image(systemName: snapshot.symbol).font(.system(size: 28))
                         .accessibilityHidden(true)
@@ -46,7 +45,7 @@ struct WeatherDetailsView: View {
                 Text(localization.string(controller.isLoading ? .weatherLoading : .weatherUnavailable))
                     .foregroundStyle(.primary.opacity(0.78))
             }
-            if let snapshot = forecast.snapshot {
+            if let snapshot = controller.snapshot {
                 if !snapshot.forecastEntries.isEmpty {
                     Text(localization.string(.weatherHourly)).font(.subheadline.weight(.semibold))
                     ScrollView(.horizontal) {
@@ -57,9 +56,6 @@ struct WeatherDetailsView: View {
                         }.padding(.vertical, 4)
                     }.scrollIndicators(.hidden).frame(height: 94)
                 }
-            } else if forecast.isUnavailable {
-                Text(localization.string(.weatherForecastUnavailable)).font(.caption)
-                    .foregroundStyle(.primary.opacity(0.78))
             }
             if settings.weatherSource == .shortcuts {
                 WeatherShortcutInstallButtons(localization: localization)
@@ -87,7 +83,7 @@ struct WeatherDetailsView: View {
                     .fixedSize()
                     .accessibilityLabel(localization.string(.weatherSource))
                     Spacer(minLength: 8)
-                    Text((forecast.updatedAt ?? controller.updatedAt).map {
+                    Text((controller.updatedAt).map {
                         localization.format(.weatherUpdated, $0.formatted(date: .omitted, time: .shortened))
                     } ?? localization.string(.weatherUnavailable))
                         .font(.caption).foregroundStyle(.secondary)
@@ -99,7 +95,7 @@ struct WeatherDetailsView: View {
                             .frame(width: 24, height: 24).contentShape(Rectangle())
                     }.buttonStyle(PopupHoverButtonStyle())
                         .accessibilityLabel(localization.string(.weatherRefresh))
-                        .disabled(controller.isLoading || forecast.isLoading)
+                        .disabled(controller.isLoading)
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -114,23 +110,19 @@ struct WeatherDetailsView: View {
             NativeWeatherLocationSession.shared.enableAuthorizationRequest()
             configureWeather(source: settings.weatherSource)
             controller.setVisible(true, shortcutName: settings.weatherShortcutName)
-            forecast.setVisible(true, shortcutName: settings.weatherForecastShortcutName)
         }
         .onChange(of: settings.weatherSource) { _, source in
             configureWeather(source: source)
             controller.setVisible(true, shortcutName: settings.weatherShortcutName)
-            forecast.setVisible(true, shortcutName: settings.weatherForecastShortcutName)
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             // Verify the installed output after returning from the system importer.
             refreshWeather()
         }
-        .onDisappear { forecast.setVisible(false, shortcutName: settings.weatherForecastShortcutName) }
     }
 
     private func configureWeather(source: WeatherSource) {
         controller.configure(source: source)
-        forecast.configure(source: source)
     }
 
     private var sourceMenuTitle: String {
@@ -143,9 +135,9 @@ struct WeatherDetailsView: View {
     }
 
     private func refreshWeather() {
+        NativeWeatherLocationSession.shared.enableAuthorizationRequest()
         configureWeather(source: settings.weatherSource)
         controller.refreshNow(shortcutName: settings.weatherShortcutName)
-        forecast.refreshNow(shortcutName: settings.weatherForecastShortcutName)
     }
 
     private func nativeIssueGuidance(_ issue: NativeWeatherIssue) -> some View {

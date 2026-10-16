@@ -411,9 +411,9 @@
 
 "settings.utilityStripPosition" = "The strips sit between the player and the shortcut buttons.";
 
-"shortcut.addWeather" = "Add weather shortcuts…";
+"shortcut.addWeather" = "Add weather shortcut…";
 "shortcut.continueSetup" = "Continue setup…";
-"shortcut.sequentialInstallHelp" = "Import the shortcut in the system window, then return here to continue. Each shortcut requires separate confirmation.";
+"shortcut.sequentialInstallHelp" = "Import Glance Weather in the system window. It provides both current weather and the hourly forecast.";
 
 "settings.uninstall" = "Uninstall Glance…";
 "settings.uninstall.title" = "Uninstall Glance?";
@@ -514,9 +514,11 @@
 "weather.nativeHelp" = "Retrieves Apple Weather for your current location through the configured Glance weather service. Location access is requested when weather is shown.";
 "weather.native.notConfigured" = "Apple Weather is unavailable in this build. Use Shortcuts or install a build configured for Apple Weather.";
 "weather.native.locationDenied" = "Location access is denied. Allow Glance in System Settings → Privacy & Security → Location Services, or use Shortcuts.";
-"weather.native.locationUnavailable" = "Your location could not be determined. Enable Location Services and try again, or use Shortcuts.";
+"weather.native.locationUnavailable" = "Your location could not be determined. Try refreshing the weather, or use Shortcuts.";
 "weather.native.serviceUnavailable" = "Apple Weather could not load. Try again later or use Shortcuts.";
 "weather.useShortcuts" = "Use Shortcuts";
 "weather.openLocationSettings" = "Open Location Settings";
 "weather.attribution" = "Apple Weather";
 "weather.legal" = "Weather data sources";
+"weather.native.locationServicesDisabled" = "Location Services are turned off. Enable them in System Settings → Privacy & Security → Location Services, then try again.";
+"weather.native.authorizationTimedOut" = "Waiting for location permission timed out. Respond to the system permission dialog, then refresh the weather.";

@@ -3,7 +3,7 @@ import SwiftUI
 struct UsageProviderIcon: View {
     enum Provider { case codex, claude }
     let provider: Provider
-    var tint: Color = .white
+    var tint: Color = .primary
 
     var body: some View {
         Group {

@@ -413,7 +413,7 @@
 
 "shortcut.addWeather" = "Wetter-Kurzbefehle hinzufügen…";
 "shortcut.continueSetup" = "Einrichtung fortsetzen…";
-"shortcut.sequentialInstallHelp" = "Bestätige den Import im Systemfenster und kehre hierher zurück. Jeder Kurzbefehl muss einzeln bestätigt werden.";
+"shortcut.sequentialInstallHelp" = "Importiere Glance Weather im Systemfenster. Ein Kurzbefehl liefert aktuelles Wetter und die stündliche Vorhersage.";
 
 "settings.uninstall" = "Glance deinstallieren…";
 "settings.uninstall.title" = "Glance deinstallieren?";
@@ -514,9 +514,11 @@
 "weather.nativeHelp" = "Ruft Apple Wetter für deinen Standort über den eingerichteten Glance-Wetterdienst ab. Der Standortzugriff wird beim Anzeigen des Wetters angefragt.";
 "weather.native.notConfigured" = "Apple Wetter ist in dieser Version nicht eingerichtet. Verwende Kurzbefehle oder installiere eine für Apple Wetter konfigurierte Version.";
 "weather.native.locationDenied" = "Standortzugriff verweigert. Erlaube Glance unter Systemeinstellungen → Datenschutz & Sicherheit → Ortungsdienste oder verwende Kurzbefehle.";
-"weather.native.locationUnavailable" = "Dein Standort konnte nicht ermittelt werden. Aktiviere Ortungsdienste und versuche es erneut oder verwende Kurzbefehle.";
+"weather.native.locationUnavailable" = "Dein Standort konnte nicht ermittelt werden. Aktualisiere das Wetter oder verwende Kurzbefehle.";
 "weather.native.serviceUnavailable" = "Apple Wetter konnte nicht geladen werden. Versuche es später erneut oder verwende Kurzbefehle.";
 "weather.useShortcuts" = "Kurzbefehle verwenden";
 "weather.openLocationSettings" = "Standorteinstellungen öffnen";
 "weather.attribution" = "Apple Wetter";
 "weather.legal" = "Wetterdatenquellen";
+"weather.native.locationServicesDisabled" = "Die Ortungsdienste sind deaktiviert. Aktiviere sie unter Systemeinstellungen → Datenschutz & Sicherheit → Ortungsdienste und versuche es erneut.";
+"weather.native.authorizationTimedOut" = "Zeitüberschreitung beim Warten auf die Standortfreigabe. Beantworte den Systemdialog und aktualisiere das Wetter.";

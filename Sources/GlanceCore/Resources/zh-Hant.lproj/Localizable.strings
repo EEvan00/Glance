@@ -413,7 +413,7 @@
 
 "shortcut.addWeather" = "加入天氣捷徑…";
 "shortcut.continueSetup" = "繼續加入…";
-"shortcut.sequentialInstallHelp" = "在系統視窗確認匯入後，返回這裡繼續加入下一個捷徑。每個捷徑需分別確認。";
+"shortcut.sequentialInstallHelp" = "在系統視窗確認匯入 Glance Weather，一個捷徑同時提供目前天氣和每小時預報。";
 
 "settings.uninstall" = "解除安裝 Glance…";
 "settings.uninstall.title" = "解除安裝 Glance？";
@@ -514,9 +514,11 @@
 "weather.nativeHelp" = "透過已設定的 Glance 天氣服務取得目前位置的 Apple 天氣。顯示天氣時才會要求定位權限。";
 "weather.native.notConfigured" = "此版本尚未設定 Apple 天氣。請使用捷徑，或安裝已設定 Apple 天氣的版本。";
 "weather.native.locationDenied" = "定位權限遭拒。請在系統設定 → 隱私權與安全性 → 定位服務中允許 Glance，或使用捷徑。";
-"weather.native.locationUnavailable" = "無法確定目前位置。請開啟定位服務後重試，或使用捷徑。";
+"weather.native.locationUnavailable" = "暫時無法取得目前位置。請重新整理天氣再試，或使用捷徑。";
 "weather.native.serviceUnavailable" = "無法載入 Apple 天氣。請稍後重試，或使用捷徑。";
 "weather.useShortcuts" = "使用捷徑";
 "weather.openLocationSettings" = "開啟定位設定";
 "weather.attribution" = "Apple 天氣";
 "weather.legal" = "天氣資料來源";
+"weather.native.locationServicesDisabled" = "系統定位服務已關閉。請在系統設定 → 隱私權與安全性 → 定位服務中開啟後重試。";
+"weather.native.authorizationTimedOut" = "等待定位授權逾時。請處理系統定位授權視窗，然後重新整理天氣。";

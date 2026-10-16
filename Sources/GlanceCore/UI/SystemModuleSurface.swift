@@ -24,10 +24,26 @@ extension View {
     }
 
     func systemModuleSurface(cornerRadius: CGFloat = 8) -> some View {
-        background(.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: cornerRadius, style: .circular))
+        modifier(SystemModuleSurface(cornerRadius: cornerRadius))
+    }
+}
+
+private struct SystemModuleSurface: ViewModifier {
+    let cornerRadius: CGFloat
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var borderColors: [Color] {
+        colorScheme == .dark
+            ? [.white.opacity(0.22), .white.opacity(0.04)]
+            : [.black.opacity(0.16), .black.opacity(0.08)]
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .background(.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: cornerRadius, style: .circular))
             .overlay {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .circular)
-                    .strokeBorder(LinearGradient(colors: [.white.opacity(0.22), .white.opacity(0.04)], startPoint: .top, endPoint: .bottom), lineWidth: CompactPopupLayout.borderWidth)
+                    .strokeBorder(LinearGradient(colors: borderColors, startPoint: .top, endPoint: .bottom), lineWidth: CompactPopupLayout.borderWidth)
                     .allowsHitTesting(false)
             }
             .shadow(color: .black.opacity(0.14), radius: 3, y: 2)

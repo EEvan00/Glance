@@ -1,4 +1,6 @@
+import AppKit
 import CoreLocation
+import OSLog
 import Foundation
 
 enum NativeWeatherAuthorization: Sendable { case notDetermined, authorized, denied }
@@ -33,7 +35,13 @@ final class NativeWeatherLocationSession: NativeWeatherLocationManaging {
 
     init(manager: any NativeWeatherLocationManaging) { self.manager = manager }
 
-    func enableAuthorizationRequest() { allowsAuthorizationRequest = true }
+    func enableAuthorizationRequest() {
+        allowsAuthorizationRequest = true
+        // A new explicit visit/refresh may retry an unanswered system request.
+        // Cancellation alone keeps the pending request, so popover dismissal
+        // by the permission dialog does not issue a duplicate request.
+        if status == .notDetermined { requestedAuthorization = false }
+    }
 
     var status: NativeWeatherAuthorization { manager.status }
     var servicesEnabled: Bool { manager.servicesEnabled }
@@ -106,7 +114,7 @@ final class NativeWeatherLocationRequest {
 
     func locate() async throws -> NativeWeatherLocation {
         try Task.checkCancellation()
-        guard manager.servicesEnabled else { throw NativeWeatherIssue.locationUnavailable }
+        guard manager.servicesEnabled else { throw NativeWeatherIssue.locationServicesDisabled }
         guard manager.status != .denied else { throw NativeWeatherIssue.locationDenied }
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
@@ -118,7 +126,7 @@ final class NativeWeatherLocationRequest {
                 manager.onEvent = { [weak self] event in self?.receive(event) }
                 deadline = Task { [weak self, timeout] in
                     do { try await Task.sleep(for: timeout) } catch { return }
-                    self?.finish(.failure(NativeWeatherIssue.locationUnavailable))
+                    self?.timedOut()
                 }
                 if manager.status == .notDetermined { manager.requestAuthorization() }
                 else { startLocation() }
@@ -132,6 +140,10 @@ final class NativeWeatherLocationRequest {
         guard continuation != nil else { return }
         switch event {
         case .authorizationChanged:
+            guard manager.servicesEnabled else {
+                finish(.failure(NativeWeatherIssue.locationServicesDisabled))
+                return
+            }
             switch manager.status {
             case .denied: finish(.failure(NativeWeatherIssue.locationDenied))
             case .authorized: startLocation()
@@ -144,8 +156,25 @@ final class NativeWeatherLocationRequest {
                   abs(timestamp.timeIntervalSinceNow) <= 300 else { return }
             finish(.success(location))
         case .failed(let denied):
-            finish(.failure(denied ? NativeWeatherIssue.locationDenied : .locationUnavailable))
+            let issue: NativeWeatherIssue = !manager.servicesEnabled ? .locationServicesDisabled :
+                (denied ? .locationDenied : .locationUnavailable)
+            finish(.failure(issue))
         }
+    }
+
+    private func timedOut() {
+        let issue: NativeWeatherIssue
+        if !manager.servicesEnabled { issue = .locationServicesDisabled }
+        else {
+            switch manager.status {
+            case .notDetermined: issue = .authorizationTimedOut
+            case .denied: issue = .locationDenied
+            case .authorized: issue = .locationUnavailable
+            }
+        }
+        Logger(subsystem: "io.github.EEvan00.Glance", category: "WeatherLocation")
+            .notice("Weather location deadline: \(String(describing: issue), privacy: .public)")
+        finish(.failure(issue))
     }
 
     private func startLocation() {
@@ -185,7 +214,11 @@ private final class CoreLocationWeatherManager: NSObject, NativeWeatherLocationM
         manager.delegate = self
     }
 
-    func requestAuthorization() { manager.requestWhenInUseAuthorization() }
+    func requestAuthorization() {
+        Logger(subsystem: "io.github.EEvan00.Glance", category: "WeatherLocation")
+            .info("Requesting weather location permission; appActive=\(NSApp?.isActive ?? false)")
+        manager.requestWhenInUseAuthorization()
+    }
     func requestLocation() { manager.requestLocation() }
     func stop() { manager.stopUpdatingLocation() }
 
@@ -202,6 +235,10 @@ private final class CoreLocationWeatherManager: NSObject, NativeWeatherLocationM
     }
 
     nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        let failure = error as NSError
+        // Record only the system error identity, never coordinates or place names.
+        Logger(subsystem: "io.github.EEvan00.Glance", category: "WeatherLocation")
+            .notice("Weather location failed: \(failure.domain, privacy: .public) code=\(failure.code)")
         let denied = (error as? CLError)?.code == .denied
         Task { @MainActor [weak self] in self?.onEvent?(.failed(denied: denied)) }
     }

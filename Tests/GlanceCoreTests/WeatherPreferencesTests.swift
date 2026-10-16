@@ -39,6 +39,10 @@ final class WeatherPreferencesTests: XCTestCase {
     func testNativeIssuesSelectActionableLocalizedGuidance() {
         XCTAssertEqual(NativeWeatherIssue.notConfigured.messageKey, .weatherNativeNotConfigured)
         XCTAssertEqual(NativeWeatherIssue.locationDenied.messageKey, .weatherNativeLocationDenied)
+        XCTAssertEqual(NativeWeatherIssue.locationServicesDisabled.messageKey, .weatherNativeLocationServicesDisabled)
+        XCTAssertEqual(NativeWeatherIssue.authorizationTimedOut.messageKey, .weatherNativeAuthorizationTimedOut)
+        XCTAssertTrue(NativeWeatherIssue.locationServicesDisabled.opensLocationSettings)
+        XCTAssertFalse(NativeWeatherIssue.authorizationTimedOut.opensLocationSettings)
         XCTAssertEqual(NativeWeatherIssue.locationUnavailable.messageKey, .weatherNativeLocationUnavailable)
         XCTAssertEqual(NativeWeatherIssue.serviceUnavailable.messageKey, .weatherNativeServiceUnavailable)
         XCTAssertTrue(NativeWeatherIssue.locationDenied.opensLocationSettings)

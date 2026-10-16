@@ -413,7 +413,7 @@
 
 "shortcut.addWeather" = "Thêm phím tắt thời tiết…";
 "shortcut.continueSetup" = "Tiếp tục thiết lập…";
-"shortcut.sequentialInstallHelp" = "Nhập phím tắt trong cửa sổ hệ thống, rồi quay lại đây để tiếp tục. Mỗi phím tắt cần được xác nhận riêng.";
+"shortcut.sequentialInstallHelp" = "Nhập Glance Weather trong cửa sổ hệ thống. Một phím tắt cung cấp cả thời tiết hiện tại và dự báo hàng giờ.";
 
 "settings.uninstall" = "Gỡ cài đặt Glance…";
 "settings.uninstall.title" = "Gỡ cài đặt Glance?";
@@ -514,9 +514,11 @@
 "weather.nativeHelp" = "Lấy Thời tiết Apple cho vị trí hiện tại qua dịch vụ thời tiết Glance đã cấu hình. Quyền truy cập vị trí được yêu cầu khi hiển thị thời tiết.";
 "weather.native.notConfigured" = "Thời tiết Apple chưa được cấu hình trong bản này. Dùng Phím tắt hoặc cài bản đã cấu hình Thời tiết Apple.";
 "weather.native.locationDenied" = "Quyền truy cập vị trí bị từ chối. Cho phép Glance trong Cài đặt hệ thống → Quyền riêng tư & Bảo mật → Dịch vụ định vị, hoặc dùng Phím tắt.";
-"weather.native.locationUnavailable" = "Không thể xác định vị trí hiện tại. Bật Dịch vụ định vị và thử lại, hoặc dùng Phím tắt.";
+"weather.native.locationUnavailable" = "Không thể xác định vị trí hiện tại. Hãy làm mới thời tiết hoặc dùng Phím tắt.";
 "weather.native.serviceUnavailable" = "Không thể tải Thời tiết Apple. Thử lại sau hoặc dùng Phím tắt.";
 "weather.useShortcuts" = "Dùng Phím tắt";
 "weather.openLocationSettings" = "Mở cài đặt vị trí";
 "weather.attribution" = "Thời tiết Apple";
 "weather.legal" = "Nguồn dữ liệu thời tiết";
+"weather.native.locationServicesDisabled" = "Dịch vụ định vị đang tắt. Hãy bật trong Cài đặt hệ thống → Quyền riêng tư & Bảo mật → Dịch vụ định vị rồi thử lại.";
+"weather.native.authorizationTimedOut" = "Đã hết thời gian chờ cấp quyền vị trí. Hãy trả lời hộp thoại hệ thống rồi làm mới thời tiết.";

@@ -22,7 +22,7 @@ enum NativeWeatherConfiguration {
 }
 
 enum NativeWeatherIssue: Error, Equatable, Sendable {
-    case notConfigured, locationDenied, locationUnavailable, serviceUnavailable
+    case notConfigured, locationDenied, locationServicesDisabled, authorizationTimedOut, locationUnavailable, serviceUnavailable
 }
 
 struct NativeWeatherAttribution: Codable, Equatable, Sendable {

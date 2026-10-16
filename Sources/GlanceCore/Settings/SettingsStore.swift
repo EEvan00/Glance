@@ -324,7 +324,6 @@ final class SettingsStore: ObservableObject {
     }
 
     var weatherShortcutName: String { BundledWeatherShortcut.current.rawValue }
-    var weatherForecastShortcutName: String { BundledWeatherShortcut.forecast.rawValue }
 
     private let defaults: UserDefaults
 

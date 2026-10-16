@@ -413,7 +413,7 @@
 
 "shortcut.addWeather" = "إضافة اختصارات الطقس…";
 "shortcut.continueSetup" = "متابعة الإعداد…";
-"shortcut.sequentialInstallHelp" = "أكد الاستيراد في نافذة النظام ثم ارجع هنا للمتابعة. يتطلب كل اختصار تأكيدًا منفصلًا.";
+"shortcut.sequentialInstallHelp" = "استورد Glance Weather في نافذة النظام. يوفر اختصار واحد الطقس الحالي والتوقعات لكل ساعة.";
 
 "settings.uninstall" = "إلغاء تثبيت Glance…";
 "settings.uninstall.title" = "إلغاء تثبيت Glance؟";
@@ -514,9 +514,11 @@
 "weather.nativeHelp" = "يجلب طقس Apple لموقعك الحالي عبر خدمة طقس Glance المُعدّة. يُطلب إذن الوصول إلى الموقع عند عرض الطقس.";
 "weather.native.notConfigured" = "طقس Apple غير مُعدّ في هذا الإصدار. استخدم الاختصارات أو ثبّت إصدارًا مُعدًّا لطقس Apple.";
 "weather.native.locationDenied" = "رُفض الوصول إلى الموقع. اسمح لـ Glance في إعدادات النظام → الخصوصية والأمن → خدمات الموقع، أو استخدم الاختصارات.";
-"weather.native.locationUnavailable" = "تعذّر تحديد موقعك. فعّل خدمات الموقع وأعد المحاولة، أو استخدم الاختصارات.";
+"weather.native.locationUnavailable" = "تعذر تحديد موقعك الحالي. حاول تحديث الطقس أو استخدم الاختصارات.";
 "weather.native.serviceUnavailable" = "تعذّر تحميل طقس Apple. حاول لاحقًا أو استخدم الاختصارات.";
 "weather.useShortcuts" = "استخدام الاختصارات";
 "weather.openLocationSettings" = "فتح إعدادات الموقع";
 "weather.attribution" = "طقس Apple";
 "weather.legal" = "مصادر بيانات الطقس";
+"weather.native.locationServicesDisabled" = "خدمات الموقع متوقفة. فعّلها من إعدادات النظام ← الخصوصية والأمان ← خدمات الموقع، ثم حاول مجددًا.";
+"weather.native.authorizationTimedOut" = "انتهت مهلة انتظار إذن الموقع. استجب لمربع حوار إذن النظام، ثم حدّث الطقس.";

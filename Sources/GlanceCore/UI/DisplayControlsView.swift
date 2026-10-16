@@ -81,10 +81,7 @@ struct DisplayControlsView: View {
     private func feature(_ index: Int, label: LocalizationKey, symbol: String) -> some View {
         Button { controller.toggle(index); brightness.refresh() } label: {
             VStack(spacing: 5) {
-                Image(systemName: symbol).font(.system(size: 20))
-                    .frame(width: 40, height: 40)
-                    .background(controller.states[index] == true ? Color.accentColor : Color.primary.opacity(0.08), in: Circle())
-                    .shadow(color: .black.opacity(0.15), radius: 3, y: 2)
+                DisplayFeatureIcon(symbol: symbol, isOn: controller.states[index] == true)
                 Text(localization.string(label)).font(.system(size: 10, weight: .medium))
                 Text(localization.string(controller.states[index].map { $0 ? .displayOn : .displayOff } ?? .displayUnavailable))
                     .font(.system(size: 10)).foregroundStyle(.primary.opacity(0.78))

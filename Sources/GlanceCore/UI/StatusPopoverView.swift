@@ -291,7 +291,6 @@ struct StatusPopoverView: View {
     @ObservedObject var claudeUsage: ClaudeUsageController
     @ObservedObject var codexUsage: CodexUsageController
     @ObservedObject var weather: WeatherController
-    @ObservedObject var weatherForecast: WeatherController
     @ObservedObject var nowPlaying: NowPlayingController
     @ObservedObject var brightness: BrightnessController
     @EnvironmentObject private var localization: Localization
@@ -341,7 +340,7 @@ struct StatusPopoverView: View {
             case .output:
                 SoundControlsView(store: store, settings: settings, onBack: { panel = .summary }, onOpenSettings: openSoundSettings)
             case .weather:
-                WeatherDetailsView(controller: weather, forecast: weatherForecast, settings: settings, onBack: { panel = .summary }, onOpenWeather: openWeather)
+                WeatherDetailsView(controller: weather, settings: settings, onBack: { panel = .summary }, onOpenWeather: openWeather)
             case .timer:
                 CountdownView(controller: countdown, onBack: { panel = .summary })
             case .performance:

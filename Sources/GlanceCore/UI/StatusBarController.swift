@@ -32,7 +32,6 @@ final class StatusBarController: NSObject {
     private var utilityCancellable: AnyCancellable?
     private let codexUsage = CodexUsageController()
     private let weather = WeatherController()
-    private let weatherForecast = WeatherController()
     private let nowPlaying = NowPlayingController()
     private let brightness = BrightnessController()
     private let screenshot = ScreenshotController()
@@ -106,7 +105,6 @@ final class StatusBarController: NSObject {
         }
         configureButton()
         weather.configure(source: settings.weatherSource)
-        weatherForecast.configure(source: settings.weatherSource)
         configurePopover()
         observeAppearanceChanges()
         scheduleInitialRender()
@@ -138,7 +136,6 @@ final class StatusBarController: NSObject {
         weatherSourceCancellable = settings.$weatherSource.removeDuplicates().sink { [weak self] source in
             guard let self else { return }
             self.weather.configure(source: source)
-            self.weatherForecast.configure(source: source)
         }
         footerErrorCancellable = footerActions.$errorMessage.compactMap { $0 }
             .receive(on: RunLoop.main)
@@ -320,7 +317,6 @@ final class StatusBarController: NSObject {
                 claudeUsage: claudeUsage,
                 codexUsage: codexUsage,
                 weather: weather,
-                weatherForecast: weatherForecast,
                 nowPlaying: nowPlaying,
                 brightness: brightness,
                 requestWiFiNameAccess: handleRequestWiFiNameAccess,
@@ -390,7 +386,6 @@ final class StatusBarController: NSObject {
             brightness.refresh()
             updateUtilityVisibility(settings.visiblePopupUtilities, isVisible: true)
             weather.configure(source: settings.weatherSource)
-            weatherForecast.configure(source: settings.weatherSource)
             weather.setVisible(settings.footerLayout.modules.contains(where: { $0.kind == .weather }),
                                shortcutName: settings.weatherShortcutName)
             nowPlaying.setVisible(true)
@@ -528,7 +523,6 @@ final class StatusBarController: NSObject {
         codexUsage.setVisible(false)
         claudeUsage.setVisible(false)
         weather.setVisible(false, shortcutName: settings.weatherShortcutName)
-        weatherForecast.setVisible(false, shortcutName: settings.weatherForecastShortcutName)
         nowPlaying.setVisible(false)
         store.closePopoverDetails()
         popover.contentViewController = nil

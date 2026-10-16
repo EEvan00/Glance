@@ -15,7 +15,7 @@ struct CapsuleSlider<Leading: View>: View {
             let width = geometry.size.width
             let thumbX = CapsuleSliderGeometry.thumbCenter(value: value, width: width)
             ZStack(alignment: .leading) {
-                Capsule().fill(colorScheme == .dark ? Color.white.opacity(0.18) : Color.black.opacity(0.12))
+                Capsule().fill(PopupTrackStyle.color(for: colorScheme))
                 Capsule().fill(Color.white.opacity(isEnabled ? 0.92 : 0.35))
                     .frame(width: min(width, thumbX + 7))
                 Circle().fill(.white).frame(width: 14, height: 14)

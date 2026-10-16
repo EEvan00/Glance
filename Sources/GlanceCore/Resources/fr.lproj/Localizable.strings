@@ -413,7 +413,7 @@
 
 "shortcut.addWeather" = "Ajouter les raccourcis météo…";
 "shortcut.continueSetup" = "Continuer la configuration…";
-"shortcut.sequentialInstallHelp" = "Confirmez l’importation dans la fenêtre système, puis revenez ici pour continuer. Chaque raccourci nécessite une confirmation distincte.";
+"shortcut.sequentialInstallHelp" = "Importez Glance Weather dans la fenêtre système. Un seul raccourci fournit la météo actuelle et les prévisions horaires.";
 
 "settings.uninstall" = "Désinstaller Glance…";
 "settings.uninstall.title" = "Désinstaller Glance ?";
@@ -514,9 +514,11 @@
 "weather.nativeHelp" = "Récupère Météo Apple pour votre position via le service météo Glance configuré. L’accès à la position est demandé lors de l’affichage de la météo.";
 "weather.native.notConfigured" = "Météo Apple n’est pas configuré dans cette version. Utilisez Raccourcis ou installez une version configurée pour Météo Apple.";
 "weather.native.locationDenied" = "Accès à la position refusé. Autorisez Glance dans Réglages Système → Confidentialité et sécurité → Service de localisation, ou utilisez Raccourcis.";
-"weather.native.locationUnavailable" = "Votre position n’a pas pu être déterminée. Activez le service de localisation et réessayez, ou utilisez Raccourcis.";
+"weather.native.locationUnavailable" = "Votre position n’a pas pu être déterminée. Actualisez la météo ou utilisez Raccourcis.";
 "weather.native.serviceUnavailable" = "Météo Apple n’a pas pu être chargé. Réessayez plus tard ou utilisez Raccourcis.";
 "weather.useShortcuts" = "Utiliser Raccourcis";
 "weather.openLocationSettings" = "Ouvrir les réglages de localisation";
 "weather.attribution" = "Météo Apple";
 "weather.legal" = "Sources des données météo";
+"weather.native.locationServicesDisabled" = "Les services de localisation sont désactivés. Activez-les dans Réglages Système → Confidentialité et sécurité → Service de localisation, puis réessayez.";
+"weather.native.authorizationTimedOut" = "Le délai d’attente de l’autorisation de localisation a expiré. Répondez à la demande du système, puis actualisez la météo.";

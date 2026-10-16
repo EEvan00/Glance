@@ -413,7 +413,7 @@
 
 "shortcut.addWeather" = "天気ショートカットを追加…";
 "shortcut.continueSetup" = "設定を続ける…";
-"shortcut.sequentialInstallHelp" = "システムのウインドウで読み込みを確認し、ここに戻って続けてください。各ショートカットを個別に確認する必要があります。";
+"shortcut.sequentialInstallHelp" = "システムのウインドウで Glance Weather を読み込んでください。1つのショートカットで現在の天気と時間ごとの予報を取得できます。";
 
 "settings.uninstall" = "Glance をアンインストール…";
 "settings.uninstall.title" = "Glance をアンインストールしますか？";
@@ -514,9 +514,11 @@
 "weather.nativeHelp" = "設定されたGlance天気サービスを通じて現在地のAppleの天気を取得します。天気を表示するときに位置情報へのアクセスを求めます。";
 "weather.native.notConfigured" = "このバージョンではAppleの天気が設定されていません。ショートカットを使うか、Appleの天気が設定されたバージョンをインストールしてください。";
 "weather.native.locationDenied" = "位置情報へのアクセスが拒否されました。システム設定 → プライバシーとセキュリティ → 位置情報サービスでGlanceを許可するか、ショートカットを使ってください。";
-"weather.native.locationUnavailable" = "現在地を取得できませんでした。位置情報サービスを有効にして再試行するか、ショートカットを使ってください。";
+"weather.native.locationUnavailable" = "現在地を取得できませんでした。天気を更新するか、ショートカットを使用してください。";
 "weather.native.serviceUnavailable" = "Appleの天気を読み込めませんでした。後で再試行するか、ショートカットを使ってください。";
 "weather.useShortcuts" = "ショートカットを使う";
 "weather.openLocationSettings" = "位置情報の設定を開く";
 "weather.attribution" = "Appleの天気";
 "weather.legal" = "天気データの提供元";
+"weather.native.locationServicesDisabled" = "位置情報サービスがオフです。システム設定 → プライバシーとセキュリティ → 位置情報サービスでオンにしてから再試行してください。";
+"weather.native.authorizationTimedOut" = "位置情報の許可待ちがタイムアウトしました。システムの許可ダイアログに応答してから、天気を更新してください。";

@@ -413,7 +413,7 @@
 
 "shortcut.addWeather" = "Aggiungi comandi meteo…";
 "shortcut.continueSetup" = "Continua configurazione…";
-"shortcut.sequentialInstallHelp" = "Conferma l’importazione nella finestra di sistema, poi torna qui per continuare. Ogni comando richiede una conferma separata.";
+"shortcut.sequentialInstallHelp" = "Importa Glance Weather nella finestra di sistema. Un solo comando rapido fornisce meteo attuale e previsioni orarie.";
 
 "settings.uninstall" = "Disinstalla Glance…";
 "settings.uninstall.title" = "Disinstallare Glance?";
@@ -514,9 +514,11 @@
 "weather.nativeHelp" = "Recupera Meteo Apple per la tua posizione tramite il servizio meteo Glance configurato. L’accesso alla posizione viene richiesto quando viene mostrato il meteo.";
 "weather.native.notConfigured" = "Meteo Apple non è configurato in questa versione. Usa Comandi Rapidi o installa una versione configurata per Meteo Apple.";
 "weather.native.locationDenied" = "Accesso alla posizione negato. Consenti Glance in Impostazioni di Sistema → Privacy e sicurezza → Localizzazione, oppure usa Comandi Rapidi.";
-"weather.native.locationUnavailable" = "Impossibile determinare la posizione. Attiva Localizzazione e riprova, oppure usa Comandi Rapidi.";
+"weather.native.locationUnavailable" = "Impossibile determinare la posizione. Aggiorna il meteo oppure usa Comandi Rapidi.";
 "weather.native.serviceUnavailable" = "Impossibile caricare Meteo Apple. Riprova più tardi oppure usa Comandi Rapidi.";
 "weather.useShortcuts" = "Usa Comandi Rapidi";
 "weather.openLocationSettings" = "Apri impostazioni di localizzazione";
 "weather.attribution" = "Meteo Apple";
 "weather.legal" = "Fonti dei dati meteo";
+"weather.native.locationServicesDisabled" = "I servizi di localizzazione sono disattivati. Attivali in Impostazioni di Sistema → Privacy e sicurezza → Localizzazione e riprova.";
+"weather.native.authorizationTimedOut" = "Attesa del permesso di localizzazione scaduta. Rispondi alla finestra di sistema, poi aggiorna il meteo.";

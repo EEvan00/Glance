@@ -413,7 +413,7 @@
 
 "shortcut.addWeather" = "날씨 단축어 추가…";
 "shortcut.continueSetup" = "설정 계속…";
-"shortcut.sequentialInstallHelp" = "시스템 창에서 가져오기를 확인한 뒤 돌아와 다음 단축어를 추가하세요. 각 단축어를 따로 확인해야 합니다.";
+"shortcut.sequentialInstallHelp" = "시스템 창에서 Glance Weather를 가져오세요. 하나의 단축어로 현재 날씨와 시간별 예보를 제공합니다.";
 
 "settings.uninstall" = "Glance 제거…";
 "settings.uninstall.title" = "Glance를 제거하시겠습니까?";
@@ -514,9 +514,11 @@
 "weather.nativeHelp" = "설정된 Glance 날씨 서비스를 통해 현재 위치의 Apple 날씨를 가져옵니다. 날씨가 표시될 때 위치 접근 권한을 요청합니다.";
 "weather.native.notConfigured" = "이 버전에서는 Apple 날씨가 설정되지 않았습니다. 단축어를 사용하거나 Apple 날씨가 설정된 버전을 설치하세요.";
 "weather.native.locationDenied" = "위치 접근이 거부되었습니다. 시스템 설정 → 개인정보 보호 및 보안 → 위치 서비스에서 Glance를 허용하거나 단축어를 사용하세요.";
-"weather.native.locationUnavailable" = "현재 위치를 확인할 수 없습니다. 위치 서비스를 켜고 다시 시도하거나 단축어를 사용하세요.";
+"weather.native.locationUnavailable" = "현재 위치를 확인할 수 없습니다. 날씨를 새로고침하거나 단축어를 사용하세요.";
 "weather.native.serviceUnavailable" = "Apple 날씨를 불러올 수 없습니다. 나중에 다시 시도하거나 단축어를 사용하세요.";
 "weather.useShortcuts" = "단축어 사용";
 "weather.openLocationSettings" = "위치 설정 열기";
 "weather.attribution" = "Apple 날씨";
 "weather.legal" = "날씨 데이터 출처";
+"weather.native.locationServicesDisabled" = "위치 서비스가 꺼져 있습니다. 시스템 설정 → 개인정보 보호 및 보안 → 위치 서비스에서 켠 후 다시 시도하세요.";
+"weather.native.authorizationTimedOut" = "위치 권한 대기 시간이 초과되었습니다. 시스템 권한 대화상자에 응답한 후 날씨를 새로고침하세요.";

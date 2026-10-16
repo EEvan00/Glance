@@ -22,13 +22,17 @@ extension NativeWeatherIssue {
         switch self {
         case .notConfigured: .weatherNativeNotConfigured
         case .locationDenied: .weatherNativeLocationDenied
+        case .locationServicesDisabled: .weatherNativeLocationServicesDisabled
+        case .authorizationTimedOut: .weatherNativeAuthorizationTimedOut
         case .locationUnavailable: .weatherNativeLocationUnavailable
         case .serviceUnavailable: .weatherNativeServiceUnavailable
         }
     }
 
     var opensLocationSettings: Bool {
-        if case .locationDenied = self { return true }
-        return false
+        switch self {
+        case .locationDenied, .locationServicesDisabled: return true
+        default: return false
+        }
     }
 }

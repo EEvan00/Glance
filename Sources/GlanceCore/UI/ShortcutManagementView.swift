@@ -74,7 +74,8 @@ struct ShortcutManagementView: View {
                             Button(localization.string(.shortcutManageRemove)) {
                                 if let url = URL(string: "shortcuts://") { NSWorkspace.shared.open(url) }
                             }
-                        } else {
+                        }
+                        if versions.needsUpdate(name: item.name, bundledVersion: item.version) {
                             Button(localization.string(.shortcutUpdate)) {
                                 if let resource = item.resource {
                                     versions.requestVerification(name: item.name)

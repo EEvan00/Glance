@@ -76,7 +76,6 @@ final class WeatherTests: XCTestCase {
         defaults.set("Status Trio Weather", forKey: "weatherShortcutName")
         let settings = SettingsStore(defaults: defaults)
         XCTAssertEqual(settings.weatherShortcutName, "Glance Weather")
-        XCTAssertEqual(settings.weatherForecastShortcutName, "Glance Weather Forecast")
     }
 
     @MainActor

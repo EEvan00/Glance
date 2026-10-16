@@ -13,6 +13,44 @@ final class NativeWeatherLocationTests: XCTestCase {
         XCTAssertEqual(manager.locationRequests, 0)
     }
 
+    func testDisabledServicesAreNotReportedAsAnAuthorizationTimeout() async {
+        let manager = WeatherLocationManagerDouble(status: .notDetermined)
+        manager.servicesEnabled = false
+        let request = NativeWeatherLocationRequest(manager: manager, timeout: .milliseconds(5))
+        do { _ = try await request.locate(); XCTFail("Disabled location succeeded") }
+        catch { XCTAssertEqual(error as? NativeWeatherIssue, .locationServicesDisabled) }
+        XCTAssertEqual(manager.authorizationRequests, 0)
+        XCTAssertEqual(manager.locationRequests, 0)
+    }
+
+    func testUnansweredAuthorizationHasItsOwnTimeout() async {
+        let manager = WeatherLocationManagerDouble(status: .notDetermined)
+        let request = NativeWeatherLocationRequest(manager: manager, timeout: .milliseconds(5))
+        do { _ = try await request.locate(); XCTFail("Unanswered permission succeeded") }
+        catch { XCTAssertEqual(error as? NativeWeatherIssue, .authorizationTimedOut) }
+        XCTAssertTrue(manager.stopped)
+        XCTAssertNil(manager.onEvent)
+    }
+
+    func testExplicitReactivationRetriesUnansweredAuthorization() async throws {
+        let manager = WeatherLocationManagerDouble(status: .notDetermined)
+        let session = NativeWeatherLocationSession(manager: manager)
+        session.enableAuthorizationRequest()
+        let first = Task { try await session.locate() }
+        for _ in 0..<1000 where manager.authorizationRequests == 0 { await Task.yield() }
+        first.cancel()
+        _ = try? await first.value
+        session.enableAuthorizationRequest()
+        let retry = Task { try await session.locate() }
+        for _ in 0..<1000 where manager.onEvent == nil { await Task.yield() }
+        XCTAssertEqual(manager.authorizationRequests, 2)
+        manager.status = .authorized
+        manager.onEvent?(.authorizationChanged)
+        manager.onEvent?(.location(NativeWeatherLocation(latitude: 30, longitude: 40), accuracy: 20, timestamp: Date()))
+        let location = try await retry.value
+        XCTAssertEqual(location.latitude, 30)
+    }
+
     func testDeniedAuthorizationNeverStartsLocationUpdates() async {
         let manager = WeatherLocationManagerDouble(status: .denied)
         let request = NativeWeatherLocationRequest(manager: manager)

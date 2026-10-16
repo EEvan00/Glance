@@ -3,7 +3,6 @@ import SwiftUI
 
 enum BundledWeatherShortcut: String, CaseIterable {
     case current = "Glance Weather"
-    case forecast = "Glance Weather Forecast"
 
     private static let versions: [String: Int] = {
         guard let url = Bundle.module.url(forResource: "WeatherShortcutVersions", withExtension: "json"),
@@ -26,8 +25,7 @@ struct WeatherShortcutInstallButtons: View {
     var purpose: ShortcutManagementView.Purpose = .missingOnly
     var body: some View {
         ShortcutManagementView(items: [
-            .init(name: BundledWeatherShortcut.current.rawValue, addLabel: .settingsWeatherAddCurrent, resource: BundledWeatherShortcut.current.url, version: BundledWeatherShortcut.current.version),
-            .init(name: BundledWeatherShortcut.forecast.rawValue, addLabel: .settingsWeatherAddForecast, resource: BundledWeatherShortcut.forecast.url, version: BundledWeatherShortcut.forecast.version)
+            .init(name: BundledWeatherShortcut.current.rawValue, addLabel: .settingsWeatherAddCurrent, resource: BundledWeatherShortcut.current.url, version: BundledWeatherShortcut.current.version)
         ], purpose: purpose)
     }
 }
