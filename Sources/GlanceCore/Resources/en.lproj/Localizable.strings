@@ -200,7 +200,7 @@
 "magsafe.off" = "Off";
 "magsafe.unsupported" = "This Mac does not expose MagSafe indicator control.";
 "magsafe.installHelper" = "Enable MagSafe Control…";
-"magsafe.installExplanation" = "Enabling this helper opens Installer and requires an administrator password. After an app update, reinstall the helper if prompted. Before deleting Glance, turn the light back on and use Settings → About → Uninstall. Moving the app to the Trash leaves the helper installed and may leave the light off. Use the standalone helper removal package on glance.gadels.com if the app is already deleted.";
+"magsafe.installExplanation" = "Follow the system prompts to enable the helper. macOS will request administrator authorization if needed. This feature controls only the indicator light, not charging. Glance attempts to restore system control when quitting; after an unexpected exit, the helper normally restores it within about 30 seconds. To delete Glance, use Settings → About → Uninstall to fully remove the helper.";
 "magsafe.uninstallHelper" = "Remove MagSafe Helper";
 "magsafe.error.install" = "The MagSafe helper could not be installed.";
 "magsafe.error.uninstall" = "The MagSafe helper could not be removed.";

@@ -200,7 +200,7 @@
 "magsafe.off" = "Off";
 "magsafe.unsupported" = "This Mac does not expose MagSafe indicator control.";
 "magsafe.installHelper" = "Enable MagSafe Control…";
-"magsafe.installExplanation" = "A narrowly scoped system helper is required to change the indicator. macOS will ask you to approve it.";
+"magsafe.installExplanation" = "시스템 안내에 따라 보조 프로그램을 활성화하세요. 관리자 승인이 필요하면 macOS가 안내합니다. 이 기능은 표시등만 제어하며 충전에는 영향을 주지 않습니다. Glance를 종료하면 시스템 제어 복원을 시도합니다. 예기치 않게 종료된 경우 보조 프로그램이 보통 약 30초 이내에 복원합니다. 앱을 삭제할 때는 설정 → 정보 → 제거를 사용하여 보조 프로그램도 완전히 제거하세요.";
 "magsafe.uninstallHelper" = "Remove MagSafe Helper";
 "magsafe.error.install" = "The MagSafe helper could not be installed.";
 "magsafe.error.uninstall" = "The MagSafe helper could not be removed.";

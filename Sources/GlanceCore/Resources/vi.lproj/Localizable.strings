@@ -200,7 +200,7 @@
 "magsafe.off" = "Tắt";
 "magsafe.unsupported" = "Máy Mac này không hỗ trợ điều khiển đèn báo MagSafe.";
 "magsafe.installHelper" = "Bật điều khiển MagSafe…";
-"magsafe.installExplanation" = "Bật trình trợ giúp sẽ mở Trình cài đặt và yêu cầu mật khẩu quản trị viên. Sau khi cập nhật ứng dụng, hãy cài lại trình trợ giúp nếu được nhắc. Trước khi xóa Glance, bật lại đèn rồi chọn Cài đặt → Giới thiệu → Gỡ cài đặt. Chuyển ứng dụng vào Thùng rác vẫn giữ trình trợ giúp và có thể khiến đèn tiếp tục tắt. Nếu đã xóa ứng dụng, dùng gói gỡ trình trợ giúp riêng trên glance.gadels.com.";
+"magsafe.installExplanation" = "Làm theo hướng dẫn của hệ thống để bật trình trợ giúp. macOS sẽ yêu cầu quyền quản trị viên nếu cần. Tính năng này chỉ điều khiển đèn báo, không ảnh hưởng đến việc sạc. Khi thoát, Glance sẽ thử khôi phục quyền điều khiển của hệ thống. Sau khi ứng dụng thoát bất ngờ, trình trợ giúp thường khôi phục trong khoảng 30 giây. Để xóa Glance và gỡ bỏ hoàn toàn trình trợ giúp, hãy dùng Cài đặt → Giới thiệu → Gỡ cài đặt.";
 "magsafe.uninstallHelper" = "Gỡ trình trợ giúp MagSafe";
 "magsafe.error.install" = "Không thể cài đặt trình trợ giúp MagSafe.";
 "magsafe.error.uninstall" = "Không thể gỡ trình trợ giúp MagSafe.";

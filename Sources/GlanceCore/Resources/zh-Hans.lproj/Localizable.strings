@@ -200,7 +200,7 @@
 "magsafe.off" = "熄灭";
 "magsafe.unsupported" = "这台 Mac 不支持控制 MagSafe 指示灯。";
 "magsafe.installHelper" = "启用 MagSafe 控制…";
-"magsafe.installExplanation" = "启用辅助程序会打开安装器并要求管理员密码；软件更新后，如有提示，请重新安装辅助程序。 删除 Glance 前，请先开启指示灯，再使用「设置 → 关于 → 卸载」。直接拖进废纸篓会留下辅助程序，灯光可能继续熄灭。若已删除软件，可在 glance.gadels.com 下载独立卸载包恢复系统控制。";
+"magsafe.installExplanation" = "请按系统提示启用辅助程序；如需管理员授权，macOS 会提示。此功能只控制指示灯，不影响充电。退出 Glance 时会尝试恢复系统控制；意外退出后，辅助程序通常会在约 30 秒内恢复。删除应用请使用「设置 → 关于 → 卸载」，以完整移除辅助程序。";
 "magsafe.uninstallHelper" = "移除 MagSafe 辅助程序";
 "magsafe.error.install" = "无法安装 MagSafe 辅助程序。";
 "magsafe.error.uninstall" = "无法移除 MagSafe 辅助程序。";
