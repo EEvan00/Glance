@@ -28,6 +28,7 @@ struct CodexUsageView: View {
                             }
                             if let remaining = window.remainingPercent {
                                 PopupProgressBar(percent: Double(remaining))
+                                    .popupBottomShadow()
                                 .accessibilityElement(children: .ignore)
                                 .accessibilityLabel(windowLabel(window, localization: localization))
                                 .accessibilityValue(remainingLabel(window, localization: localization))

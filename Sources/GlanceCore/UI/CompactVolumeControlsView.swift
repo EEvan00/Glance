@@ -28,6 +28,7 @@ struct CompactVolumeControlsView: View {
             }, onEditingChanged: { isAdjusting = $0 }) {
                 EmptyView()
             }
+            .popupBottomShadow(isEnabled: onOpenOutput == nil)
             .contextMenu {
                 if let onOpenOutput { Button(localization.string(.volumeOutputTitle), action: onOpenOutput) }
                 Button(localization.string(store.liveVolume.isMuted ? .volumeUnmuted : .volumeMuted)) { store.toggleMute() }

@@ -15,6 +15,7 @@ struct BrightnessControlsView: View {
                 CapsuleSlider(value: $value, label: localization.string(.brightnessTitle), onChange: { scalar, final in
                     controller.setValue(scalar, final: final)
                 }, onEditingChanged: { isAdjusting = $0 }) { EmptyView() }
+                    .popupBottomShadow(isEnabled: onOpenDisplay == nil)
                 if let onOpenDisplay {
                     Button(action: onOpenDisplay) {
                         PopupChevron(alignsToModuleEdge: true)

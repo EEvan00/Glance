@@ -20,6 +20,7 @@ struct PerformanceDetailsView: View {
                 row(.performanceCPU, value: snapshot.cpuPercent.map { "\(Int($0.rounded()))%" } ?? "—")
                 row(.performanceMemory, value: "\(bytes(snapshot.usedMemory)) / \(bytes(snapshot.totalMemory))")
                 PopupProgressBar(percent: snapshot.memoryPercent)
+                    .popupBottomShadow()
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(localization.string(.performanceMemory))
                     .accessibilityValue("\(Int(snapshot.memoryPercent.rounded()))%")

@@ -76,6 +76,8 @@ struct WeatherDetailsView: View {
                         }
                     } label: {
                         Text(sourceMenuTitle)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -83,10 +85,13 @@ struct WeatherDetailsView: View {
                     .fixedSize()
                     .accessibilityLabel(localization.string(.weatherSource))
                     Spacer(minLength: 8)
-                    Text((controller.updatedAt).map {
-                        localization.format(.weatherUpdated, $0.formatted(date: .omitted, time: .shortened))
-                    } ?? localization.string(.weatherUnavailable))
-                        .font(.caption).foregroundStyle(.secondary)
+                    if let updatedAt = controller.updatedAt {
+                        let time = updatedAt.formatted(date: .omitted, time: .shortened)
+                        WeatherUpdateTimeLabel(fullText: localization.format(.weatherUpdated, time), timeText: time)
+                    } else {
+                        Text(localization.string(.weatherUnavailable))
+                            .font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                    }
                     Button {
                         refreshWeather()
                     } label: {

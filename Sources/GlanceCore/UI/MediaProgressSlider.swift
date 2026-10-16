@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-/// Retains the native track and knob, overriding only the filled portion.
+/// Uses the shared progress palette while retaining native slider geometry and interaction.
 struct MediaProgressSlider: NSViewRepresentable {
     @Binding var value: Double
     let onEditingChanged: (Bool) -> Void
@@ -28,6 +28,8 @@ struct MediaProgressSlider: NSViewRepresentable {
         context.coordinator.parent = self
         if !context.coordinator.isEditing { slider.doubleValue = value }
         slider.isEnabled = context.environment.isEnabled
+        slider.appearance = NSAppearance(named: context.environment.colorScheme == .dark ? .darkAqua : .aqua)
+        slider.needsDisplay = true
     }
 
     @MainActor
@@ -58,8 +60,10 @@ final class MediaProgressControl: NSSlider {
 @MainActor
 final class MediaProgressCell: NSSliderCell {
     override func drawBar(inside rect: NSRect, flipped: Bool) {
-        super.drawBar(inside: rect, flipped: flipped)
+        let scheme: ColorScheme = controlView?.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? .dark : .light
         let bar = barRect(flipped: flipped)
+        NSColor(PopupTrackStyle.color(for: scheme)).setFill()
+        NSBezierPath(roundedRect: bar, xRadius: bar.height / 2, yRadius: bar.height / 2).fill()
         let end = min(bar.maxX, max(bar.minX, knobRect(flipped: flipped).midX))
         guard end > bar.minX else { return }
         NSGraphicsContext.saveGraphicsState()

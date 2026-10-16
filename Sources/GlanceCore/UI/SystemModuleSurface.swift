@@ -23,6 +23,10 @@ extension View {
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    func popupBottomShadow(isEnabled: Bool = true) -> some View {
+        shadow(color: .black.opacity(isEnabled ? 0.14 : 0), radius: 3, y: 2)
+    }
+
     func systemModuleSurface(cornerRadius: CGFloat = 8) -> some View {
         modifier(SystemModuleSurface(cornerRadius: cornerRadius))
     }
@@ -46,7 +50,7 @@ private struct SystemModuleSurface: ViewModifier {
                     .strokeBorder(LinearGradient(colors: borderColors, startPoint: .top, endPoint: .bottom), lineWidth: CompactPopupLayout.borderWidth)
                     .allowsHitTesting(false)
             }
-            .shadow(color: .black.opacity(0.14), radius: 3, y: 2)
+            .popupBottomShadow()
     }
 }
 

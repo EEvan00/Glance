@@ -27,6 +27,7 @@ struct CountdownView: View {
                             .font(.subheadline).foregroundStyle(.secondary)
                     }
                     PopupProgressBar(percent: controller.duration > 0 ? controller.remaining / controller.duration * 100 : 0)
+                        .popupBottomShadow()
                     HStack {
                         if !controller.isFinished {
                             Button(localization.string(controller.isRunning ? .timerPause : .timerResume)) {
