@@ -7,6 +7,18 @@
     <description>Independent Glance releases.</description>
     <language>en</language>
     <item>
+      <title>Version 2.0.3 （English + 中文， 中文在下方）</title>
+      <pubDate>Fri, 16 Oct 2026 05:55:44 +0000</pubDate>
+      <sparkle:version>27</sparkle:version>
+      <sparkle:shortVersionString>2.0.3</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <description><![CDATA[<ul><li>Version: 2.0.3</li></ul><h2>English</h2><ul><li>Fix a crash after opening the macOS screenshot toolbar.</li><li>Fix the Show Desktop footer button failing to reveal the desktop.</li><li>Update MagSafe guidance in all 13 languages to explain system authorization, automatic light-control restoration, and complete removal through the in-app uninstaller.</li></ul><h2>中文</h2><ul><li>修复打开 macOS 截图工具后 Glance 闪退的问题。</li><li>修复底部「显示桌面」按钮无法正常使用的问题。</li><li>同步更新全部 13 种语言的 MagSafe 说明，明确系统授权、灯光控制自动恢复和应用内完整卸载方式。</li></ul>]]></description>
+      <enclosure url="https://github.com/EEvan00/Glance/releases/download/v2.0.3/Glance-2.0.3.dmg"
+                 type="application/octet-stream"
+                 sparkle:edSignature="/CqfMF6Xo9wuF6E1cxkYu54DHMVMHhrzYWmscGX7airuRCMUBVm0MQLFNix+J/9wgOpgLtbeiHTeLxY7XUkjAQ=="
+                 length="5606443" />
+    </item>
+    <item>
       <title>Version 2.0.2 （English + 中文， 中文在下方）</title>
       <pubDate>Fri, 16 Oct 2026 04:39:48 +0000</pubDate>
       <sparkle:version>24</sparkle:version>
