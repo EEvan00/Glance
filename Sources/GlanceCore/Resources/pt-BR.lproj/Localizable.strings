@@ -200,7 +200,7 @@
 "magsafe.off" = "Off";
 "magsafe.unsupported" = "This Mac does not expose MagSafe indicator control.";
 "magsafe.installHelper" = "Enable MagSafe Control…";
-"magsafe.installExplanation" = "A narrowly scoped system helper is required to change the indicator. macOS will ask you to approve it.";
+"magsafe.installExplanation" = "Siga as instruções do sistema para ativar o auxiliar. O macOS solicitará autorização de administrador se necessário. Este recurso controla apenas a luz indicadora, sem afetar o carregamento. Ao sair, o Glance tenta restaurar o controle do sistema. Após um encerramento inesperado, o auxiliar normalmente o restaura em cerca de 30 segundos. Para excluir o Glance e remover completamente o auxiliar, use Ajustes → Sobre → Desinstalar.";
 "magsafe.uninstallHelper" = "Remove MagSafe Helper";
 "magsafe.error.install" = "The MagSafe helper could not be installed.";
 "magsafe.error.uninstall" = "The MagSafe helper could not be removed.";

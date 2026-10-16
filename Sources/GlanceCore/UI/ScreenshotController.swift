@@ -12,15 +12,14 @@ final class ScreenshotController {
             try? await Task.sleep(for: .milliseconds(200))
             guard let self else { return }
             let url = URL(fileURLWithPath: "/System/Applications/Utilities/Screenshot.app")
-            NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration()) { [weak self] _, error in
-                Task { @MainActor [weak self] in
-                    self?.isOpening = false
-                    guard error != nil else { return }
-                    let alert = NSAlert()
-                    alert.messageText = localization.string(.compactScreenshot)
-                    alert.informativeText = localization.string(.screenshotFailed)
-                    alert.runModal()
-                }
+            defer { isOpening = false }
+            do {
+                try await SystemApplicationLauncher.open(url)
+            } catch {
+                let alert = NSAlert()
+                alert.messageText = localization.string(.compactScreenshot)
+                alert.informativeText = localization.string(.screenshotFailed)
+                alert.runModal()
             }
         }
     }

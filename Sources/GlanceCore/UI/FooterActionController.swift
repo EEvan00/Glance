@@ -135,9 +135,15 @@ final class FooterActionController: ObservableObject {
         case .notes: openSystemApplication("com.apple.Notes")
         case .reminders: openSystemApplication("com.apple.reminders")
         case .showDesktop:
-            // Apple's Mission Control executable maps argument 1 to
-            // com.apple.showdesktop.awake. No shell, user arguments or key remapping.
-            runSystemExecutable("/System/Applications/Mission Control.app/Contents/MacOS/Mission Control", arguments: ["1"])
+            // Launch Services satisfies Mission Control's launch constraints;
+            // direct Process execution can be killed with Code Signature Invalid.
+            // Argument 1 selects com.apple.showdesktop.awake.
+            Task { @MainActor [weak self] in
+                do {
+                    try await SystemApplicationLauncher.open(
+                        URL(fileURLWithPath: "/System/Applications/Mission Control.app"), arguments: ["1"])
+                } catch { self?.fail(.footerActionSystemUnavailable) }
+            }
         case .lockScreen:
             guard let lockScreen else { fail(.footerActionSystemUnavailable); return }
             lockScreen()
@@ -165,26 +171,6 @@ final class FooterActionController: ObservableObject {
             fail(.footerActionOpenFailed); return
         }
         open(url)
-    }
-
-    private func runSystemExecutable(_ path: String, arguments: [String]) {
-        guard FileManager.default.isExecutableFile(atPath: path) else {
-            fail(.footerActionSystemUnavailable); return
-        }
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: path)
-        process.arguments = arguments
-        process.standardOutput = FileHandle.nullDevice
-        process.standardError = FileHandle.nullDevice
-        // These fixed system utilities finish immediately; completion is checked
-        // asynchronously so the main actor does not block on process termination.
-        process.terminationHandler = { [weak self] process in
-            let succeeded = process.terminationReason == .exit && process.terminationStatus == 0
-            Task { @MainActor [weak self] in
-                if !succeeded { self?.fail(.footerActionSystemUnavailable) }
-            }
-        }
-        do { try process.run() } catch { fail(.footerActionSystemUnavailable) }
     }
 
     private func fail(_ key: LocalizationKey) { errorMessage = localization.string(key) }

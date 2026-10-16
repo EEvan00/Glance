@@ -200,7 +200,7 @@
 "magsafe.off" = "熄滅";
 "magsafe.unsupported" = "這台 Mac 不支援控制 MagSafe 指示燈。";
 "magsafe.installHelper" = "啟用 MagSafe 控制…";
-"magsafe.installExplanation" = "更改指示燈需要註冊一個權限受限的系統輔助程式，macOS 會要求你批准。";
+"magsafe.installExplanation" = "請依照系統提示啟用輔助程式；如需管理員授權，macOS 會提示。此功能只控制指示燈，不影響充電。結束 Glance 時會嘗試恢復系統控制；意外結束後，輔助程式通常會在約 30 秒內恢復。刪除應用程式請使用「設定 → 關於 → 解除安裝」，以完整移除輔助程式。";
 "magsafe.uninstallHelper" = "移除 MagSafe 輔助程式";
 "magsafe.error.install" = "無法安裝 MagSafe 輔助程式。";
 "magsafe.error.uninstall" = "無法移除 MagSafe 輔助程式。";
